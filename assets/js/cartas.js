@@ -93,7 +93,10 @@ document.body.style.overflow="hidden";
             ""
         }
 
-        <p>${carta.texto}</p>
+       ${carta.texto
+    .split("\n\n")
+    .map(paragrafo => `<p>${paragrafo}</p>`)
+    .join("")}
 
         <div class="assinatura">
 

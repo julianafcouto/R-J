@@ -1,0 +1,218 @@
+/* ===========================
+   PÁGINA
+=========================== */
+
+.lista-musicas{
+
+    width:min(1000px,90%);
+    margin:50px auto 120px;
+
+    display:flex;
+    flex-direction:column;
+    gap:28px;
+
+}
+
+
+/* ===========================
+   CARD
+=========================== */
+
+.song-card{
+
+    display:flex;
+    gap:25px;
+
+    padding:28px;
+
+    border-radius:22px;
+
+    background:rgba(255,255,255,.05);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    backdrop-filter:blur(18px);
+
+    transition:.35s;
+
+    animation:fadeUp .6s ease;
+
+}
+
+.song-card:hover{
+
+    transform:translateY(-6px);
+
+    border-color:rgba(170,120,255,.35);
+
+    box-shadow:
+    0 20px 45px rgba(0,0,0,.35);
+
+}
+
+
+/* ===========================
+   ÍCONE
+=========================== */
+
+.album{
+
+    min-width:80px;
+    height:80px;
+
+    border-radius:20px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-size:34px;
+
+    background:linear-gradient(
+        135deg,
+        #7c5cff,
+        #b178ff
+    );
+
+    box-shadow:
+    0 10px 30px rgba(124,92,255,.35);
+
+}
+
+
+/* ===========================
+   TEXTO
+=========================== */
+
+.song-info{
+
+    flex:1;
+
+}
+
+.song-info h3{
+
+    font-size:24px;
+
+    margin-bottom:8px;
+
+    color:white;
+
+}
+
+.song-info span{
+
+    color:#b7b7cb;
+
+    font-size:15px;
+
+}
+
+.song-info p{
+
+    margin:18px 0;
+
+    line-height:1.8;
+
+    color:#d8d8e8;
+
+}
+
+
+/* ===========================
+   BOTÃO
+=========================== */
+
+.listen{
+
+    display:inline-flex;
+
+    align-items:center;
+    gap:10px;
+
+    padding:12px 20px;
+
+    border-radius:999px;
+
+    text-decoration:none;
+
+    color:white;
+
+    background:#1DB954;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.listen:hover{
+
+    transform:scale(1.05);
+
+    background:#20c95b;
+
+}
+
+
+/* ===========================
+   ERRO
+=========================== */
+
+.erro{
+
+    text-align:center;
+
+    color:#bbb;
+
+    margin-top:40px;
+
+}
+
+
+/* ===========================
+   RESPONSIVO
+=========================== */
+
+@media(max-width:768px){
+
+.song-card{
+
+    flex-direction:column;
+
+    text-align:center;
+
+}
+
+.album{
+
+    margin:auto;
+
+}
+
+}
+
+
+/* ===========================
+   ANIMAÇÃO
+=========================== */
+
+@keyframes fadeUp{
+
+from{
+
+opacity:0;
+
+transform:translateY(20px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}

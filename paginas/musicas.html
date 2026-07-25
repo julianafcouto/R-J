@@ -1,4 +1,24 @@
-document.addEventListener("DOMContentLoaded", carregarMusicas);
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Músicas • R & J</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/musicas.css">
+
+</head>
+
+<body>
 
 <script>
 
@@ -8,127 +28,55 @@ if(!sessionStorage.getItem("introVista")){
 
 </script>
 
-async function carregarMusicas(){
+<div class="background-glow"></div>
 
+<header class="page-header">
 
-    const lista =
-    document.getElementById(
-        "listaMusicas"
-    );
+    <h1>Músicas</h1>
 
+    <p>
+        Cada música guarda um pedacinho da nossa história.
+    </p>
 
-    try {
+</header>
 
+<main>
 
-        const resposta =
-        await fetch("../data/musicas.json");
+    <section
+        id="listaMusicas"
+        class="lista-musicas">
 
+        <!-- As músicas serão carregadas pelo JavaScript -->
 
+    </section>
 
-        const musicas =
-        await resposta.json();
+</main>
 
+<nav class="mobile-nav">
 
+    <a href="../index.html">
+        🏠
+    </a>
 
-        musicas.forEach(
-            (musica, index)=>{
+    <a class="active">
+        🎵
+    </a>
 
+    <a href="cartas.html">
+        💌
+    </a>
 
-                const card =
-                document.createElement("article");
+    <a href="galeria.html">
+        📸
+    </a>
 
+    <a href="timeline.html">
+        ✨
+    </a>
 
-                card.className =
-                "song-card";
+</nav>
 
+<script src="../assets/js/musicas.js"></script>
 
-
-                card.innerHTML = `
-
-
-                <div class="album">
-
-                    ${index === 0 ? "🎵" : "🎵"}
-
-                </div>
-
-
-
-                <div class="song-info">
-
-
-                    <h3>
-                    ${musica.titulo}
-                    </h3>
-
-
-
-                    <span>
-                    ${musica.artista}
-                    </span>
-
-
-
-
-                    <p>
-                    ${musica.mensagem}
-                    </p>
-
-
-
-
-                    <a 
-                    href="${musica.spotify}"
-                    target="_blank"
-                    class="listen">
-
-
-                    🎧 Ouvir música
-
-
-                    </a>
-
-
-
-                </div>
-
-
-                `;
-
-
-
-                lista.appendChild(card);
-
-
-
-            }
-        );
-
-
-
-    } catch(error){
-
-
-        lista.innerHTML = `
-
-        <p class="erro">
-
-        Não foi possível carregar
-        nossas músicas 💜
-
-        </p>
-
-        `;
-
-
-        console.error(error);
-
-
-    }
-
-
-
-}
-
-<div id="pageTransition"></div>
-<script src="../assets/js/transition.js"></script>
+</body>
+</html>
