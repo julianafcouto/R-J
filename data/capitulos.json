@@ -1,7 +1,7 @@
 [
   {
     "id": "2026-06-19",
-    "titulo": "Um lugar para nós",
+    "titulo": "Bem-Vinda",
     "data": "19.06.2026",
     "subtitulo": "O começo do nosso cantinho",
     "componentes": [
@@ -14,12 +14,12 @@
         "tipo": "cofre",
         "modo": "opcoes",
         "titulo": "A primeira chave",
-        "descricao": "Uma pergunta simples para abrir a primeira música deste lugar.",
+        "descricao": "Uma pergunta simples para abrir a primeira música",
         "pergunta": "Para quem este site foi feito?",
         "opcoes": [
-          "Para qualquer pessoa",
+          "Para a Selvatti",
           "Para Rayane",
-          "Para a internet",
+          "Para o Davi Brito",
           "Para ninguém"
         ],
         "resposta": "Para Rayane",
@@ -39,7 +39,7 @@
   },
   {
     "id": "2026-07-11",
-    "titulo": "Eu sou porque nós somos",
+    "titulo": "Provérbio Africano",
     "data": "11.07.2026",
     "subtitulo": "Ubuntu",
     "componentes": [
@@ -87,9 +87,9 @@
         "pergunta": "Como chamamos uma descoberta feliz feita por acaso?",
         "opcoes": [
           "Serendipia",
-          "Ausência",
-          "Rotina",
-          "Esquecimento"
+          "Prostituição",
+          "Fortnite",
+          "La Ele"
         ],
         "resposta": "Serendipia",
         "mensagemSucesso": "Você encontrou a palavra certa. ♡",

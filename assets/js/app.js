@@ -721,6 +721,244 @@
   }
 
   /*
+  * Contexto
+  */
+ function criarContexto(dados = {}) {
+  const elemento = document.createElement("article");
+  elemento.className = "componente contexto";
+
+  const palavras = Array.isArray(dados.palavras)
+    ? dados.palavras
+    : [];
+
+  const resposta = normalizar(
+    dados.resposta || palavras.find((item) => item.posicao === 1)?.palavra || ""
+  );
+
+  const limiteTentativas = Number(dados.tentativas) || 10;
+
+  let tentativas = 0;
+  let finalizado = false;
+  const historico = [];
+
+  elemento.innerHTML = `
+    <header class="puzzle__cabecalho">
+      <span class="puzzle__etiqueta">Contexto</span>
+
+      <h3>
+        ${escaparHTML(dados.titulo || "Descubra a palavra")}
+      </h3>
+
+      <p>
+        ${escaparHTML(
+          dados.descricao ||
+          "Digite palavras relacionadas até encontrar a palavra secreta."
+        )}
+      </p>
+    </header>
+
+    <div class="contexto__informacoes">
+      <span>
+        Tentativas:
+        <strong data-contexto-tentativas>0</strong>
+        / ${limiteTentativas}
+      </span>
+
+      <span>
+        Melhor posição:
+        <strong data-contexto-melhor>—</strong>
+      </span>
+    </div>
+
+    <div class="contexto__entrada">
+      <label class="sr-only" for="contexto-palavra">
+        Digite uma palavra
+      </label>
+
+      <input
+        id="contexto-palavra"
+        type="text"
+        autocomplete="off"
+        placeholder="Digite uma palavra"
+        data-contexto-input
+      >
+
+      <button
+        type="button"
+        data-contexto-enviar
+      >
+        Tentar
+      </button>
+    </div>
+
+    <p
+      class="contexto__mensagem"
+      data-contexto-mensagem
+      aria-live="polite"
+    ></p>
+
+    <div
+      class="contexto__historico"
+      data-contexto-historico
+    ></div>
+  `;
+
+  const input = elemento.querySelector("[data-contexto-input]");
+  const botao = elemento.querySelector("[data-contexto-enviar]");
+  const lista = elemento.querySelector("[data-contexto-historico]");
+  const mensagem = elemento.querySelector("[data-contexto-mensagem]");
+  const contador = elemento.querySelector("[data-contexto-tentativas]");
+  const melhorElemento = elemento.querySelector("[data-contexto-melhor]");
+
+  function localizarPalavra(valor) {
+    const palavraNormalizada = normalizar(valor);
+
+    return palavras.find((item) => {
+      return normalizar(item.palavra) === palavraNormalizada;
+    });
+  }
+
+  function atualizarHistorico() {
+    lista.innerHTML = "";
+
+    historico
+      .slice()
+      .sort((a, b) => a.posicao - b.posicao)
+      .forEach((item) => {
+        const linha = document.createElement("div");
+        linha.className = "contexto__resultado";
+
+        if (item.posicao === 1) {
+          linha.classList.add("contexto__resultado--correto");
+        } else if (item.posicao <= 10) {
+          linha.classList.add("contexto__resultado--muito-perto");
+        } else if (item.posicao <= 100) {
+          linha.classList.add("contexto__resultado--perto");
+        } else if (item.posicao <= 1000) {
+          linha.classList.add("contexto__resultado--medio");
+        }
+
+        linha.innerHTML = `
+          <span>${escaparHTML(item.palavra)}</span>
+          <strong>${item.posicao}</strong>
+        `;
+
+        lista.appendChild(linha);
+      });
+
+    const melhor = historico.reduce((menor, item) => {
+      return item.posicao < menor ? item.posicao : menor;
+    }, Infinity);
+
+    melhorElemento.textContent =
+      Number.isFinite(melhor) ? melhor : "—";
+  }
+
+  function concluir() {
+    finalizado = true;
+    input.disabled = true;
+    botao.disabled = true;
+
+    mensagem.textContent =
+      dados.mensagemSucesso ||
+      "Você encontrou a palavra secreta. ♡";
+
+    elemento.classList.add("contexto--resolvido");
+
+    elemento.dispatchEvent(
+      new CustomEvent("puzzle-resolvido", {
+        bubbles: true,
+        detail: {
+          tipo: "contexto",
+          resposta
+        }
+      })
+    );
+  }
+
+  function tentar() {
+    if (finalizado) {
+      return;
+    }
+
+    const valor = input.value.trim();
+
+    if (!valor) {
+      mensagem.textContent = "Digite uma palavra.";
+      input.focus();
+      return;
+    }
+
+    const palavraNormalizada = normalizar(valor);
+
+    const repetida = historico.some((item) => {
+      return normalizar(item.palavra) === palavraNormalizada;
+    });
+
+    if (repetida) {
+      mensagem.textContent = "Você já tentou essa palavra.";
+      input.select();
+      return;
+    }
+
+    tentativas += 1;
+    contador.textContent = tentativas;
+
+    const encontrada = localizarPalavra(valor);
+
+    const resultado = encontrada
+      ? {
+          palavra: encontrada.palavra,
+          posicao: Number(encontrada.posicao)
+        }
+      : {
+          palavra: valor,
+          posicao: 10000
+        };
+
+    historico.push(resultado);
+    atualizarHistorico();
+
+    input.value = "";
+    input.focus();
+
+    if (resultado.posicao === 1 || palavraNormalizada === resposta) {
+      concluir();
+      return;
+    }
+
+    if (resultado.posicao <= 10) {
+      mensagem.textContent = "Muito perto!";
+    } else if (resultado.posicao <= 100) {
+      mensagem.textContent = "Você está perto.";
+    } else if (resultado.posicao <= 1000) {
+      mensagem.textContent = "Está ficando mais quente.";
+    } else {
+      mensagem.textContent = "Ainda está distante.";
+    }
+
+    if (tentativas >= limiteTentativas) {
+      finalizado = true;
+      input.disabled = true;
+      botao.disabled = true;
+
+      mensagem.textContent =
+        `Fim das tentativas. A palavra era “${dados.resposta}”.`;
+    }
+  }
+
+  botao.addEventListener("click", tentar);
+
+  input.addEventListener("keydown", (evento) => {
+    if (evento.key === "Enter") {
+      tentar();
+    }
+  });
+
+  return elemento;
+}
+
+  /*
    * Conexo
    */
 
@@ -1299,6 +1537,9 @@
         case "termo":
           return criarTermo(dados);
 
+        case "contexto":
+          return criarContexto(dados);
+
         case "conexo":
           return criarConexo(dados);
 
@@ -1339,42 +1580,54 @@
 
     capitulo.innerHTML = `
       <header class="capitulo__cabecalho">
-        <time
-          class="capitulo__data"
-          datetime="${escaparHTML(
-            dados.id || ""
+        <button
+          class="capitulo__botao"
+          type="button"
+          aria-expanded="false"
+          aria-controls="${escaparHTML(
+            `${dados.id || "capitulo"}-conteudo`
           )}"
         >
-          ${escaparHTML(dados.data || "")}
-        </time>
+          <span class="capitulo__resumo">
+            <time
+              class="capitulo__data"
+              datetime="${escaparHTML(
+                dados.id || ""
+              )}"
+            >
+              ${escaparHTML(dados.data || "")}
+            </time>
 
-        <h2 class="capitulo__titulo">
-          ${escaparHTML(
-            dados.titulo || "Capítulo"
-          )}
-        </h2>
+            <span class="capitulo__titulo">
+              ${escaparHTML(
+                dados.titulo || "Capítulo"
+              )}
+            </span>
+          </span>
 
-        ${
-          dados.subtitulo || dados.descricao
-            ? `
-              <p class="capitulo__subtitulo">
-                ${escaparHTML(
-                  dados.subtitulo ||
-                  dados.descricao
-                )}
-              </p>
-            `
-            : ""
-        }
+          <span
+            class="capitulo__icone"
+            aria-hidden="true"
+          ></span>
+        </button>
       </header>
 
-      <div class="capitulo__componentes"></div>
+      <div
+        class="capitulo__componentes"
+        id="${escaparHTML(
+          `${dados.id || "capitulo"}-conteudo`
+        )}"
+        hidden
+      ></div>
     `;
 
     const container =
       capitulo.querySelector(
         ".capitulo__componentes"
       );
+
+    const botao =
+      capitulo.querySelector(".capitulo__botao");
 
     const componentes =
       Array.isArray(dados.componentes)
@@ -1480,6 +1733,54 @@
         }, 650);
       }
     );
+
+    botao.addEventListener("click", function () {
+      const deveAbrir =
+        botao.getAttribute("aria-expanded") !== "true";
+
+      document
+        .querySelectorAll(".capitulo--aberto")
+        .forEach(function (outroCapitulo) {
+          if (outroCapitulo === capitulo) {
+            return;
+          }
+
+          outroCapitulo.classList.remove(
+            "capitulo--aberto"
+          );
+
+          const outroBotao =
+            outroCapitulo.querySelector(
+              ".capitulo__botao"
+            );
+
+          const outroConteudo =
+            outroCapitulo.querySelector(
+              ".capitulo__componentes"
+            );
+
+          outroBotao?.setAttribute(
+            "aria-expanded",
+            "false"
+          );
+
+          if (outroConteudo) {
+            outroConteudo.hidden = true;
+          }
+        });
+
+      capitulo.classList.toggle(
+        "capitulo--aberto",
+        deveAbrir
+      );
+
+      botao.setAttribute(
+        "aria-expanded",
+        String(deveAbrir)
+      );
+
+      container.hidden = !deveAbrir;
+    });
 
     return capitulo;
   }
