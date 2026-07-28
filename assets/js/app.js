@@ -2,7 +2,7 @@
 
 (function () {
   const DATA_INICIO =
-    new Date("2026-06-19T00:00:00");
+    new Date("2026-06-16T00:00:00");
 
   const TIPOS_PUZZLE = new Set([
     "cofre",

@@ -7,7 +7,7 @@
     "componentes": [
       {
         "tipo": "carta",
-        "titulo": "Um lugar para nós",
+        "titulo": "Um lugar para você",
         "texto": "Oi, meu amor.\n\nCriei este lugar para guardar algumas das coisas que sinto por você. Aqui existirão cartas, músicas, fotografias, pequenas brincadeiras e lembranças que fazem parte da nossa história.\n\nEste é apenas o primeiro capítulo. Aos poucos, este lugar vai crescer junto com a gente.\n\nEspero que cada página consiga lembrar você do quanto é amada.\n\nBem-vinda ao nosso cantinho."
       },
       {
@@ -202,7 +202,7 @@
         "artista": "Jão",
         "capa": "./assets/imagens/capas/por-voce.jpg",
         "link": "https://open.spotify.com/intl-pt/track/1jBmw9hizoiIpxqFy8hNS2?si=bd1075b7f6cd4feb",
-        "mensagem": "Jão realmente não é a minha praia, mas, por você, avalio mais milhões de discografias.\n\nNota: para você é 10; para o álbum... deixo para a próxima.",
+        "mensagem": "Jão realmente não é a minha praia, mas, por você, avalio mais milhões de discografias.\n\nEle pode não ser o meu cantor da parede, ou quem toca no rádio do meu carro, mas ele é quem alegra você. Então ele é legal! :)\n\nNota: para você é sempre 10, para o álbum... deixo para a próxima.",
         "bloqueada": true
       }
     ]
