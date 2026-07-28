@@ -1,0 +1,210 @@
+[
+  {
+    "id": "2026-06-19",
+    "titulo": "Um lugar para nós",
+    "data": "19.06.2026",
+    "subtitulo": "O começo do nosso cantinho",
+    "componentes": [
+      {
+        "tipo": "carta",
+        "titulo": "Um lugar para nós",
+        "texto": "Oi, meu amor.\n\nCriei este lugar para guardar algumas das coisas que sinto por você. Aqui existirão cartas, músicas, fotografias, pequenas brincadeiras e lembranças que fazem parte da nossa história.\n\nEste é apenas o primeiro capítulo. Aos poucos, este lugar vai crescer junto com a gente.\n\nEspero que cada página consiga lembrar você do quanto é amada.\n\nBem-vinda ao nosso cantinho."
+      },
+      {
+        "tipo": "cofre",
+        "modo": "opcoes",
+        "titulo": "A primeira chave",
+        "descricao": "Uma pergunta simples para abrir a primeira música deste lugar.",
+        "pergunta": "Para quem este site foi feito?",
+        "opcoes": [
+          "Para qualquer pessoa",
+          "Para Rayane",
+          "Para a internet",
+          "Para ninguém"
+        ],
+        "resposta": "Para Rayane",
+        "mensagemSucesso": "Exatamente. Tudo aqui foi feito para você. ♡",
+        "mensagemErro": "Essa ainda não é a resposta. Tente novamente."
+      },
+      {
+        "tipo": "musica",
+        "titulo": "Você Tem",
+        "artista": "Dreicon & Carol Biazin",
+        "capa": "./assets/imagens/capas/voce-tem.jpg",
+        "link": "https://open.spotify.com/intl-pt/track/6MMeHHFx8H30NoxkfAD5Bn?si=090512ea88cb48d2",
+        "mensagem": "Queria manter minha pose de quem detesta essa tal Carol Biazin... mas honestamente, muito do que ela fala me lembra de nós, de você. E navegando pela discografia ampla dela, caí de paraquedas nessa música. Confesso que, perdida na movimentação da rotina, me assustei quando prestei atenção neste trecho. Sinto que tiraram um pedaço dos meus pensamentos e fizeram ele kkkk. Enfim... xixei, eu sei. Assim como sei que talvez seja cedo; como sei que você tem tudo que eu gosto; como sei que talvez pareça louca; e como não só sei, mas vejo que tu não tem só um pouco, mas muito mais...",
+        "bloqueada": true
+      }
+    ]
+  },
+  {
+    "id": "2026-07-11",
+    "titulo": "Eu sou porque nós somos",
+    "data": "11.07.2026",
+    "subtitulo": "Ubuntu",
+    "componentes": [
+      {
+        "tipo": "carta",
+        "titulo": "Eu sou porque nós somos",
+        "texto": "Bê, hoje, enquanto assistíamos Largados e Pelados, uma das participantes mencionou um provérbio africano que me fez refletir: \"Se você quer ir rápido, vá sozinho. Se você quer ir longe, vá acompanhado.\" E, na mesma hora, pensei em nós. É exatamente isso que sinto quando penso no nosso futuro. Eu não quero apenas viver momentos bons ao seu lado; eu quero construir uma vida inteira com você. Quero ir longe, enfrentar desafios, celebrar as conquistas e dividir cada etapa, sempre com você!\n\nMinha curiosidade me levou a pesquisar mais sobre a sabedoria africana, e acabei encontrando um conceito chamado Ubuntu.\n\nUbuntu é uma ideia que diz: eu sou porque nós somos.\n\nEla fala sobre como uma pessoa também é formada pelo encontro com as outras. Sobre como o cuidado, o afeto e a presença conseguem transformar quem somos.\n\nEu não sou a mesma pessoa desde que encontrei você.\n\nVocê me ensinou novas maneiras de amar, de cuidar e de olhar para o futuro. Existem partes minhas que só nasceram porque você chegou.\n\nTalvez essa seja uma das formas mais bonitas de explicar o que sinto: eu sou mais eu quando estou com você.\n\nObrigada por ser a minha companheira, minha amiga e meu amor."
+      },
+      {
+        "tipo": "termo",
+        "titulo": "Uma palavra escondida",
+        "descricao": "Descubra a palavra relacionada à nossa história.",
+        "palavra": "AMOR",
+        "tentativas": 6,
+        "dica": "É o que sustenta este lugar.",
+        "mensagemSucesso": "Nós nos encontramos na conexão. ♡"
+      },
+      {
+        "tipo": "musica",
+        "titulo": "O Amor do Mundo Inteiro",
+        "artista": "Chapéu de Palha",
+        "capa": "./assets/imagens/capas/o-amor-do-mundo-inteiro.jpg",
+        "link": "https://open.spotify.com/intl-pt/track/4ephGEwWsjs8lQkNt2o8BU?si=37f76fadfca14bbd",
+        "mensagem": "Essa semana fez um mês desde que nos vimos pela primeira vez. E, desde então, tenho vivido uma saudade que não cabe no peito. Mas sabe algo sinistro de maneiro? Um dia tu vai até cansar do meu rosto. Vai vê-lo todas as noites ao dormir e todos os dias ao acordar. Bebê, não tem saudade desse mundo que diminua meu amor e desejo por ti! Não te tenho no físico, mas te tenho na alma. Te tenho nos meus pensamentos e ainda te toco em meus sonhos. Vivo ansiosa, à espera do nosso futuro, mas, enquanto isso, aprecio a saudade e a doçura perversa dos nossos encontros.",
+        "bloqueada": true
+      }
+    ]
+  },
+  {
+    "id": "2026-07-16",
+    "titulo": "O acaso mais bonito",
+    "data": "16.07.2026",
+    "subtitulo": "Serendipia",
+    "componentes": [
+      {
+        "tipo": "carta",
+        "titulo": "O acaso mais bonito",
+        "texto": "Serendipia é um termo que descreve a capacidade ou o ato de descobrir coisas boas, valiosas ou inesperadas enquanto se procura por algo totalmente diferente. A serendipia é a ocorrência de eventos felizes e inesperados, muitas vezes resultando em descobertas valiosas. É como se o universo conspirasse a nosso favor, presenteando-nos com momentos de pura magia. E é essa a palavra que escolho para definir os últimos meses.\n\nConfesso que não esperava por esse encontro, mas fui surpreendida da mais linda forma pela vida. Um mês desde que me tornei oficialmente sua, e você minha. Teu amor me trouxe a liberdade, a alegria e o orgulho de viver e amar de forma plena. Espero, por todos os dias, meses, anos e décadas, celebrar isso, celebrar nós! Te amo, bebê."
+      },
+      {
+        "tipo": "cofre",
+        "modo": "opcoes",
+        "titulo": "Um encontro inesperado",
+        "descricao": "Descubra a palavra escondida neste capítulo.",
+        "pergunta": "Como chamamos uma descoberta feliz feita por acaso?",
+        "opcoes": [
+          "Serendipia",
+          "Ausência",
+          "Rotina",
+          "Esquecimento"
+        ],
+        "resposta": "Serendipia",
+        "mensagemSucesso": "Você encontrou a palavra certa. ♡",
+        "mensagemErro": "Ainda não. Tente novamente."
+      },
+      {
+        "tipo": "musica",
+        "titulo": "BB (Garupa de Moto Amarela)",
+        "artista": "Tim Bernardes",
+        "capa": "./assets/imagens/capas/BB.jpg",
+        "link": "https://open.spotify.com/intl-pt/track/31s1pfAuukn7r3HhCLdxZ1?si=9bb71d43488f44da",
+        "mensagem": "Talvez o acaso tenha nos apresentado, mas é o amor que nos faz permanecer. E eu escolheria você em qualquer caminho.",
+        "bloqueada": true
+      }
+    ]
+  },
+  {
+    "id": "2026-07-25",
+    "titulo": "Para sempre",
+    "data": "25.07.2026",
+    "subtitulo": "Sempiterno",
+    "componentes": [
+      {
+        "tipo": "carta",
+        "titulo": "Sempiterno",
+        "texto": "Sempiterno é um adjetivo que descreve aquilo que é eterno, contínuo, permanente. É uma palavra que ultrapassa o simples conceito de tempo; ela fala sobre o que permanece mesmo quando tudo ao redor muda. Sobre aquilo que resiste às estações da vida, às incertezas e às distâncias. É a permanência de algo que escolhe existir todos os dias.\n\nEu venho de um lugar onde quase nada permanece. Onde as pessoas, as promessas e os sentimentos costumam durar apenas enquanto é conveniente. Cresci aprendendo que tudo tinha um prazo, que o fim sempre chegava cedo demais. Talvez por isso eu nunca tenha acreditado, de verdade, na ideia de eternidade.\n\nEntão você apareceu.\n\nE, pela primeira vez, eu não senti apenas que algo poderia durar. Eu senti vontade de fazer durar. Você transformou a eternidade de um conceito distante em um desejo concreto. Fez nascer em mim a vontade de construir dias, colecionar memórias, enfrentar dificuldades e continuar escolhendo você, mesmo quando o tempo insistir em passar.\n\nPorque é isso que eu quero.\n\nQuero que a nossa história sobreviva aos dias bons e aos difíceis. Quero que ela cresça, amadureça e floresça em cada nova fase da nossa vida. Quero olhar para você daqui a muitos anos e ainda reconhecer, no brilho dos seus olhos, o mesmo lugar onde encontrei paz pela primeira vez.\n\nQuero que dure.\n\nQuero que aconteça.\n\nQuero que seja eterno.\n\nQuero que seja sempiterno.\n\nQuero que, quando o tempo olhar para nós, ele perceba que não conseguiu nos levar embora.\n\nQuero que seja você.\n\nQuero que seja eu.\n\nQuero que seja nós. Hoje, amanhã, em todos os dias que ainda não existem.\n\nEu te amo, minha linda. E, se o amor puder escolher um destino, que o nosso seja permanecer. Para sempre. Sempiternamente."
+      },
+      {
+        "tipo": "cofre",
+        "modo": "texto",
+        "id": "palavra-secreta",
+        "titulo": "A palavra guardada",
+        "descricao": "Digite a palavra que representa este capítulo.",
+        "pergunta": "Qual palavra representa aquilo que somos?",
+        "placeholder": "Digite a palavra...",
+        "resposta": "sempiterno",
+        "mensagemSucesso": "Sempiterno: aquilo que teve início, mas não terá fim.",
+        "mensagemErro": "Quase. Tente novamente."
+      },
+      {
+        "tipo": "musica",
+        "titulo": "Final Feliz",
+        "artista": "Jorge Vercillo & Djavan",
+        "capa": "./assets/imagens/capas/final-feliz.jpg",
+        "link": "https://open.spotify.com/intl-pt/track/3TnVzwHRytGd8Va9jn6Yhs?si=f0295ea18724454a",
+        "mensagem": "Você me faz acreditar em finais felizes, e eu quero viver todos eles no calor do seu abraço. Quero que seu sorriso me ilumine todos os dias e que seu chamego me embale todas as noites.",
+        "bloqueada": true
+      }
+    ]
+  },
+  {
+    "id": "2026-07-27",
+    "titulo": "Minha opinião",
+    "data": "27.07.2026",
+    "subtitulo": "Memórias Póstumas, do Jão",
+    "descricao": "Minha opinião sobre o álbum Memórias Póstumas, do Jão.",
+    "componentes": [
+      {
+        "tipo": "carta",
+        "titulo": "Memórias Póstumas — Jão",
+        "texto": "Prometi que te daria minha opinião..."
+      },
+      {
+        "tipo": "conexo",
+        "titulo": "Encontre as músicas de que mais gostei",
+        "descricao": "Selecione quatro palavras que pertencem ao mesmo grupo.",
+        "grupos": [
+          {
+            "titulo": "O Amor",
+            "palavras": [
+              "berço",
+              "curiosas",
+              "horrível",
+              "bonito"
+            ]
+          },
+          {
+            "titulo": "Aurora",
+            "palavras": [
+              "água",
+              "fogo",
+              "presa",
+              "lobo"
+            ]
+          },
+          {
+            "titulo": "Por Você",
+            "palavras": [
+              "você",
+              "dedicado",
+              "eternos",
+              "infinito"
+            ]
+          },
+          {
+            "titulo": "Passeios Noturnos",
+            "palavras": [
+              "corpo",
+              "companhia",
+              "tentações",
+              "sensações"
+            ]
+          }
+        ],
+        "mensagemSucesso": "Você encontrou todas as conexões. ♡"
+      },
+      {
+        "tipo": "musica",
+        "titulo": "Por Você",
+        "artista": "Jão",
+        "capa": "./assets/imagens/capas/por-voce.jpg",
+        "link": "https://open.spotify.com/intl-pt/track/1jBmw9hizoiIpxqFy8hNS2?si=bd1075b7f6cd4feb",
+        "mensagem": "Jão realmente não é a minha praia, mas, por você, avalio mais milhões de discografias.\n\nNota: para você é 10; para o álbum... deixo para a próxima.",
+        "bloqueada": true
+      }
+    ]
+  }
+]
