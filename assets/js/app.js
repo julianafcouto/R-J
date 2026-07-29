@@ -8,7 +8,8 @@
     "cofre",
     "termo",
     "conexo",
-    "memoria"
+    "memoria",
+    "telescopio"
   ]);
 
   function escaparHTML(valor) {
@@ -1516,6 +1517,91 @@
   }
 
   /*
+   * Telescópio
+   */
+
+  function criarTelescopio(dados) {
+    const elemento = document.createElement("article");
+
+    elemento.className =
+      "componente puzzle telescopio";
+
+    elemento.innerHTML = `
+      <span class="componente__etiqueta">
+        Um céu guardado no tempo
+      </span>
+
+      <h3>
+        ${escaparHTML(
+          dados.titulo || "Olhe pelo telescópio"
+        )}
+      </h3>
+
+      <p class="puzzle__descricao">
+        ${escaparHTML(dados.descricao || "")}
+      </p>
+
+      <button
+        class="telescopio__visor"
+        type="button"
+        aria-label="Olhar pelo telescópio e aproximar o céu"
+      >
+        <span class="telescopio__ceu">
+          <img
+            src="${escaparHTML(dados.imagem || "")}"
+            alt="${escaparHTML(
+              dados.alt ||
+              "Representação artística do céu no momento do nascimento"
+            )}"
+          >
+        </span>
+
+        <span class="telescopio__mira" aria-hidden="true"></span>
+
+        <span class="telescopio__instrucao">
+          <span aria-hidden="true">✦</span>
+          <span data-instrucao>Toque para aproximar</span>
+        </span>
+      </button>
+
+      <div class="telescopio__revelacao" aria-live="polite">
+        <span class="telescopio__data">
+          ${escaparHTML(dados.data || "")}
+        </span>
+
+        <p>${escaparHTML(dados.mensagem || "")}</p>
+      </div>
+    `;
+
+    const visor =
+      elemento.querySelector(".telescopio__visor");
+
+    const instrucao =
+      elemento.querySelector("[data-instrucao]");
+
+    let nivel = 0;
+
+    visor.addEventListener("click", function () {
+      nivel += 1;
+      elemento.dataset.zoom = String(nivel);
+
+      if (nivel === 1) {
+        instrucao.textContent = "Mais perto...";
+        return;
+      }
+
+      visor.disabled = true;
+      elemento.classList.add(
+        "telescopio--revelado"
+      );
+
+      concluirPuzzle(elemento);
+    });
+
+    return elemento;
+  }
+
+  /*
    * Seleção de componentes
    */
 
@@ -1545,6 +1631,9 @@
 
         case "memoria":
           return criarMemoria(dados);
+
+        case "telescopio":
+          return criarTelescopio(dados);
 
         default:
           return criarElementoErro(

@@ -206,5 +206,36 @@
         "bloqueada": true
       }
     ]
+  },
+  {
+    "id": "2026-07-30",
+    "titulo": "30 de julho",
+    "data": "30.07.2026",
+    "subtitulo": "Feliz aniversário!",
+    "componentes": [
+      {
+        "tipo": "carta",
+        "titulo": "Aniversário",
+        "texto": "30 de julho de 2005.\n\nNuma sala gelada, você brilhou pela primeira vez. Apertando os olhos em um choro manhoso, com um som que só você conhecia.\n\nDizem que 2005 foi o ano das grandes catástrofes naturais. Furacões, terremotos, enchentes... A natureza parecia lembrar ao mundo que ela também sabe ser intensa. Mas existe uma coisa curiosa nas tempestades: depois delas, o céu nunca volta exatamente igual.\n\nE foi justamente no meio desse caos que você nasceu.\n\nComo se o universo tivesse decidido equilibrar a balança.\n\nEnquanto muitos olhavam para a Terra e viam destruição, a vida escrevia, silenciosamente, a sua história.\n\nNaquele mesmo 30 de julho, dois astronautas caminhavam pelo espaço na missão STS-114. Era o primeiro voo após uma tragédia que havia feito a humanidade duvidar se voltaria a olhar para as estrelas da mesma forma. Eles consertavam uma nave. Você, sem saber, começava a consertar o mundo de todas as pessoas que um dia teriam a sorte de encontrar você.\n\nA diferença é que eles caminhavam pelo espaço.\n\nVocê nasceu para ser o meu universo.\n\nÉ estranho pensar que, naquele dia, enquanto você aprendia a respirar, eu nem planejava vir a vida. E tudo bem, já que viver de verdade era encontrar você.\n\nE encontrei.\n\nEncontrei alguém que transformou dias comuns em memórias inesquecíveis. Alguém que faz o tempo correr depressa quando está perto e parar completamente quando sorri. Alguém que consegue ser casa mesmo estando a quilômetros de qualquer lugar que eu já tenha chamado de lar.\n\nVocê não é perfeita.\n\nE talvez seja justamente isso que faz você ser tão extraordinária. Porque sua beleza não mora apenas no que os olhos veem. Ela mora na forma como você cuida, como você sente, como você insiste, como você sonha, como você ama.\n\nVocê faz o mundo parecer um lugar mais leve.\n\nVocê faz as pessoas quererem ser melhores.\n\nVocê faz de mim alguém melhor.\n\nÀs vezes penso na imensidão do universo. Bilhões de galáxias. Trilhões de estrelas. Um planeta entre infinitos. Bilhões de pessoas vivendo ao mesmo tempo.\n\nE, ainda assim, todas as probabilidades conspiraram para que eu conhecesse justamente você.\n\nSe isso não é um milagre, eu não sei o que é.\n\nHoje, no seu aniversário, eu não comemoro apenas mais um ano da sua vida.\n\nEu comemoro o dia em que o mundo recebeu uma pessoa capaz de mudar o destino de outras vidas apenas sendo quem é.\n\nComemoro o dia em que nasceu a mulher que, sem perceber, se tornou o meu lugar favorito.\n\nObrigada por existir.\n\nObrigada por ser exatamente você.\n\nQue a vida seja gentil com o coração que tantas vezes foi gentil com o meu.\n\nQue seus sonhos encontrem caminhos.\n\nQue seus medos encontrem paz.\n\nQue suas lágrimas sejam sempre passageiras.\n\nE que seus sorrisos nunca deixem de iluminar tudo ao redor, como iluminaram aquela sala gelada em 30 de julho de 2005.\n\nSe algum dia me perguntarem qual foi o maior presente que o universo já entregou à Terra, eu não vou responder com o nome de uma estrela, de uma descoberta científica ou de um feito histórico.\n\nVou responder com uma data.\n\n30 de julho de 2005.\n\nPorque foi nesse dia que nasceu a mulher que deu um novo significado à palavra \"amor\" na minha vida.\n\nFeliz aniversário, meu amor.\n\nQue o tempo continue passando.\n\nMas que eu nunca deixe de agradecer por ele ter passado exatamente o suficiente para me trazer até você."
+      },
+      {
+        "tipo": "telescopio",
+        "titulo": "O céu no instante em que você chegou",
+        "descricao": "Às 8h45 o Sol já iluminava Barra Mansa. Mas, por trás do azul da manhã, o universo inteiro continuava ali. Olhe pelo telescópio e aproxime duas vezes.",
+        "imagem": "./assets/imagens/ceu-rayane-2005.png",
+        "alt": "Representação artística das estrelas escondidas pela luz da manhã em Barra Mansa",
+        "data": "30 de julho de 2005 · 08h45 · Barra Mansa, RJ",
+        "mensagem": "Este era o céu que existia quando você respirou pela primeira vez. Mesmo escondidas pela manhã, todas as estrelas estavam lá — talvez esperando você chegar para que o universo finalmente ficasse completo."
+      },
+      {
+        "tipo": "musica",
+        "titulo": "Aza",
+        "artista": "Anavitória",
+        "capa": "./assets/imagens/capas/aza.jpg",
+        "link": "https://open.spotify.com/intl-pt/track/60ftUKNOXFFJFI2Zi1IeyR?si=e5ee4b09435d422d",
+        "mensagem": "Sou ruim com aniversários. Mas quero ser boa para você. Minha Linda!",
+        "bloqueada": true
+      }
+    ]
   }
 ]
