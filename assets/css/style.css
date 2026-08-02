@@ -319,7 +319,7 @@ img {
 
 .contadores__grade {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 22px;
   width: min(1050px, 100%);
   margin: 0 auto;
@@ -334,11 +334,36 @@ img {
   text-align: center;
 }
 
+.contador__marco {
+  margin: 0;
+  color: var(--roxo-escuro) !important;
+  font-family: var(--titulo);
+  font-size: clamp(1.7rem, 3vw, 2.3rem) !important;
+}
+
+.contador time {
+  display: block;
+  margin-top: 5px;
+  color: var(--texto-suave);
+  font-size: 0.8rem;
+}
+
+.contador__tempo {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.contador__tempo div {
+  min-width: 0;
+}
+
 .contador strong {
   display: block;
   color: var(--roxo-escuro);
   font-family: var(--titulo);
-  font-size: clamp(3.5rem, 7vw, 5.2rem);
+  font-size: clamp(2rem, 4vw, 3.4rem);
   font-weight: 400;
 }
 
@@ -611,6 +636,68 @@ img {
   border-color: var(--roxo);
   box-shadow:
     0 0 0 4px rgba(119, 99, 143, 0.1);
+}
+
+/* Complete a frase */
+
+.puzzle-frase { text-align: center; }
+
+.puzzle-frase__formulario {
+  display: grid;
+  width: min(720px, 100%);
+  margin: 34px auto 0;
+  justify-items: center;
+  gap: 22px;
+}
+
+.puzzle-frase__linha {
+  display: flex;
+  width: 100%;
+  align-items: baseline;
+  justify-content: center;
+  gap: 12px;
+  font-family: var(--titulo);
+  font-size: clamp(1.45rem, 4vw, 2.25rem);
+  line-height: 1.35;
+}
+
+.puzzle-frase__frase { flex: 0 0 auto; color: var(--roxo-escuro); }
+
+.puzzle-frase__input {
+  width: min(340px, 48vw);
+  padding: 4px 2px 8px;
+  border: 0;
+  border-bottom: 2px solid rgba(119, 99, 143, 0.38);
+  border-radius: 0;
+  background: transparent;
+  color: var(--texto);
+  font: inherit;
+  outline: none;
+  text-align: left;
+}
+
+.puzzle-frase__input::placeholder {
+  color: rgba(82, 72, 89, 0.42);
+  font-family: var(--corpo);
+  font-size: 0.9rem;
+}
+
+.puzzle-frase__input:focus { border-color: var(--roxo); }
+
+.puzzle-frase__mensagem {
+  min-height: 30px;
+  margin-top: 28px;
+  color: var(--texto-suave);
+  font-weight: 500;
+  transition: color 300ms ease, transform 300ms ease;
+}
+
+.puzzle-frase__mensagem--final { color: var(--verde); transform: scale(1.04); }
+.puzzle-frase--finalizado .puzzle-frase__input { border-color: rgba(102, 132, 109, 0.55); }
+
+@media (max-width: 620px) {
+  .puzzle-frase__linha { flex-direction: column; align-items: center; }
+  .puzzle-frase__input { width: 100%; text-align: center; }
 }
 
 /* Telescópio */
@@ -1337,6 +1424,14 @@ img {
 
   .contadores__grade {
     grid-template-columns: 1fr;
+  }
+
+  .contador {
+    padding: 38px 16px;
+  }
+
+  .contador__tempo {
+    gap: 7px;
   }
 
   .capitulo__botao {

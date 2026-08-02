@@ -230,10 +230,90 @@
       {
         "tipo": "musica",
         "titulo": "Aza",
-        "artista": "Anavitória",
+        "artista": "ANAVITÓRIA",
         "capa": "./assets/imagens/capas/aza.jpg",
         "link": "https://open.spotify.com/intl-pt/track/60ftUKNOXFFJFI2Zi1IeyR?si=e5ee4b09435d422d",
         "mensagem": "Sou ruim com aniversários. Mas quero ser boa para você. Minha Linda!",
+        "bloqueada": true
+      }
+    ]
+  },
+  {
+    "id": "2026-08-02",
+    "titulo": "Te amo",
+    "data": "02.08.2026",
+    "subtitulo": "Até a lua?",
+    "componentes": [
+      {
+        "tipo": "carta",
+        "titulo": "Ressignificando",
+        "texto": "Tu me conhece e sabe que eu sou maluca. \n\nHoje, voltei no teu passado. E uma frase rodou na minha cabeça a manhã inteira: 'até a lua'. \n\nPensei muito sobre ela. \n\nTalvez, em algum momento, a lua tenha sido a maior distância que alguém conseguiu imaginar. Talvez ela tenha sido a forma mais bonita de dizer 'eu te amo'. \n\nMas hoje eu percebi uma coisa. Se o amor pudesse ser medido em quilômetros, eu perderia. \n\nPorque o que eu sinto por você não cabe em distância alguma. \n\nNão vai até a lua, nem até as estrelas. nem até o fim do universo. \n\nEle simplesmente fica. \n\n Fica em cada bom dia, em cada silêncio confortável, em cada abraço que parece colocar o mundo no lugar, em cada plano que fazemos sem perceber. \n\nA lua é um destino. \n\nVocê nunca foi um destino. \n\nVocê é a minha casa!"
+      },
+      {
+      "tipo": "puzzle",
+      "titulo": "Só mais uma coisa",
+      "instrucao": "Complete a frase para desbloquear a música.",
+      "frase": "Eu te amo daqui até",
+      "placeholder": "Digite o lugar mais distante que conseguir imaginar...",
+      "botao": "Confirmar",
+      "respostaCorreta": "você",
+      "ignorarAcentos": true,
+      "ignorarMaiusculas": true,
+      "fluxoErro": [
+        {
+          "texto": "Analisando resposta...",
+          "duracao": 1200
+        },
+        {
+          "texto": "Distância detectada.",
+          "duracao": 1000
+        },
+        {
+          "texto": "Corrigindo...",
+          "duracao": 1000
+        }
+      ],
+      "apagarResposta": true,
+      "textoDigitadoAutomaticamente": "você.",
+      "velocidadeDigitacao": 180,
+      "mensagensFinais": [
+        {
+          "texto": "Porque nunca foi sobre distância.",
+          "duracao": 1400
+        },
+        {
+          "texto": "Sempre foi sobre onde o amor escolhe ficar.",
+          "duracao": 1600
+        },
+        {
+          "texto": "E o meu escolheu você.",
+          "duracao": 1800
+        }
+      ],
+      "fluxoAcerto": [
+        {
+          "texto": "Analisando resposta...",
+          "duracao": 1000
+        },
+        {
+          "texto": "Resposta correta.",
+          "duracao": 1000
+        },
+        {
+          "texto": "Sabia que você entenderia.",
+          "duracao": 1600
+        }
+      ],
+      "mensagemDesbloqueio": "Música desbloqueada.",
+      "desbloqueia": "musica-ter-o-coracao-no-chao"
+    },
+      {
+        "tipo": "musica",
+        "titulo": "Ter o coração no chão",
+        "artista": "ANAVITÓRIA",
+        "capa": "./assets/imagens/capas/ter-o-coracao-no-chao.jpg",
+        "link": "https://open.spotify.com/intl-pt/track/5FbcIkgUDNt6mZdDVFwVyE?si=779583c9204b41a1",
+        "mensagem": "Dizem que alguns amam até a Lua. Eu prefiro te amar no compasso do meu coração. Porque a Lua é distante; meu coração nunca soube ficar longe de você. \n\nReforço, SOU MALUCA!",
         "bloqueada": true
       }
     ]

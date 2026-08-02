@@ -1,14 +1,12 @@
 "use strict";
 
 (function () {
-  const DATA_INICIO =
-    new Date("2026-06-16T00:00:00");
-
   const TIPOS_PUZZLE = new Set([
     "cofre",
     "termo",
     "conexo",
     "memoria",
+    "puzzle",
     "telescopio"
   ]);
 
@@ -100,46 +98,35 @@
   function atualizarContadores() {
     const agora = new Date();
 
-    const diferenca = Math.max(
-      0,
-      agora.getTime() - DATA_INICIO.getTime()
-    );
+    document
+      .querySelectorAll("[data-contador-data]")
+      .forEach((contador) => {
+        const dataInicio = new Date(contador.dataset.contadorData);
+        const diferenca = Math.max(
+          0,
+          agora.getTime() - dataInicio.getTime()
+        );
+        const dias = Math.floor(diferenca / 86400000);
+        const horas = Math.floor((diferenca % 86400000) / 3600000);
+        const minutos = Math.floor((diferenca % 3600000) / 60000);
+        const segundos = Math.floor((diferenca % 60000) / 1000);
+        const valores = {
+          dias: dias.toLocaleString("pt-BR"),
+          horas: String(horas).padStart(2, "0"),
+          minutos: String(minutos).padStart(2, "0"),
+          segundos: String(segundos).padStart(2, "0")
+        };
 
-    const dias = Math.floor(
-      diferenca / 86400000
-    );
+        Object.entries(valores).forEach(([unidade, valor]) => {
+          const elemento = contador.querySelector(
+            `[data-unidade="${unidade}"]`
+          );
 
-    const horas = Math.floor(
-      diferenca / 3600000
-    );
-
-    const minutos = Math.floor(
-      diferenca / 60000
-    );
-
-    const elementoDias =
-      document.getElementById("contador-dias");
-
-    const elementoHoras =
-      document.getElementById("contador-horas");
-
-    const elementoMinutos =
-      document.getElementById("contador-minutos");
-
-    if (elementoDias) {
-      elementoDias.textContent =
-        dias.toLocaleString("pt-BR");
-    }
-
-    if (elementoHoras) {
-      elementoHoras.textContent =
-        horas.toLocaleString("pt-BR");
-    }
-
-    if (elementoMinutos) {
-      elementoMinutos.textContent =
-        minutos.toLocaleString("pt-BR");
-    }
+          if (elemento) {
+            elemento.textContent = valor;
+          }
+        });
+      });
   }
 
   /*
@@ -1520,6 +1507,78 @@
    * Telescópio
    */
 
+  function criarPuzzleFrase(dados) {
+    const elemento = document.createElement("article");
+
+    elemento.className = "componente puzzle puzzle-frase";
+    elemento.innerHTML = `
+      <span class="componente__etiqueta">Um pequeno desafio</span>
+      <h3>${escaparHTML(dados.titulo || "Complete a frase")}</h3>
+      <p class="puzzle__descricao">${escaparHTML(dados.instrucao || "")}</p>
+      <form class="puzzle-frase__formulario">
+        <label class="puzzle-frase__linha">
+          <span class="puzzle-frase__frase">${escaparHTML(dados.frase || "")}</span>
+          <input class="puzzle-frase__input" type="text" autocomplete="off"
+            placeholder="${escaparHTML(dados.placeholder || "")}" aria-label="Complete a frase" required>
+        </label>
+        <button class="botao" type="submit">${escaparHTML(dados.botao || "Confirmar")}</button>
+      </form>
+      <div class="puzzle-frase__mensagem" aria-live="polite"></div>
+    `;
+
+    const formulario = elemento.querySelector("form");
+    const input = elemento.querySelector("input");
+    const botao = elemento.querySelector("button");
+    const mensagem = elemento.querySelector(".puzzle-frase__mensagem");
+    let processando = false;
+
+    const esperar = (duracao) => new Promise((resolver) => {
+      window.setTimeout(resolver, Math.max(0, Number(duracao) || 0));
+    });
+
+    async function mostrarFluxo(fluxo) {
+      for (const etapa of Array.isArray(fluxo) ? fluxo : []) {
+        mensagem.textContent = etapa.texto || "";
+        await esperar(etapa.duracao);
+      }
+    }
+
+    async function digitar(texto) {
+      input.value = "";
+      for (const caractere of String(texto || "")) {
+        input.value += caractere;
+        await esperar(dados.velocidadeDigitacao || 120);
+      }
+    }
+
+    formulario.addEventListener("submit", async function (evento) {
+      evento.preventDefault();
+      if (processando || !input.value.trim()) return;
+
+      processando = true;
+      input.disabled = true;
+      botao.disabled = true;
+
+      const acertou = normalizar(input.value) === normalizar(dados.respostaCorreta);
+
+      if (acertou) {
+        await mostrarFluxo(dados.fluxoAcerto);
+      } else {
+        await mostrarFluxo(dados.fluxoErro);
+        if (dados.apagarResposta !== false) input.value = "";
+        await digitar(dados.textoDigitadoAutomaticamente || dados.respostaCorreta);
+        await mostrarFluxo(dados.mensagensFinais);
+      }
+
+      mensagem.textContent = dados.mensagemDesbloqueio || "Desbloqueado.";
+      mensagem.classList.add("puzzle-frase__mensagem--final");
+      elemento.classList.add("puzzle-frase--finalizado");
+      concluirPuzzle(elemento);
+    });
+
+    return elemento;
+  }
+
   function criarTelescopio(dados) {
     const elemento = document.createElement("article");
 
@@ -1631,6 +1690,9 @@
 
         case "memoria":
           return criarMemoria(dados);
+
+        case "puzzle":
+          return criarPuzzleFrase(dados);
 
         case "telescopio":
           return criarTelescopio(dados);
@@ -1966,7 +2028,7 @@
 
       window.setInterval(
         atualizarContadores,
-        60000
+        1000
       );
     } catch (erro) {
       console.error(
