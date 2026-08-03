@@ -43,7 +43,8 @@ body.abertura-ativa {
 }
 
 button,
-input {
+input,
+textarea {
   font: inherit;
 }
 
@@ -1333,6 +1334,113 @@ img {
   animation: subir linear forwards;
 }
 
+/* Cantinho da Rayane */
+
+.cantinho {
+  padding: 110px 24px;
+  background: linear-gradient(180deg, transparent, rgba(225, 214, 235, 0.32));
+}
+
+.cantinho__cartao,
+.cantinho__guardados {
+  width: min(760px, 100%);
+  margin-inline: auto;
+}
+
+.cantinho__cartao {
+  padding: clamp(24px, 5vw, 42px);
+  border: 1px solid var(--borda);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: var(--sombra);
+}
+
+.cantinho__cartao label {
+  display: block;
+  margin-bottom: 14px;
+  color: var(--roxo-escuro);
+  font-family: var(--titulo);
+  font-size: 1.55rem;
+}
+
+.cantinho__cartao textarea {
+  width: 100%;
+  min-height: 170px;
+  padding: 18px;
+  resize: vertical;
+  border: 1px solid var(--borda);
+  border-radius: 18px;
+  background: white;
+  color: var(--texto);
+  line-height: 1.7;
+  outline: none;
+}
+
+.cantinho__cartao textarea:focus {
+  border-color: var(--roxo);
+  box-shadow: 0 0 0 4px rgba(119, 99, 143, 0.1);
+}
+
+.cantinho__acoes,
+.cantinho__anotacao-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.cantinho__acoes { margin-top: 16px; }
+
+.cantinho__acoes span,
+.cantinho__anotacao time {
+  color: var(--texto-suave);
+  font-size: 0.75rem;
+}
+
+.cantinho__aviso {
+  min-height: 24px;
+  margin: 14px 0 0;
+  color: var(--verde);
+  text-align: center;
+}
+
+.cantinho__guardados {
+  display: grid;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.cantinho__anotacao {
+  padding: 24px 26px;
+  border: 1px solid var(--borda);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.cantinho__anotacao p {
+  margin: 18px 0 0;
+  color: #514b56;
+  font-family: var(--titulo);
+  font-size: 1.3rem;
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+
+.cantinho__excluir {
+  padding: 7px 10px;
+  border: 0;
+  background: transparent;
+  color: var(--texto-suave);
+  cursor: pointer;
+  font-size: 0.75rem;
+}
+
+.cantinho__vazio {
+  padding: 22px;
+  color: var(--texto-suave);
+  text-align: center;
+}
+
 .rodape {
   padding: 60px 24px;
   border-top: 1px solid var(--borda);
@@ -1486,6 +1594,13 @@ img {
   .musica__conteudo {
     text-align: center;
   }
+
+  .cantinho__acoes {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .cantinho__acoes span { align-self: flex-end; }
 }
 
 .contexto {

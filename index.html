@@ -73,6 +73,7 @@
       <a href="#inicio">Início</a>
       <a href="#tempo">Tempo</a>
       <a href="#historia">História</a>
+      <a href="#cantinho">Seu cantinho</a>
     </nav>
   </header>
 
@@ -157,6 +158,34 @@
           <span>♡</span>
           <p>Carregando nossas memórias...</p>
         </div>
+      </div>
+    </section>
+
+    <section class="cantinho" id="cantinho">
+      <header class="secao-cabecalho">
+        <span class="etiqueta">Um espaço para você</span>
+        <h2>Cantinho da Rayane</h2>
+        <p>
+          Escreva aqui o que estiver sentindo, uma lembrança ou
+          qualquer coisinha que queira guardar.
+        </p>
+      </header>
+
+      <div class="cantinho__cartao">
+        <label for="cantinho-texto">O que você quer guardar hoje?</label>
+        <textarea id="cantinho-texto" rows="6" maxlength="1200"
+          placeholder="Pode escrever do seu jeito..."></textarea>
+
+        <div class="cantinho__acoes">
+          <span id="cantinho-contador">0 de 12000</span>
+          <button class="botao" id="cantinho-guardar" type="button">Guardar</button>
+        </div>
+
+        <p class="cantinho__aviso" id="cantinho-aviso" aria-live="polite"></p>
+      </div>
+
+      <div class="cantinho__guardados" id="cantinho-guardados">
+        <p class="cantinho__vazio">As coisas que você guardar vão aparecer aqui. ♡</p>
       </div>
     </section>
   </main>

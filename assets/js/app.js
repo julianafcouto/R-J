@@ -2022,7 +2022,106 @@
     }
   }
 
+  function iniciarCantinho() {
+    const texto = document.getElementById("cantinho-texto");
+    const guardar = document.getElementById("cantinho-guardar");
+    const contador = document.getElementById("cantinho-contador");
+    const aviso = document.getElementById("cantinho-aviso");
+    const guardados = document.getElementById("cantinho-guardados");
+    const chave = "rayane-cantinho-v1";
+
+    if (!texto || !guardar || !contador || !aviso || !guardados) return;
+
+    function ler() {
+      try {
+        const valor = JSON.parse(localStorage.getItem(chave) || "[]");
+        return Array.isArray(valor) ? valor : [];
+      } catch (erro) {
+        return [];
+      }
+    }
+
+    function salvar(anotacoes) {
+      localStorage.setItem(chave, JSON.stringify(anotacoes));
+    }
+
+    function mostrar() {
+      const anotacoes = ler();
+      guardados.innerHTML = "";
+
+      if (!anotacoes.length) {
+        guardados.innerHTML = '<p class="cantinho__vazio">As coisas que você guardar vão aparecer aqui. ♡</p>';
+        return;
+      }
+
+      anotacoes.slice().reverse().forEach(function (anotacao) {
+        const cartao = document.createElement("article");
+        const cabecalho = document.createElement("div");
+        const data = document.createElement("time");
+        const excluir = document.createElement("button");
+        const conteudo = document.createElement("p");
+
+        cartao.className = "cantinho__anotacao";
+        cabecalho.className = "cantinho__anotacao-cabecalho";
+        data.dateTime = anotacao.criadaEm;
+        data.textContent = new Intl.DateTimeFormat("pt-BR", {
+          dateStyle: "long",
+          timeStyle: "short"
+        }).format(new Date(anotacao.criadaEm));
+        excluir.type = "button";
+        excluir.className = "cantinho__excluir";
+        excluir.textContent = "Apagar";
+        excluir.setAttribute("aria-label", "Apagar esta mensagem");
+        conteudo.textContent = anotacao.texto;
+
+        excluir.addEventListener("click", function () {
+          if (!window.confirm("Quer mesmo apagar esta mensagem?")) return;
+          salvar(ler().filter(function (item) { return item.id !== anotacao.id; }));
+          mostrar();
+        });
+
+        cabecalho.append(data, excluir);
+        cartao.append(cabecalho, conteudo);
+        guardados.appendChild(cartao);
+      });
+    }
+
+    texto.addEventListener("input", function () {
+      contador.textContent = `${texto.value.length} de 1200`;
+      aviso.textContent = "";
+    });
+
+    guardar.addEventListener("click", function () {
+      const valor = texto.value.trim();
+
+      if (!valor) {
+        aviso.textContent = "Escreva alguma coisinha antes de guardar.";
+        texto.focus();
+        return;
+      }
+
+      try {
+        const anotacoes = ler();
+        anotacoes.push({
+          id: `${Date.now()}-${Math.random()}`,
+          texto: valor,
+          criadaEm: new Date().toISOString()
+        });
+        salvar(anotacoes);
+        texto.value = "";
+        contador.textContent = "0 de 1200";
+        aviso.textContent = "Guardado com carinho. ♡";
+        mostrar();
+      } catch (erro) {
+        aviso.textContent = "Não foi possível guardar. Tente novamente.";
+      }
+    });
+
+    mostrar();
+  }
+
   function iniciarSite() {
+    iniciarCantinho();
     try {
       atualizarContadores();
 
