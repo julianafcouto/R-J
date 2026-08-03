@@ -173,8 +173,21 @@
 
       <div class="cantinho__cartao">
         <label for="cantinho-texto">O que você quer guardar hoje?</label>
-        <textarea id="cantinho-texto" rows="6" maxlength="1200"
+        <textarea id="cantinho-texto" rows="6" maxlength="12000"
           placeholder="Pode escrever do seu jeito..."></textarea>
+
+        <div class="cantinho__campos-extras">
+          <div class="cantinho__campo">
+            <label for="cantinho-data">Data</label>
+            <input id="cantinho-data" type="date">
+          </div>
+
+          <div class="cantinho__campo">
+            <label for="cantinho-link">Link <span>(se quiser)</span></label>
+            <input id="cantinho-link" type="url" inputmode="url"
+              placeholder="exemplo.com ou cole um link">
+          </div>
+        </div>
 
         <div class="cantinho__acoes">
           <span id="cantinho-contador">0 de 12000</span>

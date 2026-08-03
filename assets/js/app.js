@@ -2024,13 +2024,29 @@
 
   function iniciarCantinho() {
     const texto = document.getElementById("cantinho-texto");
+    const dataEscolhida = document.getElementById("cantinho-data");
+    const link = document.getElementById("cantinho-link");
     const guardar = document.getElementById("cantinho-guardar");
     const contador = document.getElementById("cantinho-contador");
     const aviso = document.getElementById("cantinho-aviso");
     const guardados = document.getElementById("cantinho-guardados");
     const chave = "rayane-cantinho-v1";
 
-    if (!texto || !guardar || !contador || !aviso || !guardados) return;
+    if (!texto || !dataEscolhida || !link || !guardar || !contador || !aviso || !guardados) return;
+
+    dataEscolhida.value = new Date().toLocaleDateString("en-CA");
+
+    function prepararLink(valor) {
+      if (!valor) return "";
+
+      try {
+        const completo = /^https?:\/\//i.test(valor) ? valor : `https://${valor}`;
+        const endereco = new URL(completo);
+        return ["http:", "https:"].includes(endereco.protocol) ? endereco.href : "";
+      } catch (erro) {
+        return "";
+      }
+    }
 
     function ler() {
       try {
@@ -2063,11 +2079,20 @@
 
         cartao.className = "cantinho__anotacao";
         cabecalho.className = "cantinho__anotacao-cabecalho";
-        data.dateTime = anotacao.criadaEm;
-        data.textContent = new Intl.DateTimeFormat("pt-BR", {
-          dateStyle: "long",
-          timeStyle: "short"
-        }).format(new Date(anotacao.criadaEm));
+        if (anotacao.data) {
+          const partes = anotacao.data.split("-").map(Number);
+          const dataLocal = new Date(partes[0], partes[1] - 1, partes[2]);
+          data.dateTime = anotacao.data;
+          data.textContent = new Intl.DateTimeFormat("pt-BR", {
+            dateStyle: "long"
+          }).format(dataLocal);
+        } else {
+          data.dateTime = anotacao.criadaEm;
+          data.textContent = new Intl.DateTimeFormat("pt-BR", {
+            dateStyle: "long",
+            timeStyle: "short"
+          }).format(new Date(anotacao.criadaEm));
+        }
         excluir.type = "button";
         excluir.className = "cantinho__excluir";
         excluir.textContent = "Apagar";
@@ -2082,21 +2107,40 @@
 
         cabecalho.append(data, excluir);
         cartao.append(cabecalho, conteudo);
+
+        if (anotacao.link) {
+          const acesso = document.createElement("a");
+          acesso.className = "cantinho__link";
+          acesso.href = anotacao.link;
+          acesso.target = "_blank";
+          acesso.rel = "noopener noreferrer";
+          acesso.textContent = "Abrir link ↗";
+          cartao.appendChild(acesso);
+        }
+
         guardados.appendChild(cartao);
       });
     }
 
     texto.addEventListener("input", function () {
-      contador.textContent = `${texto.value.length} de 1200`;
+      contador.textContent = `${texto.value.length} de 12000`;
       aviso.textContent = "";
     });
 
     guardar.addEventListener("click", function () {
       const valor = texto.value.trim();
+      const linkDigitado = link.value.trim();
+      const linkPreparado = prepararLink(linkDigitado);
 
       if (!valor) {
         aviso.textContent = "Escreva alguma coisinha antes de guardar.";
         texto.focus();
+        return;
+      }
+
+      if (linkDigitado && !linkPreparado) {
+        aviso.textContent = "Confira o link antes de guardar.";
+        link.focus();
         return;
       }
 
@@ -2105,11 +2149,15 @@
         anotacoes.push({
           id: `${Date.now()}-${Math.random()}`,
           texto: valor,
+          data: dataEscolhida.value,
+          link: linkPreparado,
           criadaEm: new Date().toISOString()
         });
         salvar(anotacoes);
         texto.value = "";
-        contador.textContent = "0 de 1200";
+        link.value = "";
+        dataEscolhida.value = new Date().toLocaleDateString("en-CA");
+        contador.textContent = "0 de 12000";
         aviso.textContent = "Guardado com carinho. ♡";
         mostrar();
       } catch (erro) {

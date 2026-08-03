@@ -1381,6 +1381,41 @@ img {
   box-shadow: 0 0 0 4px rgba(119, 99, 143, 0.1);
 }
 
+.cantinho__campos-extras {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.7fr) minmax(220px, 1.3fr);
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.cantinho__campo label {
+  margin-bottom: 8px;
+  font-family: var(--corpo);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.cantinho__campo label span {
+  color: var(--texto-suave);
+  font-weight: 400;
+}
+
+.cantinho__campo input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid var(--borda);
+  border-radius: 14px;
+  background: white;
+  color: var(--texto);
+  outline: none;
+}
+
+.cantinho__campo input:focus {
+  border-color: var(--roxo);
+  box-shadow: 0 0 0 4px rgba(119, 99, 143, 0.1);
+}
+
 .cantinho__acoes,
 .cantinho__anotacao-cabecalho {
   display: flex;
@@ -1434,6 +1469,17 @@ img {
   cursor: pointer;
   font-size: 0.75rem;
 }
+
+.cantinho__link {
+  display: inline-flex;
+  margin-top: 18px;
+  color: var(--roxo);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.cantinho__link:hover { text-decoration: underline; }
 
 .cantinho__vazio {
   padding: 22px;
@@ -1601,6 +1647,8 @@ img {
   }
 
   .cantinho__acoes span { align-self: flex-end; }
+
+  .cantinho__campos-extras { grid-template-columns: 1fr; }
 }
 
 .contexto {
