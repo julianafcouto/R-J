@@ -2023,18 +2023,35 @@
   }
 
   function iniciarCantinho() {
+    const SUPABASE_URL = "https://mmipkjzdnnrgovvlihlp.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_vokCdlS5rBIiogRyIy0WPA_D5xTADIN";
     const texto = document.getElementById("cantinho-texto");
     const dataEscolhida = document.getElementById("cantinho-data");
     const link = document.getElementById("cantinho-link");
+    const codigo = document.getElementById("cantinho-codigo");
     const guardar = document.getElementById("cantinho-guardar");
     const contador = document.getElementById("cantinho-contador");
     const aviso = document.getElementById("cantinho-aviso");
     const guardados = document.getElementById("cantinho-guardados");
-    const chave = "rayane-cantinho-v1";
+    const chaveLocal = "rayane-cantinho-v1";
+    const chaveCodigo = "rayane-cantinho-codigo-v1";
 
-    if (!texto || !dataEscolhida || !link || !guardar || !contador || !aviso || !guardados) return;
+    if (!texto || !dataEscolhida || !link || !codigo || !guardar || !contador || !aviso || !guardados) return;
 
     dataEscolhida.value = new Date().toLocaleDateString("en-CA");
+    codigo.value = localStorage.getItem(chaveCodigo) || "";
+
+    function opcoesRequisicao(extras) {
+      return {
+        ...extras,
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+          "Content-Type": "application/json",
+          ...(extras?.headers || {})
+        }
+      };
+    }
 
     function prepararLink(valor) {
       if (!valor) return "";
@@ -2048,21 +2065,48 @@
       }
     }
 
-    function ler() {
+    function lerLocais() {
       try {
-        const valor = JSON.parse(localStorage.getItem(chave) || "[]");
+        const valor = JSON.parse(localStorage.getItem(chaveLocal) || "[]");
         return Array.isArray(valor) ? valor : [];
       } catch (erro) {
         return [];
       }
     }
 
-    function salvar(anotacoes) {
-      localStorage.setItem(chave, JSON.stringify(anotacoes));
+    async function enviar(anotacao, codigoAcesso) {
+      const resposta = await fetch(
+        `${SUPABASE_URL}/rest/v1/rpc/criar_publicacao_rayane`,
+        opcoesRequisicao({
+          method: "POST",
+          body: JSON.stringify({
+            p_id: anotacao.id,
+            p_texto: anotacao.texto,
+            p_data: anotacao.data || null,
+            p_link: anotacao.link || null,
+            p_codigo: codigoAcesso
+          })
+        })
+      );
+
+      if (!resposta.ok) {
+        const detalhe = await resposta.text();
+        throw new Error(detalhe.includes("codigo_incorreto") ? "codigo" : "envio");
+      }
     }
 
-    function mostrar() {
-      const anotacoes = ler();
+    async function migrarLocais(codigoAcesso) {
+      const locais = lerLocais();
+      if (!locais.length) return;
+
+      for (const anotacao of locais) {
+        await enviar(anotacao, codigoAcesso);
+      }
+
+      localStorage.removeItem(chaveLocal);
+    }
+
+    function mostrar(anotacoes) {
       guardados.innerHTML = "";
 
       if (!anotacoes.length) {
@@ -2070,7 +2114,7 @@
         return;
       }
 
-      anotacoes.slice().reverse().forEach(function (anotacao) {
+      anotacoes.forEach(function (anotacao) {
         const cartao = document.createElement("article");
         const cabecalho = document.createElement("div");
         const data = document.createElement("time");
@@ -2087,11 +2131,12 @@
             dateStyle: "long"
           }).format(dataLocal);
         } else {
-          data.dateTime = anotacao.criadaEm;
+          const criadaEm = anotacao.criada_em || anotacao.criadaEm;
+          data.dateTime = criadaEm;
           data.textContent = new Intl.DateTimeFormat("pt-BR", {
             dateStyle: "long",
             timeStyle: "short"
-          }).format(new Date(anotacao.criadaEm));
+          }).format(new Date(criadaEm));
         }
         excluir.type = "button";
         excluir.className = "cantinho__excluir";
@@ -2099,10 +2144,43 @@
         excluir.setAttribute("aria-label", "Apagar esta mensagem");
         conteudo.textContent = anotacao.texto;
 
-        excluir.addEventListener("click", function () {
+        excluir.addEventListener("click", async function () {
           if (!window.confirm("Quer mesmo apagar esta mensagem?")) return;
-          salvar(ler().filter(function (item) { return item.id !== anotacao.id; }));
-          mostrar();
+
+          const codigoAcesso = codigo.value.trim();
+          if (!codigoAcesso) {
+            aviso.textContent = "Digite o código de acesso para apagar.";
+            codigo.focus();
+            return;
+          }
+
+          excluir.disabled = true;
+          try {
+            const resposta = await fetch(
+              `${SUPABASE_URL}/rest/v1/rpc/apagar_publicacao_rayane`,
+              opcoesRequisicao({
+                method: "POST",
+                body: JSON.stringify({
+                  p_id: anotacao.id,
+                  p_codigo: codigoAcesso
+                })
+              })
+            );
+
+            if (!resposta.ok) {
+              const detalhe = await resposta.text();
+              throw new Error(detalhe.includes("codigo_incorreto") ? "codigo" : "exclusao");
+            }
+
+            localStorage.setItem(chaveCodigo, codigoAcesso);
+            aviso.textContent = "Publicação apagada.";
+            await carregarPublicacoes();
+          } catch (erro) {
+            aviso.textContent = erro.message === "codigo"
+              ? "Código de acesso incorreto."
+              : "Não foi possível apagar. Confira sua conexão.";
+            excluir.disabled = false;
+          }
         });
 
         cabecalho.append(data, excluir);
@@ -2122,15 +2200,32 @@
       });
     }
 
+    async function carregarPublicacoes() {
+      try {
+        const resposta = await fetch(
+          `${SUPABASE_URL}/rest/v1/publicacoes_rayane?select=*&order=criada_em.desc`,
+          opcoesRequisicao({ cache: "no-store" })
+        );
+
+        if (!resposta.ok) throw new Error("leitura");
+        mostrar(await resposta.json());
+      } catch (erro) {
+        const locais = lerLocais().slice().reverse();
+        mostrar(locais);
+        aviso.textContent = "Sem conexão. Mostrando o que estava salvo neste aparelho.";
+      }
+    }
+
     texto.addEventListener("input", function () {
-      contador.textContent = `${texto.value.length} de 12000`;
+      contador.textContent = `${texto.value.length} de 16000000`;
       aviso.textContent = "";
     });
 
-    guardar.addEventListener("click", function () {
+    guardar.addEventListener("click", async function () {
       const valor = texto.value.trim();
       const linkDigitado = link.value.trim();
       const linkPreparado = prepararLink(linkDigitado);
+      const codigoAcesso = codigo.value.trim();
 
       if (!valor) {
         aviso.textContent = "Escreva alguma coisinha antes de guardar.";
@@ -2144,28 +2239,39 @@
         return;
       }
 
+      if (!codigoAcesso) {
+        aviso.textContent = "Digite o código de acesso para publicar.";
+        codigo.focus();
+        return;
+      }
+
+      guardar.disabled = true;
       try {
-        const anotacoes = ler();
-        anotacoes.push({
-          id: `${Date.now()}-${Math.random()}`,
+        await migrarLocais(codigoAcesso);
+        await enviar({
+          id: globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`,
           texto: valor,
           data: dataEscolhida.value,
-          link: linkPreparado,
-          criadaEm: new Date().toISOString()
-        });
-        salvar(anotacoes);
+          link: linkPreparado
+        }, codigoAcesso);
+
+        localStorage.setItem(chaveCodigo, codigoAcesso);
         texto.value = "";
         link.value = "";
         dataEscolhida.value = new Date().toLocaleDateString("en-CA");
-        contador.textContent = "0 de 12000";
+        contador.textContent = "0 de 16000000";
         aviso.textContent = "Guardado com carinho. ♡";
-        mostrar();
+        await carregarPublicacoes();
       } catch (erro) {
-        aviso.textContent = "Não foi possível guardar. Tente novamente.";
+        aviso.textContent = erro.message === "codigo"
+          ? "Código de acesso incorreto."
+          : "Não foi possível publicar. Confira sua conexão.";
+      } finally {
+        guardar.disabled = false;
       }
     });
 
-    mostrar();
+    carregarPublicacoes();
   }
 
   function iniciarSite() {
