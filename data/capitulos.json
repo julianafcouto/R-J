@@ -317,5 +317,27 @@
         "bloqueada": true
       }
     ]
+  },
+  {
+    "id": "2026-08-06",
+    "titulo": "Obrigada!",
+    "data": "06.08.2026",
+    "subtitulo": "Nos dias bons e nos dias ruins",
+    "componentes": [
+      {
+        "tipo": "carta",
+        "titulo": "Existe amor",
+        "texto": "Bê, acho que ontem foi facilmente um dos dias mais complexos que você já dividiu comigo. \n\nConfesso que é estranho. \n\nÉ estranho ter alguém aqui. Disponivel. Alguém que se importe. Alguém que se preocupe. Alguém que se doa. Alguém que me escuta. Alguém que me entende. Alguém que me ama. \n\nMas foi o estranho mais bonito de toda a minha vida. \n\nObrigada por invadir a minha solidão, e ser companhia. \n\nEspero poder retribuir, e te mostrar que existe muuuuiiiitooooooo amor aqui."
+      },
+      {
+        "tipo": "musica",
+        "titulo": "Meu Bem",
+        "artista": "Chapéu de Palha",
+        "capa": "./assets/imagens/capas/o-amor-do-mundo-inteiro.jpg",
+        "link": "https://open.spotify.com/intl-pt/track/3hIpLc4RJnLydG3hRcTjDD?si=1b5f199c709a49ac",
+        "mensagem": "Obrigada por ser minha pessoa favorita. E por permanecer, em dias bons, e em dias ruins. Te quero sempre por perto, meu bem.",
+        "bloqueada": true
+      }
+    ]
   }
 ]
