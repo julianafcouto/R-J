@@ -1668,72 +1668,158 @@
   function criarMapa(dados) {
     const elemento = document.createElement("article");
     const chave = `rj-mapa-${dados.id || "destinos"}`;
+    const chaveCodigo = "rayane-cantinho-codigo-v1";
+    const prefixoMapa = "__MAPA_RJ__";
+    const SUPABASE_URL = "https://mmipkjzdnnrgovvlihlp.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_vokCdlS5rBIiogRyIy0WPA_D5xTADIN";
     let pontos = [];
-    let posicaoNova = { x: 50, y: 50 };
+    let posicaoNova = { lat: -15, lng: -48 };
     try { pontos = JSON.parse(localStorage.getItem(chave) || "[]"); if (!Array.isArray(pontos)) pontos = []; }
     catch (_) { pontos = []; }
+
+    pontos = pontos.map(function (ponto) {
+      if (Number.isFinite(ponto.lat) && Number.isFinite(ponto.lng)) return ponto;
+      return { ...ponto, lat: 85 - (Number(ponto.y) || 50) * 1.7, lng: (Number(ponto.x) || 50) * 3.6 - 180 };
+    });
 
     elemento.className = "componente puzzle mapa-afetivo";
     elemento.innerHTML = `
       <span class="componente__etiqueta">Nosso mapa do futuro</span>
       <h3>${escaparHTML(dados.titulo || "Lugares onde ainda seremos nós")}</h3>
       <p class="puzzle__descricao">${escaparHTML(dados.descricao || "Toque no mapa e guarde um destino, uma imagem e um sonho.")}</p>
-      <div class="mapa-afetivo__quadro" data-mapa tabindex="0" role="button" aria-label="Mapa ilustrado. Toque para adicionar um destino.">
-        <div class="mapa-afetivo__terra mapa-afetivo__terra--um"></div><div class="mapa-afetivo__terra mapa-afetivo__terra--dois"></div><div class="mapa-afetivo__terra mapa-afetivo__terra--tres"></div>
-        <div class="mapa-afetivo__rotas"></div><div data-pinos></div>
-        <div class="mapa-afetivo__convite" data-convite><span>＋</span> toque para marcar nosso próximo lugar</div>
-      </div>
+      <div class="mapa-afetivo__barra"><span>Arraste para passear pelo mundo e toque nos corações para ler.</span><button type="button" class="botao mapa-afetivo__adicionar" data-adicionar>♡ Marcar lugar</button></div>
+      <div class="mapa-afetivo__quadro mapa-afetivo__quadro--real" data-mapa aria-label="Mapa-múndi interativo"></div>
       <form class="mapa-afetivo__formulario" data-form hidden>
         <div class="mapa-afetivo__form-cabecalho"><strong>Novo destino</strong><button type="button" class="mapa-afetivo__fechar" data-fechar aria-label="Fechar">×</button></div>
         <label>Que lugar é esse?<input type="text" name="lugar" maxlength="80" placeholder="Ex.: ver o pôr do sol em Paraty" required></label>
         <label>O que você quer viver lá?<textarea name="observacao" rows="3" maxlength="500" placeholder="Uma ideia, promessa ou detalhe para lembrar..."></textarea></label>
         <label class="mapa-afetivo__foto">Uma imagem para esse sonho <span>(opcional)</span><input type="file" name="imagem" accept="image/*"></label>
+        <label>Código de acesso<input type="password" name="codigo" autocomplete="current-password" placeholder="O mesmo código do Cantinho" required></label>
         <button class="botao" type="submit">Guardar no mapa ♡</button><p class="puzzle__feedback" data-feedback aria-live="polite"></p>
       </form><div class="mapa-afetivo__lugares" data-lugares></div>`;
 
     const mapa = elemento.querySelector("[data-mapa]");
-    const pinos = elemento.querySelector("[data-pinos]");
-    const convite = elemento.querySelector("[data-convite]");
     const formulario = elemento.querySelector("[data-form]");
     const lugares = elemento.querySelector("[data-lugares]");
     const feedback = elemento.querySelector("[data-feedback]");
+    let modoAdicionar = false;
+    let mapaReal = null;
+    let camadaPontos = null;
+    formulario.elements.codigo.value = localStorage.getItem(chaveCodigo) || "";
+
+    function opcoesRequisicao(extras) {
+      return { ...extras, headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json", ...(extras?.headers || {}) } };
+    }
+
+    async function enviarPonto(ponto, codigo) {
+      const dadosPonto = { id: ponto.id, lugar: ponto.lugar, observacao: ponto.observacao, imagem: ponto.imagem, lat: ponto.lat, lng: ponto.lng };
+      const resposta = await fetch(`${SUPABASE_URL}/rest/v1/rpc/criar_publicacao_rayane`, opcoesRequisicao({ method: "POST", body: JSON.stringify({ p_id: ponto.id, p_texto: prefixoMapa + JSON.stringify(dadosPonto), p_data: null, p_link: null, p_codigo: codigo }) }));
+      if (!resposta.ok) { const detalhe = await resposta.text(); throw new Error(detalhe.includes("codigo_incorreto") ? "codigo" : "envio"); }
+      ponto.online = true;
+    }
+
+    async function apagarPontoOnline(ponto, codigo) {
+      if (!ponto.online) return;
+      const resposta = await fetch(`${SUPABASE_URL}/rest/v1/rpc/apagar_publicacao_rayane`, opcoesRequisicao({ method: "POST", body: JSON.stringify({ p_id: ponto.id, p_codigo: codigo }) }));
+      if (!resposta.ok) { const detalhe = await resposta.text(); throw new Error(detalhe.includes("codigo_incorreto") ? "codigo" : "exclusao"); }
+    }
+
+    async function carregarPontosOnline() {
+      try {
+        const resposta = await fetch(`${SUPABASE_URL}/rest/v1/publicacoes_rayane?select=id,texto&order=criada_em.asc`, opcoesRequisicao({ cache: "no-store" }));
+        if (!resposta.ok) throw new Error("leitura");
+        const remotos = (await resposta.json()).filter(function (item) { return String(item.texto || "").startsWith(prefixoMapa); }).map(function (item) {
+          try { return { ...JSON.parse(item.texto.slice(prefixoMapa.length)), id: item.id, online: true }; } catch (_) { return null; }
+        }).filter(Boolean);
+        const porId = new Map(pontos.map(function (ponto) { return [ponto.id, ponto]; }));
+        remotos.forEach(function (ponto) { porId.set(ponto.id, ponto); });
+        pontos = [...porId.values()]; salvar(); desenhar();
+        if (pontos.length > 0) concluirPuzzle(elemento);
+      } catch (_) {
+        feedback.textContent = "Sem conexão. Mostrando os lugares salvos neste aparelho.";
+      }
+    }
 
     function salvar() {
       try { localStorage.setItem(chave, JSON.stringify(pontos)); return true; }
       catch (_) { feedback.textContent = "A imagem ficou grande demais para guardar. Tente uma foto menor."; feedback.className = "puzzle__feedback puzzle__feedback--erro"; return false; }
     }
     function desenhar() {
-      pinos.innerHTML = ""; lugares.innerHTML = ""; convite.hidden = pontos.length > 0;
+      lugares.innerHTML = "";
+      if (camadaPontos) camadaPontos.clearLayers();
       pontos.forEach(function (ponto, indice) {
-        const pino = document.createElement("button");
-        pino.type = "button"; pino.className = "mapa-afetivo__pino"; pino.style.left = `${ponto.x}%`; pino.style.top = `${ponto.y}%`;
-        pino.setAttribute("aria-label", ponto.lugar); pino.innerHTML = `<span>♡</span><small>${indice + 1}</small>`;
-        pino.addEventListener("click", function (evento) { evento.stopPropagation(); elemento.querySelector(`[data-ponto="${ponto.id}"]`)?.scrollIntoView({ behavior: "smooth", block: "nearest" }); });
-        pinos.appendChild(pino);
+        if (camadaPontos) {
+          const icone = L.divIcon({ className: "mapa-afetivo__icone", html: `<span><b>♡</b></span><small>${indice + 1}</small>`, iconSize: [46, 52], iconAnchor: [23, 50], popupAnchor: [0, -46] });
+          const conteudo = `<div class="mapa-afetivo__popup">${ponto.imagem ? `<img src="${ponto.imagem}" alt="Imagem escolhida para ${escaparHTML(ponto.lugar)}">` : ""}<span>Um lugar para nós</span><h4>${escaparHTML(ponto.lugar)}</h4><p>${escaparHTML(ponto.observacao || "Um sonho guardado no nosso mapa.")}</p></div>`;
+          L.marker([ponto.lat, ponto.lng], { icon: icone, title: ponto.lugar }).bindPopup(conteudo, { maxWidth: 310 }).addTo(camadaPontos);
+        }
         const cartao = document.createElement("article");
         cartao.className = "mapa-afetivo__lugar"; cartao.dataset.ponto = ponto.id;
         cartao.innerHTML = `${ponto.imagem ? `<img src="${ponto.imagem}" alt="Imagem escolhida para ${escaparHTML(ponto.lugar)}">` : `<div class="mapa-afetivo__sem-foto">♡</div>`}<div><span>destino ${indice + 1}</span><h4>${escaparHTML(ponto.lugar)}</h4>${ponto.observacao ? `<p>${escaparHTML(ponto.observacao)}</p>` : ""}</div><button type="button" class="mapa-afetivo__remover" aria-label="Remover destino">×</button>`;
-        cartao.querySelector("button").addEventListener("click", function () { pontos = pontos.filter(function (item) { return item.id !== ponto.id; }); salvar(); desenhar(); });
+        cartao.querySelector("button").addEventListener("click", async function () {
+          const codigo = localStorage.getItem(chaveCodigo) || formulario.elements.codigo.value.trim();
+          if (!codigo) { feedback.textContent = "Digite o código de acesso para apagar este lugar."; formulario.hidden = false; formulario.elements.codigo.focus(); return; }
+          if (!window.confirm(`Quer mesmo apagar ${ponto.lugar} do mapa de vocês?`)) return;
+          try {
+            await apagarPontoOnline(ponto, codigo);
+            pontos = pontos.filter(function (item) { return item.id !== ponto.id; }); salvar(); desenhar();
+            feedback.textContent = "Lugar apagado do mapa compartilhado."; feedback.className = "puzzle__feedback puzzle__feedback--certo";
+          } catch (erro) {
+            feedback.textContent = erro.message === "codigo" ? "Código de acesso incorreto." : "Não foi possível apagar. Confira a conexão.";
+            feedback.className = "puzzle__feedback puzzle__feedback--erro";
+          }
+        });
         lugares.appendChild(cartao);
       });
     }
-    function abrirFormulario(x, y) { posicaoNova = { x, y }; formulario.hidden = false; formulario.querySelector("input[name='lugar']").focus(); }
-    mapa.addEventListener("click", function (evento) { const caixa = mapa.getBoundingClientRect(); abrirFormulario(Math.max(4, Math.min(96, ((evento.clientX - caixa.left) / caixa.width) * 100)), Math.max(8, Math.min(92, ((evento.clientY - caixa.top) / caixa.height) * 100))); });
-    mapa.addEventListener("keydown", function (evento) { if (evento.key === "Enter" || evento.key === " ") { evento.preventDefault(); abrirFormulario(50, 50); } });
+    function abrirFormulario(lat, lng) { posicaoNova = { lat, lng }; formulario.hidden = false; formulario.scrollIntoView({ behavior: "smooth", block: "nearest" }); formulario.querySelector("input[name='lugar']").focus(); }
+    elemento.querySelector("[data-adicionar]").addEventListener("click", function () {
+      modoAdicionar = true; mapa.classList.add("mapa-afetivo__quadro--marcando");
+      this.textContent = "Agora toque no mapa ♡";
+    });
     elemento.querySelector("[data-fechar]").addEventListener("click", function () { formulario.hidden = true; formulario.reset(); });
     formulario.addEventListener("submit", function (evento) {
       evento.preventDefault();
-      const lugar = formulario.elements.lugar.value.trim(); const observacao = formulario.elements.observacao.value.trim(); const arquivo = formulario.elements.imagem.files[0];
-      function guardar(imagem) {
-        pontos.push({ id: `${Date.now()}-${Math.random().toString(16).slice(2)}`, lugar, observacao, imagem: imagem || "", x: posicaoNova.x, y: posicaoNova.y });
+      const lugar = formulario.elements.lugar.value.trim(); const observacao = formulario.elements.observacao.value.trim(); const arquivo = formulario.elements.imagem.files[0]; const codigo = formulario.elements.codigo.value.trim();
+      async function guardar(imagem) {
+        const pontoNovo = { id: globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`, lugar, observacao, imagem: imagem || "", lat: posicaoNova.lat, lng: posicaoNova.lng };
+        pontos.push(pontoNovo);
         if (!salvar()) { pontos.pop(); return; }
-        formulario.reset(); formulario.hidden = true; desenhar(); concluirPuzzle(elemento);
+        try {
+          for (const ponto of pontos.filter(function (item) { return !item.online; })) await enviarPonto(ponto, codigo);
+          localStorage.setItem(chaveCodigo, codigo); salvar();
+          formulario.reset(); formulario.elements.codigo.value = codigo; formulario.hidden = true;
+          elemento.querySelector("[data-adicionar]").textContent = "♡ Marcar lugar"; desenhar(); concluirPuzzle(elemento);
+          feedback.textContent = "Guardado no mapa de vocês. ♡"; feedback.className = "puzzle__feedback puzzle__feedback--certo";
+        } catch (erro) {
+          feedback.textContent = erro.message === "codigo" ? "Código de acesso incorreto." : "O lugar ficou salvo neste aparelho, mas ainda não foi sincronizado.";
+          feedback.className = "puzzle__feedback puzzle__feedback--erro";
+        }
       }
       if (!arquivo) { guardar(""); return; }
       if (arquivo.size > 1500000) { feedback.textContent = "Escolha uma imagem de até 1,5 MB."; feedback.className = "puzzle__feedback puzzle__feedback--erro"; return; }
       const leitor = new FileReader(); leitor.onload = function () { guardar(leitor.result); }; leitor.readAsDataURL(arquivo);
     });
-    desenhar(); if (pontos.length > 0) window.setTimeout(function () { concluirPuzzle(elemento); }, 0);
+    if (window.L) {
+      mapaReal = L.map(mapa, { worldCopyJump: true, minZoom: 2 }).setView([-15, -48], 2);
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a>" }).addTo(mapaReal);
+      camadaPontos = L.layerGroup().addTo(mapaReal);
+      mapaReal.on("click", function (evento) {
+        if (!modoAdicionar) return;
+        modoAdicionar = false; mapa.classList.remove("mapa-afetivo__quadro--marcando");
+        abrirFormulario(evento.latlng.lat, evento.latlng.lng);
+      });
+      window.setTimeout(function () { mapaReal.invalidateSize(); }, 250);
+      if (window.ResizeObserver) {
+        const observadorMapa = new ResizeObserver(function () {
+          if (mapa.offsetWidth > 0) mapaReal.invalidateSize();
+        });
+        observadorMapa.observe(mapa);
+      }
+    } else {
+      mapa.innerHTML = `<p class="mapa-afetivo__erro">O mapa não conseguiu carregar. Verifique sua conexão e tente novamente.</p>`;
+    }
+    salvar(); desenhar(); carregarPontosOnline(); if (pontos.length > 0) window.setTimeout(function () { concluirPuzzle(elemento); }, 0);
     return elemento;
   }
 
@@ -2284,7 +2370,10 @@
         );
 
         if (!resposta.ok) throw new Error("leitura");
-        mostrar(await resposta.json());
+        const publicacoes = await resposta.json();
+        mostrar(publicacoes.filter(function (item) {
+          return !String(item.texto || "").startsWith("__MAPA_RJ__");
+        }));
       } catch (erro) {
         const locais = lerLocais().slice().reverse();
         mostrar(locais);

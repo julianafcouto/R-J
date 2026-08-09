@@ -80,10 +80,49 @@ textarea {
 .mapa-afetivo__lugar h4 { margin:5px 0 7px; font-family:var(--titulo); font-size:1.3rem; font-weight:500; }
 .mapa-afetivo__lugar p { margin:0; color:var(--texto-suave); font-size:.82rem; line-height:1.5; white-space:pre-wrap; }
 .mapa-afetivo__remover { position:absolute; right:8px; top:6px; }
+.mapa-afetivo__quadro { cursor:grab; touch-action:none; user-select:none; }
+.mapa-afetivo__quadro--arrastando { cursor:grabbing; }
+.mapa-afetivo__quadro--marcando { cursor:crosshair; box-shadow:inset 0 0 0 3px rgba(119,99,143,.28),inset 0 0 70px rgba(72,104,119,.13); }
+.mapa-afetivo__canvas { position:absolute; width:145%; height:145%; left:0; top:0; transform-origin:0 0; background-image:radial-gradient(rgba(70,95,105,.12) 1px,transparent 1px); background-size:19px 19px; will-change:transform; }
+.mapa-afetivo__controles { position:absolute; z-index:8; top:14px; right:14px; display:flex; gap:7px; }
+.mapa-afetivo__controles button { display:grid; min-width:38px; height:38px; padding:0 12px; place-items:center; border:1px solid rgba(84,67,103,.14); border-radius:12px; background:rgba(255,255,255,.94); color:var(--roxo-escuro); box-shadow:0 8px 24px rgba(65,50,80,.12); cursor:pointer; font-weight:600; }
+.mapa-afetivo__controles .mapa-afetivo__adicionar { display:flex; gap:6px; }
+.mapa-afetivo__convite { top:auto; bottom:13px; font-size:.74rem; }
+.mapa-afetivo__janela { position:absolute; z-index:9; left:50%; bottom:52px; display:grid; width:min(430px,calc(100% - 28px)); max-height:225px; overflow:hidden; grid-template-columns:auto 1fr; border:1px solid rgba(84,67,103,.16); border-radius:20px; background:rgba(255,255,255,.96); box-shadow:0 18px 50px rgba(65,50,80,.22); transform:translateX(-50%); animation:aparecer 250ms ease; user-select:text; }
+.mapa-afetivo__janela[hidden] { display:none; }
+.mapa-afetivo__janela img { width:125px; height:100%; min-height:130px; object-fit:cover; }
+.mapa-afetivo__janela > div { padding:18px 38px 18px 18px; }
+.mapa-afetivo__janela span { color:var(--roxo); font-size:.62rem; letter-spacing:.13em; text-transform:uppercase; }
+.mapa-afetivo__janela h4 { margin:5px 0 7px; font-family:var(--titulo); font-size:1.45rem; font-weight:500; }
+.mapa-afetivo__janela p { margin:0; overflow:auto; color:var(--texto-suave); font-size:.82rem; line-height:1.55; white-space:pre-wrap; }
+.mapa-afetivo__janela button { position:absolute; top:7px; right:9px; border:0; background:transparent; color:var(--texto-suave); cursor:pointer; font-size:1.5rem; }
+.mapa-afetivo__barra { display:flex; align-items:center; justify-content:space-between; margin-top:26px; gap:14px; color:var(--texto-suave); font-size:.82rem; }
+.mapa-afetivo__barra .botao { flex:0 0 auto; padding:12px 18px; font-size:.76rem; }
+.mapa-afetivo__quadro--real { z-index:1; height:500px; min-height:500px; background:#dce8eb; cursor:grab; }
+.mapa-afetivo__quadro--real::before,.mapa-afetivo__quadro--real::after { display:none; }
+.mapa-afetivo__quadro--real.mapa-afetivo__quadro--marcando,.mapa-afetivo__quadro--real.mapa-afetivo__quadro--marcando .leaflet-grab { cursor:crosshair; }
+.mapa-afetivo__icone { background:transparent; border:0; }
+.mapa-afetivo__icone > span { display:grid; width:42px; height:42px; place-items:center; border:3px solid white; border-radius:50% 50% 50% 8px; background:var(--roxo-escuro); color:white; box-shadow:0 7px 20px rgba(53,38,66,.38); font-size:1.25rem; transform:rotate(-45deg); }
+.mapa-afetivo__icone > span b { display:block; font-weight:400; transform:rotate(45deg); }
+.mapa-afetivo__icone small { position:absolute; right:-2px; top:-5px; display:grid; width:20px; height:20px; place-items:center; border-radius:50%; background:white; color:var(--roxo-escuro); box-shadow:0 2px 7px rgba(53,38,66,.22); font-weight:700; }
+.mapa-afetivo__popup { min-width:190px; font-family:var(--corpo); }
+.mapa-afetivo__popup img { width:100%; max-height:150px; margin-bottom:12px; border-radius:10px; object-fit:cover; }
+.mapa-afetivo__popup span { color:var(--roxo); font-size:.6rem; font-weight:600; letter-spacing:.13em; text-transform:uppercase; }
+.mapa-afetivo__popup h4 { margin:5px 0 8px; color:var(--texto); font-family:var(--titulo); font-size:1.5rem; font-weight:500; }
+.mapa-afetivo__popup p { margin:0; color:var(--texto-suave); font-size:.78rem; line-height:1.55; white-space:pre-wrap; }
+.mapa-afetivo__erro { display:grid; height:100%; margin:0; padding:30px; place-items:center; color:var(--texto-suave); text-align:center; }
 
 @media (max-width:760px) {
   .mapa-afetivo__quadro { min-height:330px; }
   .mapa-afetivo__lugares { grid-template-columns:1fr; }
+  .mapa-afetivo__controles { top:10px; right:10px; }
+  .mapa-afetivo__controles button { min-width:34px; height:34px; padding:0 9px; }
+  .mapa-afetivo__adicionar { font-size:.72rem; }
+  .mapa-afetivo__janela { grid-template-columns:90px 1fr; }
+  .mapa-afetivo__janela img { width:90px; }
+  .mapa-afetivo__barra { align-items:stretch; flex-direction:column; }
+  .mapa-afetivo__barra .botao { align-self:flex-start; }
+  .mapa-afetivo__quadro--real { height:420px; min-height:420px; }
 }
 
 button,
