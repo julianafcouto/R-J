@@ -7,7 +7,8 @@
     "conexo",
     "memoria",
     "puzzle",
-    "telescopio"
+    "telescopio",
+    "mapa"
   ]);
 
   function escaparHTML(valor) {
@@ -1664,6 +1665,78 @@
    * Seleção de componentes
    */
 
+  function criarMapa(dados) {
+    const elemento = document.createElement("article");
+    const chave = `rj-mapa-${dados.id || "destinos"}`;
+    let pontos = [];
+    let posicaoNova = { x: 50, y: 50 };
+    try { pontos = JSON.parse(localStorage.getItem(chave) || "[]"); if (!Array.isArray(pontos)) pontos = []; }
+    catch (_) { pontos = []; }
+
+    elemento.className = "componente puzzle mapa-afetivo";
+    elemento.innerHTML = `
+      <span class="componente__etiqueta">Nosso mapa do futuro</span>
+      <h3>${escaparHTML(dados.titulo || "Lugares onde ainda seremos nós")}</h3>
+      <p class="puzzle__descricao">${escaparHTML(dados.descricao || "Toque no mapa e guarde um destino, uma imagem e um sonho.")}</p>
+      <div class="mapa-afetivo__quadro" data-mapa tabindex="0" role="button" aria-label="Mapa ilustrado. Toque para adicionar um destino.">
+        <div class="mapa-afetivo__terra mapa-afetivo__terra--um"></div><div class="mapa-afetivo__terra mapa-afetivo__terra--dois"></div><div class="mapa-afetivo__terra mapa-afetivo__terra--tres"></div>
+        <div class="mapa-afetivo__rotas"></div><div data-pinos></div>
+        <div class="mapa-afetivo__convite" data-convite><span>＋</span> toque para marcar nosso próximo lugar</div>
+      </div>
+      <form class="mapa-afetivo__formulario" data-form hidden>
+        <div class="mapa-afetivo__form-cabecalho"><strong>Novo destino</strong><button type="button" class="mapa-afetivo__fechar" data-fechar aria-label="Fechar">×</button></div>
+        <label>Que lugar é esse?<input type="text" name="lugar" maxlength="80" placeholder="Ex.: ver o pôr do sol em Paraty" required></label>
+        <label>O que você quer viver lá?<textarea name="observacao" rows="3" maxlength="500" placeholder="Uma ideia, promessa ou detalhe para lembrar..."></textarea></label>
+        <label class="mapa-afetivo__foto">Uma imagem para esse sonho <span>(opcional)</span><input type="file" name="imagem" accept="image/*"></label>
+        <button class="botao" type="submit">Guardar no mapa ♡</button><p class="puzzle__feedback" data-feedback aria-live="polite"></p>
+      </form><div class="mapa-afetivo__lugares" data-lugares></div>`;
+
+    const mapa = elemento.querySelector("[data-mapa]");
+    const pinos = elemento.querySelector("[data-pinos]");
+    const convite = elemento.querySelector("[data-convite]");
+    const formulario = elemento.querySelector("[data-form]");
+    const lugares = elemento.querySelector("[data-lugares]");
+    const feedback = elemento.querySelector("[data-feedback]");
+
+    function salvar() {
+      try { localStorage.setItem(chave, JSON.stringify(pontos)); return true; }
+      catch (_) { feedback.textContent = "A imagem ficou grande demais para guardar. Tente uma foto menor."; feedback.className = "puzzle__feedback puzzle__feedback--erro"; return false; }
+    }
+    function desenhar() {
+      pinos.innerHTML = ""; lugares.innerHTML = ""; convite.hidden = pontos.length > 0;
+      pontos.forEach(function (ponto, indice) {
+        const pino = document.createElement("button");
+        pino.type = "button"; pino.className = "mapa-afetivo__pino"; pino.style.left = `${ponto.x}%`; pino.style.top = `${ponto.y}%`;
+        pino.setAttribute("aria-label", ponto.lugar); pino.innerHTML = `<span>♡</span><small>${indice + 1}</small>`;
+        pino.addEventListener("click", function (evento) { evento.stopPropagation(); elemento.querySelector(`[data-ponto="${ponto.id}"]`)?.scrollIntoView({ behavior: "smooth", block: "nearest" }); });
+        pinos.appendChild(pino);
+        const cartao = document.createElement("article");
+        cartao.className = "mapa-afetivo__lugar"; cartao.dataset.ponto = ponto.id;
+        cartao.innerHTML = `${ponto.imagem ? `<img src="${ponto.imagem}" alt="Imagem escolhida para ${escaparHTML(ponto.lugar)}">` : `<div class="mapa-afetivo__sem-foto">♡</div>`}<div><span>destino ${indice + 1}</span><h4>${escaparHTML(ponto.lugar)}</h4>${ponto.observacao ? `<p>${escaparHTML(ponto.observacao)}</p>` : ""}</div><button type="button" class="mapa-afetivo__remover" aria-label="Remover destino">×</button>`;
+        cartao.querySelector("button").addEventListener("click", function () { pontos = pontos.filter(function (item) { return item.id !== ponto.id; }); salvar(); desenhar(); });
+        lugares.appendChild(cartao);
+      });
+    }
+    function abrirFormulario(x, y) { posicaoNova = { x, y }; formulario.hidden = false; formulario.querySelector("input[name='lugar']").focus(); }
+    mapa.addEventListener("click", function (evento) { const caixa = mapa.getBoundingClientRect(); abrirFormulario(Math.max(4, Math.min(96, ((evento.clientX - caixa.left) / caixa.width) * 100)), Math.max(8, Math.min(92, ((evento.clientY - caixa.top) / caixa.height) * 100))); });
+    mapa.addEventListener("keydown", function (evento) { if (evento.key === "Enter" || evento.key === " ") { evento.preventDefault(); abrirFormulario(50, 50); } });
+    elemento.querySelector("[data-fechar]").addEventListener("click", function () { formulario.hidden = true; formulario.reset(); });
+    formulario.addEventListener("submit", function (evento) {
+      evento.preventDefault();
+      const lugar = formulario.elements.lugar.value.trim(); const observacao = formulario.elements.observacao.value.trim(); const arquivo = formulario.elements.imagem.files[0];
+      function guardar(imagem) {
+        pontos.push({ id: `${Date.now()}-${Math.random().toString(16).slice(2)}`, lugar, observacao, imagem: imagem || "", x: posicaoNova.x, y: posicaoNova.y });
+        if (!salvar()) { pontos.pop(); return; }
+        formulario.reset(); formulario.hidden = true; desenhar(); concluirPuzzle(elemento);
+      }
+      if (!arquivo) { guardar(""); return; }
+      if (arquivo.size > 1500000) { feedback.textContent = "Escolha uma imagem de até 1,5 MB."; feedback.className = "puzzle__feedback puzzle__feedback--erro"; return; }
+      const leitor = new FileReader(); leitor.onload = function () { guardar(leitor.result); }; leitor.readAsDataURL(arquivo);
+    });
+    desenhar(); if (pontos.length > 0) window.setTimeout(function () { concluirPuzzle(elemento); }, 0);
+    return elemento;
+  }
+
   function criarComponente(dados) {
     const tipo =
       normalizar(dados?.tipo);
@@ -1696,6 +1769,9 @@
 
         case "telescopio":
           return criarTelescopio(dados);
+
+        case "mapa":
+          return criarMapa(dados);
 
         default:
           return criarElementoErro(

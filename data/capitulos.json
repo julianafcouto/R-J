@@ -339,5 +339,33 @@
         "bloqueada": true
       }
     ]
+  },
+  {
+    "id": "2026-08-09",
+    "titulo": "Onde ainda seremos nós",
+    "data": "09.08.2026",
+    "subtitulo": "Nosso mapa do futuro",
+    "componentes": [
+      {
+        "tipo": "carta",
+        "titulo": "Todos os lugares levam a você",
+        "texto": "Quero conhecer o mundo com você. Não só os lugares enormes, distantes e bonitos, mas também as esquinas tranquilas, os cafés escondidos e qualquer caminho que fique especial porque percorremos juntas.\n\nEste mapa é para guardarmos nossos próximos destinos, e, aos poucos, transformarmos vontade em memória."
+      },
+      {
+        "tipo": "mapa",
+        "id": "nosso-mapa",
+        "titulo": "Lugares onde ainda seremos nós",
+        "descricao": "Toque em qualquer ponto do mapa. Dê um nome ao destino, deixe uma foto e escreva o que você quer viver nele comigo."
+      },
+      {
+        "tipo": "musica",
+        "titulo": "Volta",
+        "artista": "O Terno",
+        "capa": "./assets/imagens/capas/volta.jpg",
+        "link": "https://open.spotify.com/intl-pt/track/2AmlCuy1DBxmjxmfY4h463?si=a4bf005ab83a4d07",
+        "mensagem": "Para todos os lugares onde formos e para todas as vezes em que o caminho nos trouxer de volta uma para a outra.",
+        "bloqueada": true
+      }
+    ]
   }
 ]

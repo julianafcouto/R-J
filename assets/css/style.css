@@ -48,6 +48,44 @@ textarea {
   font: inherit;
 }
 
+/* Mapa afetivo */
+.mapa-afetivo__quadro { position: relative; min-height: 390px; margin-top: 30px; overflow: hidden; border: 1px solid rgba(83,112,125,.2); border-radius: 26px; background: linear-gradient(145deg,#dcebf0,#eef3ed 55%,#d9e8ec); box-shadow: inset 0 0 70px rgba(72,104,119,.13); cursor: crosshair; }
+.mapa-afetivo__quadro::before,.mapa-afetivo__quadro::after { position:absolute; inset:0; content:""; pointer-events:none; }
+.mapa-afetivo__quadro::before { background-image:radial-gradient(rgba(70,95,105,.12) 1px,transparent 1px); background-size:19px 19px; }
+.mapa-afetivo__quadro::after { background:linear-gradient(115deg,transparent 48%,rgba(255,255,255,.38) 49%,transparent 51%); }
+.mapa-afetivo__terra { position:absolute; border-radius:48% 52% 63% 37%; background:#b8c9aa; opacity:.78; box-shadow:inset -12px -15px 25px rgba(75,100,68,.12); transform:rotate(-10deg); }
+.mapa-afetivo__terra--um { width:38%; height:48%; top:-8%; left:-7%; }
+.mapa-afetivo__terra--dois { width:31%; height:57%; right:7%; top:11%; transform:rotate(18deg); }
+.mapa-afetivo__terra--tres { width:28%; height:35%; left:24%; bottom:-13%; transform:rotate(8deg); }
+.mapa-afetivo__rotas { position:absolute; width:54%; height:38%; left:20%; top:31%; border:2px dashed rgba(119,99,143,.25); border-width:2px 0 0; border-radius:50%; transform:rotate(-8deg); }
+.mapa-afetivo__convite { position:absolute; left:50%; top:50%; display:flex; align-items:center; gap:10px; padding:13px 18px; border-radius:999px; background:rgba(255,255,255,.9); color:var(--roxo-escuro); box-shadow:var(--sombra); transform:translate(-50%,-50%); font-size:.86rem; pointer-events:none; white-space:nowrap; }
+.mapa-afetivo__convite span { font-size:1.3rem; }
+.mapa-afetivo__pino { position:absolute; z-index:3; display:grid; width:46px; height:46px; padding:0; place-items:center; border:0; border-radius:50% 50% 50% 8px; background:var(--roxo-escuro); color:white; box-shadow:0 8px 22px rgba(70,49,86,.3); cursor:pointer; transform:translate(-50%,-90%) rotate(-45deg); }
+.mapa-afetivo__pino span,.mapa-afetivo__pino small { position:absolute; transform:rotate(45deg); }
+.mapa-afetivo__pino span { font-size:1.3rem; }
+.mapa-afetivo__pino small { right:-5px; top:-5px; display:grid; width:19px; height:19px; place-items:center; border-radius:50%; background:white; color:var(--roxo-escuro); font-weight:700; }
+.mapa-afetivo__formulario { display:grid; margin-top:18px; padding:24px; gap:17px; border:1px solid var(--borda); border-radius:22px; background:rgba(255,255,255,.82); }
+.mapa-afetivo__formulario[hidden] { display:none; }
+.mapa-afetivo__form-cabecalho { display:flex; align-items:center; justify-content:space-between; color:var(--roxo-escuro); font-family:var(--titulo); font-size:1.5rem; }
+.mapa-afetivo__fechar,.mapa-afetivo__remover { border:0; background:transparent; color:var(--texto-suave); cursor:pointer; font-size:1.6rem; }
+.mapa-afetivo__formulario label { display:grid; gap:8px; color:var(--texto-suave); font-size:.82rem; font-weight:600; }
+.mapa-afetivo__formulario input[type="text"],.mapa-afetivo__formulario textarea { width:100%; padding:13px 15px; border:1px solid var(--borda); border-radius:14px; background:white; color:var(--texto); font:inherit; outline:none; resize:vertical; }
+.mapa-afetivo__foto span { font-weight:400; }
+.mapa-afetivo__lugares { display:grid; margin-top:22px; gap:14px; grid-template-columns:repeat(2,minmax(0,1fr)); }
+.mapa-afetivo__lugar { position:relative; display:grid; min-width:0; overflow:hidden; grid-template-columns:105px 1fr; border:1px solid var(--borda); border-radius:18px; background:rgba(255,255,255,.78); }
+.mapa-afetivo__lugar img,.mapa-afetivo__sem-foto { width:105px; height:100%; min-height:118px; object-fit:cover; }
+.mapa-afetivo__sem-foto { display:grid; place-items:center; background:linear-gradient(145deg,#e9dfef,#dce8e2); color:var(--roxo); font-size:2rem; }
+.mapa-afetivo__lugar > div:nth-child(2) { padding:17px 30px 17px 15px; }
+.mapa-afetivo__lugar span { color:var(--roxo); font-size:.65rem; letter-spacing:.12em; text-transform:uppercase; }
+.mapa-afetivo__lugar h4 { margin:5px 0 7px; font-family:var(--titulo); font-size:1.3rem; font-weight:500; }
+.mapa-afetivo__lugar p { margin:0; color:var(--texto-suave); font-size:.82rem; line-height:1.5; white-space:pre-wrap; }
+.mapa-afetivo__remover { position:absolute; right:8px; top:6px; }
+
+@media (max-width:760px) {
+  .mapa-afetivo__quadro { min-height:330px; }
+  .mapa-afetivo__lugares { grid-template-columns:1fr; }
+}
+
 button,
 a {
   -webkit-tap-highlight-color: transparent;
