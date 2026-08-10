@@ -2740,6 +2740,9 @@
 
   function iniciarAreaCartas() {
     const HASH_SENHA = "c5e68184d2869573febab888fe67355af26a5fc059a50f8d332efe105bd9404a";
+    // Acesso de leitura. Em um site estático, o servidor ainda deve aplicar
+    // suas próprias regras para proteger dados realmente confidenciais.
+    const HASH_VISITANTE = "25d114d44f1ee498521f51cd12e524e8fd6e67c82a9d21fc29c0bbc7fff457c4";
     const modal = document.getElementById("senha-cartas");
     const formulario = document.getElementById("senha-cartas-form");
     const entrada = document.getElementById("senha-cartas-input");
@@ -2777,8 +2780,21 @@
       }, 80);
     }
 
+    function aplicarPerfil(perfil) {
+      const visitante = perfil === "visitante";
+      document.body.classList.toggle("acesso-visitante", visitante);
+      document.querySelectorAll("[data-somente-proprietaria]").forEach(function (elemento) {
+        elemento.hidden = visitante;
+      });
+      if (visitante) {
+        const painelMomentos = document.getElementById("momentos");
+        if (painelMomentos) painelMomentos.hidden = true;
+      }
+    }
+
     function abrir() {
       if (sessionStorage.getItem("rj-cartas-abertas") === "sim") {
+        aplicarPerfil(sessionStorage.getItem("rj-perfil") || "proprietaria");
         mostrarArea();
         return;
       }
@@ -2804,8 +2820,11 @@
       aviso.textContent = "Verificando...";
 
       try {
-        const correto = await calcularHash(entrada.value) === HASH_SENHA;
-        if (!correto) {
+        const hash = await calcularHash(entrada.value);
+        const perfil = hash === HASH_SENHA
+          ? "proprietaria"
+          : hash === HASH_VISITANTE ? "visitante" : "";
+        if (!perfil) {
           aviso.textContent = "Essa senha não abriu o nosso cantinho.";
           formulario.classList.remove("senha-cartas__cartao--erro");
           void formulario.offsetWidth;
@@ -2814,11 +2833,16 @@
           return;
         }
 
-        const codigoPostagem = document.getElementById("cantinho-codigo");
-        if (codigoPostagem) codigoPostagem.value = entrada.value.trim();
-        const codigoMomentos = document.getElementById("momentos-codigo");
-        if (codigoMomentos) codigoMomentos.value = entrada.value.trim();
+        if (perfil === "proprietaria") {
+          const codigoPostagem = document.getElementById("cantinho-codigo");
+          if (codigoPostagem) codigoPostagem.value = entrada.value.trim();
+          const codigoMomentos = document.getElementById("momentos-codigo");
+          if (codigoMomentos) codigoMomentos.value = entrada.value.trim();
+        }
         sessionStorage.setItem("rj-cartas-abertas", "sim");
+        sessionStorage.setItem("rj-perfil", perfil);
+        aplicarPerfil(perfil);
+        document.dispatchEvent(new CustomEvent("rj-acesso-alterado", { detail: { perfil } }));
         modal.classList.add("senha-cartas--saindo");
         window.setTimeout(function () {
           modal.classList.remove("senha-cartas--saindo");
@@ -2833,6 +2857,7 @@
     escolhas.forEach(function (escolha) {
       escolha.addEventListener("click", function () {
         const idPainel = escolha.dataset.painelCartas;
+        if (idPainel === "momentos" && sessionStorage.getItem("rj-perfil") === "visitante") return;
         paineis.forEach(function (painel) { painel.hidden = painel.id !== idPainel; });
         escolhas.forEach(function (item) { item.classList.toggle("carta-acesso--ativo", item === escolha); });
         document.getElementById(idPainel)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -2841,6 +2866,8 @@
 
     bloquear?.addEventListener("click", function () {
       sessionStorage.removeItem("rj-cartas-abertas");
+      sessionStorage.removeItem("rj-perfil");
+      document.body.classList.remove("acesso-visitante");
       area.hidden = true;
       paineis.forEach(function (painel) { painel.hidden = true; });
       escolhas.forEach(function (item) { item.classList.remove("carta-acesso--ativo"); });
@@ -2855,7 +2882,19 @@
   function iniciarSite() {
     iniciarAreaCartas();
     iniciarCantinho();
-    iniciarMomentos();
+    let momentosIniciados = false;
+    function iniciarMomentosDaProprietaria() {
+      if (momentosIniciados) return;
+      momentosIniciados = true;
+      iniciarMomentos();
+    }
+    const perfilSalvo = sessionStorage.getItem("rj-perfil");
+    if (sessionStorage.getItem("rj-cartas-abertas") === "sim" && perfilSalvo !== "visitante") {
+      iniciarMomentosDaProprietaria();
+    }
+    document.addEventListener("rj-acesso-alterado", function (evento) {
+      if (evento.detail?.perfil === "proprietaria") iniciarMomentosDaProprietaria();
+    });
     try {
       atualizarContadores();
 

@@ -33,7 +33,7 @@
 
   <link
     rel="stylesheet"
-    href="./assets/css/style.css?v=20260809c"
+    href="./assets/css/style.css?v=20260809d"
   >
   <link rel="stylesheet" href="./assets/vendor/leaflet/leaflet.css">
 </head>
@@ -180,7 +180,7 @@
           <span><small>Mensagens guardadas por ela</small><strong>Para Juliana</strong></span>
           <i>→</i>
         </button>
-        <button class="carta-acesso carta-acesso--momentos" type="button" data-painel-cartas="momentos">
+        <button class="carta-acesso carta-acesso--momentos" type="button" data-painel-cartas="momentos" data-somente-proprietaria>
           <span class="carta-acesso__icone">𖨆⁠♡𖨆⁠</span>
           <span><small>Fotos, passeios e dias especiais</small><strong>Nossos momentos</strong></span>
           <i>→</i>
@@ -220,7 +220,7 @@
         </p>
       </header>
 
-      <div class="cantinho__cartao">
+      <div class="cantinho__cartao" data-somente-proprietaria>
         <label for="cantinho-texto">O que você quer guardar hoje?</label>
         <textarea id="cantinho-texto" rows="6" maxlength="16000000"
           placeholder="Pode escrever do seu jeito..."></textarea>
@@ -323,8 +323,8 @@
         <span class="senha-cartas__icone">♡</span>
         <span class="etiqueta">Área privada</span>
         <h2>Entre nós duas</h2>
-        <p>Digite a senha para abrir nossas cartas.</p>
-        <label for="senha-cartas-input">Senha</label>
+        <p>Digite seu código para abrir as cartas.</p>
+        <label for="senha-cartas-input">Código de acesso</label>
         <input id="senha-cartas-input" type="password" autocomplete="current-password" required>
         <button class="botao" type="submit">Abrir cartas</button>
         <p class="senha-cartas__aviso" id="senha-cartas-aviso" aria-live="polite"></p>
@@ -389,7 +389,7 @@
 
   <script src="./assets/vendor/leaflet/leaflet.js"></script>
   <script
-    src="./assets/js/app.js?v=20260809d"
+    src="./assets/js/app.js?v=20260809f"
     defer
   ></script>
 </body>

@@ -2189,6 +2189,17 @@ body.senha-cartas-aberta { overflow: hidden; }
   font-size: 0.75rem;
 }
 
+/* Visitantes podem somente ler cartas e publicações. */
+.acesso-visitante [data-somente-proprietaria],
+.acesso-visitante .cantinho__excluir,
+.acesso-visitante .momento__apagar,
+.acesso-visitante .mapa-afetivo__adicionar,
+.acesso-visitante .mapa-afetivo__formulario,
+.acesso-visitante .mapa-afetivo__popup-remover,
+.acesso-visitante #momentos {
+  display: none !important;
+}
+
 .cantinho__link {
   display: inline-flex;
   margin-top: 18px;
