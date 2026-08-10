@@ -93,8 +93,7 @@
     <nav class="cabecalho__navegacao">
       <a href="#inicio">Início</a>
       <a href="#tempo">Tempo</a>
-      <a href="#historia">História</a>
-      <a href="#cantinho">Seu cantinho</a>
+      <a href="#cartas" data-abrir-cartas>Cartas</a>
     </nav>
   </header>
 
@@ -116,9 +115,9 @@
         And it's me and you
       </p>
 
-      <a class="botao" href="#historia">
-        Ler
-      </a>
+      <button class="botao" id="abrir-cartas" type="button">
+        Ver nossas cartas
+      </button>
     </section>
 
     <section class="contadores" id="tempo">
@@ -140,7 +139,7 @@
         </article>
 
         <article class="contador" data-contador-data="2026-06-16T00:00:00">
-          <p class="contador__marco">Desde que você se tornou minha</p>
+          <p class="contador__marco">Desde que nos tornamos uma da outra</p>
           <time datetime="2026-06-16">16 de junho de 2026</time>
           <div class="contador__tempo">
             <div><strong data-unidade="dias">0</strong><span>dias</span></div>
@@ -161,7 +160,29 @@
       <div id="mapa-principal"></div>
     </section>
 
-    <section class="historia" id="historia">
+    <section class="area-cartas" id="cartas" hidden>
+      <header class="area-cartas__topo">
+        <div>
+          <span class="etiqueta">Nosso espaço privado</span>
+          <h2>Cartas entre nós</h2>
+        </div>
+        <button type="button" class="area-cartas__bloquear" id="bloquear-cartas">Bloquear</button>
+      </header>
+
+      <div class="area-cartas__escolhas" id="escolher-cartas">
+        <button class="carta-acesso carta-acesso--rayane" type="button" data-painel-cartas="historia">
+          <span class="carta-acesso__icone">♡</span>
+          <span><small>Cartas, músicas e memórias</small><strong>Para Rayane</strong></span>
+          <i>→</i>
+        </button>
+        <button class="carta-acesso carta-acesso--juliana" type="button" data-painel-cartas="cantinho">
+          <span class="carta-acesso__icone">♡</span>
+          <span><small>Mensagens guardadas por ela</small><strong>Para Juliana</strong></span>
+          <i>→</i>
+        </button>
+      </div>
+
+    <section class="historia area-cartas__painel" id="historia" hidden>
       <header class="secao-cabecalho">
         <span class="etiqueta">
           Nossa história
@@ -184,7 +205,7 @@
       </div>
     </section>
 
-    <section class="cantinho" id="cantinho">
+    <section class="cantinho area-cartas__painel" id="cantinho" hidden>
       <header class="secao-cabecalho">
         <span class="etiqueta">Um espaço para você</span>
         <h2>De Rayane</h2>
@@ -230,6 +251,22 @@
         <p class="cantinho__vazio">Carregando as publicações...</p>
       </div>
     </section>
+    </section>
+
+    <div class="senha-cartas" id="senha-cartas" hidden>
+      <div class="senha-cartas__fundo" data-fechar-senha></div>
+      <form class="senha-cartas__cartao" id="senha-cartas-form">
+        <button type="button" class="senha-cartas__fechar" data-fechar-senha aria-label="Fechar">×</button>
+        <span class="senha-cartas__icone">♡</span>
+        <span class="etiqueta">Área privada</span>
+        <h2>Entre nós duas</h2>
+        <p>Digite a senha para abrir nossas cartas.</p>
+        <label for="senha-cartas-input">Senha</label>
+        <input id="senha-cartas-input" type="password" autocomplete="current-password" required>
+        <button class="botao" type="submit">Abrir cartas</button>
+        <p class="senha-cartas__aviso" id="senha-cartas-aviso" aria-live="polite"></p>
+      </form>
+    </div>
   </main>
 
   <footer class="rodape">

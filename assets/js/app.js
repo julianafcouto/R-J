@@ -1747,31 +1747,41 @@
     function desenhar() {
       lugares.innerHTML = "";
       if (camadaPontos) camadaPontos.clearLayers();
-      pontos.forEach(function (ponto, indice) {
+      pontos.forEach(function (ponto) {
         if (camadaPontos) {
-          const icone = L.divIcon({ className: "mapa-afetivo__icone", html: `<span><b>♡</b></span><small>${indice + 1}</small>`, iconSize: [46, 52], iconAnchor: [23, 50], popupAnchor: [0, -46] });
-          const conteudo = `<div class="mapa-afetivo__popup">${ponto.imagem ? `<img src="${ponto.imagem}" alt="Imagem escolhida para ${escaparHTML(ponto.lugar)}">` : ""}<span>Um lugar para nós</span><h4>${escaparHTML(ponto.lugar)}</h4><p>${escaparHTML(ponto.observacao || "Um sonho guardado no nosso mapa.")}</p></div>`;
+          const icone = L.divIcon({ className: "mapa-afetivo__icone", html: `<span><b>♡</b></span>`, iconSize: [46, 52], iconAnchor: [23, 50], popupAnchor: [0, -46] });
+          const conteudo = `<div class="mapa-afetivo__popup">${ponto.imagem ? `<img src="${ponto.imagem}" alt="Imagem escolhida para ${escaparHTML(ponto.lugar)}">` : ""}<span>Um lugar para nós</span><h4>${escaparHTML(ponto.lugar)}</h4><p>${escaparHTML(ponto.observacao || "Um sonho guardado no nosso mapa.")}</p><button type="button" class="mapa-afetivo__popup-remover" data-remover-ponto="${escaparHTML(ponto.id)}">Apagar destino</button></div>`;
           L.marker([ponto.lat, ponto.lng], { icon: icone, title: ponto.lugar }).bindPopup(conteudo, { maxWidth: 310 }).addTo(camadaPontos);
         }
-        const cartao = document.createElement("article");
-        cartao.className = "mapa-afetivo__lugar"; cartao.dataset.ponto = ponto.id;
-        cartao.innerHTML = `${ponto.imagem ? `<img src="${ponto.imagem}" alt="Imagem escolhida para ${escaparHTML(ponto.lugar)}">` : `<div class="mapa-afetivo__sem-foto">♡</div>`}<div><span>destino ${indice + 1}</span><h4>${escaparHTML(ponto.lugar)}</h4>${ponto.observacao ? `<p>${escaparHTML(ponto.observacao)}</p>` : ""}</div><button type="button" class="mapa-afetivo__remover" aria-label="Remover destino">×</button>`;
-        cartao.querySelector("button").addEventListener("click", async function () {
-          const codigo = localStorage.getItem(chaveCodigo) || formulario.elements.codigo.value.trim();
-          if (!codigo) { feedback.textContent = "Digite o código de acesso para apagar este lugar."; formulario.hidden = false; formulario.elements.codigo.focus(); return; }
-          if (!window.confirm(`Quer mesmo apagar ${ponto.lugar} do mapa de vocês?`)) return;
-          try {
-            await apagarPontoOnline(ponto, codigo);
-            pontos = pontos.filter(function (item) { return item.id !== ponto.id; }); salvar(); desenhar();
-            feedback.textContent = "Lugar apagado do mapa compartilhado."; feedback.className = "puzzle__feedback puzzle__feedback--certo";
-          } catch (erro) {
-            feedback.textContent = erro.message === "codigo" ? "Código de acesso incorreto." : "Não foi possível apagar. Confira a conexão.";
-            feedback.className = "puzzle__feedback puzzle__feedback--erro";
-          }
-        });
-        lugares.appendChild(cartao);
       });
     }
+
+    mapa.addEventListener("click", async function (evento) {
+      const botaoRemover = evento.target.closest("[data-remover-ponto]");
+      if (!botaoRemover) return;
+
+      const ponto = pontos.find(function (item) { return item.id === botaoRemover.dataset.removerPonto; });
+      if (!ponto || !window.confirm(`Quer mesmo apagar ${ponto.lugar} do mapa de vocês?`)) return;
+
+      const codigoSalvo = localStorage.getItem(chaveCodigo) || formulario.elements.codigo.value.trim();
+      const codigo = codigoSalvo || window.prompt("Digite o código de acesso para apagar este destino:")?.trim();
+      if (!codigo) return;
+
+      botaoRemover.disabled = true;
+      try {
+        await apagarPontoOnline(ponto, codigo);
+        localStorage.setItem(chaveCodigo, codigo);
+        pontos = pontos.filter(function (item) { return item.id !== ponto.id; });
+        salvar();
+        desenhar();
+        feedback.textContent = "Lugar apagado do mapa compartilhado.";
+        feedback.className = "puzzle__feedback puzzle__feedback--certo";
+      } catch (erro) {
+        feedback.textContent = erro.message === "codigo" ? "Código de acesso incorreto." : "Não foi possível apagar. Confira a conexão.";
+        feedback.className = "puzzle__feedback puzzle__feedback--erro";
+        botaoRemover.disabled = false;
+      }
+    });
     function abrirFormulario(lat, lng) { posicaoNova = { lat, lng }; formulario.hidden = false; formulario.scrollIntoView({ behavior: "smooth", block: "nearest" }); formulario.querySelector("input[name='lugar']").focus(); }
     elemento.querySelector("[data-adicionar]").addEventListener("click", function () {
       modoAdicionar = true; mapa.classList.add("mapa-afetivo__quadro--marcando");
@@ -2541,7 +2551,120 @@
     carregarPublicacoes();
   }
 
+  function iniciarAreaCartas() {
+    const HASH_SENHA = "c5e68184d2869573febab888fe67355af26a5fc059a50f8d332efe105bd9404a";
+    const modal = document.getElementById("senha-cartas");
+    const formulario = document.getElementById("senha-cartas-form");
+    const entrada = document.getElementById("senha-cartas-input");
+    const aviso = document.getElementById("senha-cartas-aviso");
+    const area = document.getElementById("cartas");
+    const bloquear = document.getElementById("bloquear-cartas");
+    const gatilhos = document.querySelectorAll("#abrir-cartas, [data-abrir-cartas]");
+    const escolhas = document.querySelectorAll("[data-painel-cartas]");
+    const paineis = document.querySelectorAll(".area-cartas__painel");
+
+    if (!modal || !formulario || !entrada || !aviso || !area) return;
+
+    async function calcularHash(valor) {
+      const bytes = new TextEncoder().encode(valor.trim().toLocaleLowerCase("pt-BR"));
+      const resumo = await crypto.subtle.digest("SHA-256", bytes);
+      return Array.from(new Uint8Array(resumo))
+        .map(function (byte) { return byte.toString(16).padStart(2, "0"); })
+        .join("");
+    }
+
+    function fecharModal() {
+      modal.hidden = true;
+      document.body.classList.remove("senha-cartas-aberta");
+      aviso.textContent = "";
+      entrada.value = "";
+    }
+
+    function mostrarArea() {
+      area.hidden = false;
+      area.classList.remove("area-cartas--entrando");
+      void area.offsetWidth;
+      area.classList.add("area-cartas--entrando");
+      window.setTimeout(function () {
+        area.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 80);
+    }
+
+    function abrir() {
+      if (sessionStorage.getItem("rj-cartas-abertas") === "sim") {
+        mostrarArea();
+        return;
+      }
+
+      modal.hidden = false;
+      document.body.classList.add("senha-cartas-aberta");
+      window.setTimeout(function () { entrada.focus(); }, 80);
+    }
+
+    gatilhos.forEach(function (gatilho) {
+      gatilho.addEventListener("click", function (evento) {
+        evento.preventDefault();
+        abrir();
+      });
+    });
+
+    modal.querySelectorAll("[data-fechar-senha]").forEach(function (botao) {
+      botao.addEventListener("click", fecharModal);
+    });
+
+    formulario.addEventListener("submit", async function (evento) {
+      evento.preventDefault();
+      aviso.textContent = "Verificando...";
+
+      try {
+        const correto = await calcularHash(entrada.value) === HASH_SENHA;
+        if (!correto) {
+          aviso.textContent = "Essa senha não abriu o nosso cantinho.";
+          formulario.classList.remove("senha-cartas__cartao--erro");
+          void formulario.offsetWidth;
+          formulario.classList.add("senha-cartas__cartao--erro");
+          entrada.select();
+          return;
+        }
+
+        const codigoPostagem = document.getElementById("cantinho-codigo");
+        if (codigoPostagem) codigoPostagem.value = entrada.value.trim();
+        sessionStorage.setItem("rj-cartas-abertas", "sim");
+        modal.classList.add("senha-cartas--saindo");
+        window.setTimeout(function () {
+          modal.classList.remove("senha-cartas--saindo");
+          fecharModal();
+          mostrarArea();
+        }, 360);
+      } catch (_) {
+        aviso.textContent = "Não foi possível verificar agora. Tente novamente.";
+      }
+    });
+
+    escolhas.forEach(function (escolha) {
+      escolha.addEventListener("click", function () {
+        const idPainel = escolha.dataset.painelCartas;
+        paineis.forEach(function (painel) { painel.hidden = painel.id !== idPainel; });
+        escolhas.forEach(function (item) { item.classList.toggle("carta-acesso--ativo", item === escolha); });
+        document.getElementById(idPainel)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+
+    bloquear?.addEventListener("click", function () {
+      sessionStorage.removeItem("rj-cartas-abertas");
+      area.hidden = true;
+      paineis.forEach(function (painel) { painel.hidden = true; });
+      escolhas.forEach(function (item) { item.classList.remove("carta-acesso--ativo"); });
+      document.getElementById("inicio")?.scrollIntoView({ behavior: "smooth" });
+    });
+
+    document.addEventListener("keydown", function (evento) {
+      if (evento.key === "Escape" && !modal.hidden) fecharModal();
+    });
+  }
+
   function iniciarSite() {
+    iniciarAreaCartas();
     iniciarCantinho();
     try {
       atualizarContadores();
