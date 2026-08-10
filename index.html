@@ -180,12 +180,17 @@
           <span><small>Mensagens guardadas por ela</small><strong>Para Juliana</strong></span>
           <i>→</i>
         </button>
+        <button class="carta-acesso carta-acesso--momentos" type="button" data-painel-cartas="momentos">
+          <span class="carta-acesso__icone">𝜗ৎ</span>
+          <span><small>Fotos, passeios e dias especiais</small><strong>Nossos momentos</strong></span>
+          <i>→</i>
+        </button>
       </div>
 
     <section class="historia area-cartas__painel" id="historia" hidden>
       <header class="secao-cabecalho">
         <span class="etiqueta">
-          Nossa história
+          Escrevendo sobre nós
         </span>
 
         <h2>De Juliana</h2>
@@ -249,6 +254,64 @@
 
       <div class="cantinho__guardados" id="cantinho-guardados">
         <p class="cantinho__vazio">Carregando as publicações...</p>
+      </div>
+    </section>
+
+    <section class="momentos area-cartas__painel" id="momentos" hidden>
+      <header class="secao-cabecalho">
+        <span class="etiqueta">Nosso álbum vivo</span>
+        <h2>Nossos momentos</h2>
+        <p>Um feed para guardar o que aconteceu, do nosso jeitinho.</p>
+      </header>
+
+      <form class="momentos__formulario" id="momentos-form">
+        <div class="momentos__form-topo">
+          <div>
+            <span class="etiqueta">Nova memória</span>
+            <h3>O que aconteceu?</h3>
+          </div>
+          <span class="momentos__passos">Fotos + uma pequena história</span>
+        </div>
+
+        <label class="momentos__fotos" for="momentos-fotos">
+          <input id="momentos-fotos" name="fotos" type="file" accept="image/*" multiple required>
+          <span class="momentos__fotos-icone">＋</span>
+          <strong>Escolher fotos</strong>
+          <small>Até 50 fotos por momento</small>
+        </label>
+        <div class="momentos__previas" id="momentos-previas" hidden></div>
+
+        <label class="momentos__campo momentos__campo--descricao">
+          <span>Pequena descrição</span>
+          <textarea id="momentos-descricao" rows="3" maxlength="700" placeholder="Conte o que aconteceu, uma frase que ficou ou um detalhe que não devemos esquecer..." required></textarea>
+        </label>
+
+        <div class="momentos__linha">
+          <label class="momentos__campo">
+            <span>Data</span>
+            <input id="momentos-data" type="date" required>
+          </label>
+          <label class="momentos__campo">
+            <span>Publicado por</span>
+            <select id="momentos-autora">
+              <option value="Juliana">Juliana</option>
+              <option value="Rayane">Rayane</option>
+            </select>
+          </label>
+          <label class="momentos__campo">
+            <span>Senha</span>
+            <input id="momentos-codigo" type="password" autocomplete="current-password" required>
+          </label>
+        </div>
+
+        <div class="momentos__acoes">
+          <p id="momentos-aviso" aria-live="polite"></p>
+          <button class="botao" type="submit">Publicar momento</button>
+        </div>
+      </form>
+
+      <div class="momentos__feed" id="momentos-feed">
+        <p class="cantinho__vazio">Carregando nossos momentos...</p>
       </div>
     </section>
     </section>

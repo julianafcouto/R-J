@@ -2183,7 +2183,7 @@
 
         const idMes = `mes-${chave}`;
         grupo.className = "mes-timeline";
-        grupo.innerHTML = `<header class="mes-timeline__cabecalho"><button type="button" class="mes-timeline__botao" aria-expanded="false" aria-controls="${escaparHTML(idMes)}"><span class="mes-timeline__titulo"><span class="mes-timeline__icone">♡</span><span><small>Nossa história</small><strong>${escaparHTML(titulo)}</strong></span></span><span class="mes-timeline__meta"><small>${itens.length} ${itens.length === 1 ? "capítulo" : "capítulos"}</small><i aria-hidden="true"></i></span></button></header><div class="mes-timeline__capitulos" id="${escaparHTML(idMes)}" hidden></div>`;
+        grupo.innerHTML = `<header class="mes-timeline__cabecalho"><button type="button" class="mes-timeline__botao" aria-expanded="false" aria-controls="${escaparHTML(idMes)}"><span class="mes-timeline__titulo"><span class="mes-timeline__icone">♡</span><span><strong>${escaparHTML(titulo)}</strong></span></span><span class="mes-timeline__meta"><small>${itens.length} ${itens.length === 1 ? "capítulo" : "capítulos"}</small><i aria-hidden="true"></i></span></button></header><div class="mes-timeline__capitulos" id="${escaparHTML(idMes)}" hidden></div>`;
         const lista = grupo.querySelector(".mes-timeline__capitulos");
         const botaoMes = grupo.querySelector(".mes-timeline__botao");
 
@@ -2364,7 +2364,7 @@
         const id = `cantinho-${chave}`;
 
         grupo.className = "cantinho-mes";
-        grupo.innerHTML = `<button type="button" class="cantinho-mes__botao" aria-expanded="false" aria-controls="${id}"><span class="cantinho-mes__titulo"><span class="cantinho-mes__icone">♡</span><span><small>Cantinho da Rayane</small><strong>${escaparHTML(titulo)}</strong></span></span><span class="cantinho-mes__meta"><small data-total>0 publicações</small><i aria-hidden="true"></i></span></button>`;
+        grupo.innerHTML = `<button type="button" class="cantinho-mes__botao" aria-expanded="false" aria-controls="${id}"><span class="cantinho-mes__titulo"><span class="cantinho-mes__icone">♡</span><span><strong>${escaparHTML(titulo)}</strong></span></span><span class="cantinho-mes__meta"><small data-total>0 publicações</small><i aria-hidden="true"></i></span></button>`;
         lista.className = "cantinho-mes__publicacoes";
         lista.id = id;
         lista.hidden = true;
@@ -2484,7 +2484,8 @@
         if (!resposta.ok) throw new Error("leitura");
         const publicacoes = await resposta.json();
         mostrar(publicacoes.filter(function (item) {
-          return !String(item.texto || "").startsWith("__MAPA_RJ__");
+          const conteudo = String(item.texto || "");
+          return !conteudo.startsWith("__MAPA_RJ__") && !conteudo.startsWith("__FEED_RJ__");
         }));
       } catch (erro) {
         const locais = lerLocais().slice().reverse();
@@ -2549,6 +2550,192 @@
     });
 
     carregarPublicacoes();
+  }
+
+  function iniciarMomentos() {
+    const SUPABASE_URL = "https://mmipkjzdnnrgovvlihlp.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_vokCdlS5rBIiogRyIy0WPA_D5xTADIN";
+    const PREFIXO = "__FEED_RJ__";
+    const formulario = document.getElementById("momentos-form");
+    const fotos = document.getElementById("momentos-fotos");
+    const previas = document.getElementById("momentos-previas");
+    const descricao = document.getElementById("momentos-descricao");
+    const data = document.getElementById("momentos-data");
+    const autora = document.getElementById("momentos-autora");
+    const codigo = document.getElementById("momentos-codigo");
+    const aviso = document.getElementById("momentos-aviso");
+    const feed = document.getElementById("momentos-feed");
+
+    if (!formulario || !fotos || !previas || !descricao || !data || !autora || !codigo || !aviso || !feed) return;
+
+    data.value = new Date().toLocaleDateString("en-CA");
+    codigo.value = localStorage.getItem("rayane-cantinho-codigo-v1") || "";
+
+    function opcoesRequisicao(extras) {
+      return {
+        ...extras,
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+          "Content-Type": "application/json",
+          ...(extras?.headers || {})
+        }
+      };
+    }
+
+    function comprimirImagem(arquivo, quantidade) {
+      return new Promise(function (resolve, reject) {
+        const leitor = new FileReader();
+        leitor.onerror = reject;
+        leitor.onload = function () {
+          const imagem = new Image();
+          imagem.onerror = reject;
+          imagem.onload = function () {
+            const limite = quantidade > 20 ? 720 : quantidade > 10 ? 900 : 1200;
+            const qualidade = quantidade > 20 ? 0.62 : quantidade > 10 ? 0.68 : 0.76;
+            const escala = Math.min(1, limite / Math.max(imagem.width, imagem.height));
+            const canvas = document.createElement("canvas");
+            canvas.width = Math.max(1, Math.round(imagem.width * escala));
+            canvas.height = Math.max(1, Math.round(imagem.height * escala));
+            canvas.getContext("2d").drawImage(imagem, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL("image/jpeg", qualidade));
+          };
+          imagem.src = leitor.result;
+        };
+        leitor.readAsDataURL(arquivo);
+      });
+    }
+
+    function mostrarPrevias() {
+      const arquivos = Array.from(fotos.files || []).slice(0, 50);
+      previas.innerHTML = "";
+      previas.hidden = arquivos.length === 0;
+      arquivos.forEach(function (arquivo) {
+        const imagem = document.createElement("img");
+        imagem.alt = "Prévia da foto escolhida";
+        imagem.src = URL.createObjectURL(arquivo);
+        imagem.onload = function () { URL.revokeObjectURL(imagem.src); };
+        previas.appendChild(imagem);
+      });
+      if ((fotos.files?.length || 0) > 50) aviso.textContent = "Serão usadas as primeiras 50 fotos.";
+    }
+
+    function criarCarrossel(imagens, titulo) {
+      const carrossel = document.createElement("div");
+      carrossel.className = "momento__carrossel";
+      carrossel.innerHTML = `<div class="momento__trilha"></div>${imagens.length > 1 ? `<button type="button" class="momento__seta momento__seta--anterior" aria-label="Foto anterior">‹</button><button type="button" class="momento__seta momento__seta--proxima" aria-label="Próxima foto">›</button><span class="momento__indicador">1 / ${imagens.length}</span>` : ""}`;
+      const trilha = carrossel.querySelector(".momento__trilha");
+      imagens.forEach(function (origem, indice) {
+        const imagem = document.createElement("img");
+        imagem.src = origem;
+        imagem.alt = `${titulo}, foto ${indice + 1} de ${imagens.length}`;
+        imagem.loading = "lazy";
+        trilha.appendChild(imagem);
+      });
+
+      if (imagens.length > 1) {
+        let atual = 0;
+        const indicador = carrossel.querySelector(".momento__indicador");
+        function irPara(indice) {
+          atual = (indice + imagens.length) % imagens.length;
+          trilha.scrollTo({ left: trilha.clientWidth * atual, behavior: "smooth" });
+          indicador.textContent = `${atual + 1} / ${imagens.length}`;
+        }
+        carrossel.querySelector(".momento__seta--anterior").addEventListener("click", function () { irPara(atual - 1); });
+        carrossel.querySelector(".momento__seta--proxima").addEventListener("click", function () { irPara(atual + 1); });
+        trilha.addEventListener("scrollend", function () {
+          atual = Math.round(trilha.scrollLeft / Math.max(1, trilha.clientWidth));
+          indicador.textContent = `${atual + 1} / ${imagens.length}`;
+        });
+      }
+      return carrossel;
+    }
+
+    function desenhar(momentos) {
+      feed.innerHTML = "";
+      if (!momentos.length) {
+        feed.innerHTML = '<div class="momentos__vazio"><span>◎</span><h3>O primeiro momento começa aqui</h3><p>Escolham algumas fotos e contem um pedacinho do dia.</p></div>';
+        return;
+      }
+
+      momentos.forEach(function (item) {
+        const cartao = document.createElement("article");
+        const dados = item.dados;
+        const dataPartes = String(dados.data || "").split("-").map(Number);
+        const dataLocal = dataPartes.length === 3 ? new Date(dataPartes[0], dataPartes[1] - 1, dataPartes[2]) : new Date(item.criada_em);
+        cartao.className = "momento";
+        cartao.appendChild(criarCarrossel(dados.imagens || [], dados.descricao || "Nosso momento"));
+        const corpo = document.createElement("div");
+        corpo.className = "momento__corpo";
+        const classeAutora = normalizar(dados.autora) === "juliana" ? "juliana" : normalizar(dados.autora) === "rayane" ? "rayane" : "nos";
+        corpo.innerHTML = `<div class="momento__meta"><span class="momento__autora momento__autora--${classeAutora}">Por ${escaparHTML(dados.autora || "Nós")}</span><time datetime="${escaparHTML(dados.data || "")}">${new Intl.DateTimeFormat("pt-BR", { dateStyle: "long" }).format(dataLocal)}</time></div><p>${escaparHTML(dados.descricao || "")}</p><button type="button" class="momento__apagar">Apagar</button>`;
+        corpo.querySelector(".momento__apagar").addEventListener("click", async function () {
+          if (!window.confirm("Quer mesmo apagar este momento?")) return;
+          const senha = codigo.value.trim() || window.prompt("Digite a senha para apagar:")?.trim();
+          if (!senha) return;
+          try {
+            const resposta = await fetch(`${SUPABASE_URL}/rest/v1/rpc/apagar_publicacao_rayane`, opcoesRequisicao({ method: "POST", body: JSON.stringify({ p_id: item.id, p_codigo: senha }) }));
+            if (!resposta.ok) { const detalhe = await resposta.text(); throw new Error(detalhe.includes("codigo_incorreto") ? "codigo" : "exclusao"); }
+            await carregar();
+          } catch (erro) {
+            aviso.textContent = erro.message === "codigo" ? "Senha incorreta." : "Não foi possível apagar agora.";
+          }
+        });
+        cartao.appendChild(corpo);
+        feed.appendChild(cartao);
+      });
+    }
+
+    async function carregar() {
+      try {
+        const resposta = await fetch(`${SUPABASE_URL}/rest/v1/publicacoes_rayane?select=id,texto,criada_em&order=criada_em.desc`, opcoesRequisicao({ cache: "no-store" }));
+        if (!resposta.ok) throw new Error("leitura");
+        const itens = (await resposta.json()).filter(function (item) { return String(item.texto || "").startsWith(PREFIXO); }).map(function (item) {
+          try { return { ...item, dados: JSON.parse(item.texto.slice(PREFIXO.length)) }; } catch (_) { return null; }
+        }).filter(Boolean);
+        desenhar(itens);
+      } catch (_) {
+        feed.innerHTML = '<p class="cantinho__vazio">Não foi possível carregar os momentos agora.</p>';
+      }
+    }
+
+    fotos.addEventListener("change", mostrarPrevias);
+
+    formulario.addEventListener("submit", async function (evento) {
+      evento.preventDefault();
+      const arquivos = Array.from(fotos.files || []).slice(0, 50);
+      const senha = codigo.value.trim();
+      if (!arquivos.length || !descricao.value.trim() || !senha) return;
+
+      const botao = formulario.querySelector("button[type='submit']");
+      botao.disabled = true;
+      aviso.textContent = "Preparando as fotos...";
+      try {
+        const imagens = [];
+        for (const arquivo of arquivos) {
+          aviso.textContent = `Preparando foto ${imagens.length + 1} de ${arquivos.length}...`;
+          imagens.push(await comprimirImagem(arquivo, arquivos.length));
+        }
+        const payload = { imagens, descricao: descricao.value.trim(), data: data.value, autora: autora.value };
+        aviso.textContent = "Publicando o momento...";
+        const resposta = await fetch(`${SUPABASE_URL}/rest/v1/rpc/criar_publicacao_rayane`, opcoesRequisicao({ method: "POST", body: JSON.stringify({ p_id: globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`, p_texto: PREFIXO + JSON.stringify(payload), p_data: data.value || null, p_link: null, p_codigo: senha }) }));
+        if (!resposta.ok) { const detalhe = await resposta.text(); throw new Error(detalhe.includes("codigo_incorreto") ? "codigo" : "envio"); }
+        localStorage.setItem("rayane-cantinho-codigo-v1", senha);
+        formulario.reset();
+        data.value = new Date().toLocaleDateString("en-CA");
+        codigo.value = senha;
+        previas.hidden = true;
+        previas.innerHTML = "";
+        aviso.textContent = "Momento publicado. ♡";
+        await carregar();
+      } catch (erro) {
+        aviso.textContent = erro.message === "codigo" ? "Senha incorreta." : "As fotos ficaram grandes demais ou houve uma falha na conexão. Tente menos fotos.";
+      } finally {
+        botao.disabled = false;
+      }
+    });
+
+    carregar();
   }
 
   function iniciarAreaCartas() {
@@ -2629,6 +2816,8 @@
 
         const codigoPostagem = document.getElementById("cantinho-codigo");
         if (codigoPostagem) codigoPostagem.value = entrada.value.trim();
+        const codigoMomentos = document.getElementById("momentos-codigo");
+        if (codigoMomentos) codigoMomentos.value = entrada.value.trim();
         sessionStorage.setItem("rj-cartas-abertas", "sim");
         modal.classList.add("senha-cartas--saindo");
         window.setTimeout(function () {
@@ -2666,6 +2855,7 @@
   function iniciarSite() {
     iniciarAreaCartas();
     iniciarCantinho();
+    iniciarMomentos();
     try {
       atualizarContadores();
 
