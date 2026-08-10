@@ -27,7 +27,7 @@
   >
 
   <link
-    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap"
     rel="stylesheet"
   >
 
@@ -43,18 +43,38 @@
     <div class="abertura__decoracao"></div>
 
     <div class="abertura__conteudo">
-      <span class="abertura__coracao">♡</span>
-
-      <p class="abertura__frase">
-        R & J
-      </p>
-
+      <p class="abertura__convite">Toque na carteirinha para entrar</p>
       <button
-        class="botao botao--claro"
+        class="identidade"
         id="botao-entrar"
         type="button"
+        aria-label="Identidade de namorada de Rayane. Toque para abrir o site."
       >
-        Entrar
+        <span class="identidade__brilho"></span>
+        <span class="identidade__topo">
+          <span>IDENTIDADE DE NAMORADA</span>
+          <strong>R <i>&</i> J</strong>
+        </span>
+        <span class="identidade__corpo">
+          <span class="identidade__foto">
+            <img
+              src="./assets/imagens/rayane-identidade.png"
+              alt="Foto de Rayane sorrindo"
+            >
+          </span>
+          <span class="identidade__dados">
+            <span><small>Nome</small><strong>Rayane Victória Souza Lima</strong></span>
+            <span><small>Categoria</small><strong>Meu grande amor</strong></span>
+            <span class="identidade__linha">
+              <span><small>Desde</small><strong>16 JUN 2026</strong></span>
+              <span><small>Validade</small><strong>Para sempre</strong></span>
+            </span>
+          </span>
+        </span>
+        <span class="identidade__rodape">
+          <span>♡ Documento oficial do nosso amor</span>
+          <b>ABRIR →</b>
+        </span>
       </button>
     </div>
   </section>
@@ -80,24 +100,20 @@
 
   <main>
     <section class="hero" id="inicio">
-      <span class="hero__coracao">♡</span>
-
       <p class="etiqueta">
         De Juliana, Para Rayane
       </p>
 
       <h1>
-        Um lugar onde cada
-        <em>memória</em>
-        encontra um lar
+        R <em>&</em> J
       </h1>
 
       <p class="hero__descricao">
         I don't know much about algebra
 
-      But I know 1 plus 1 equals 2
+        But I know 1 plus 1 equals 2
 
-      And it's me and you
+        And it's me and you
       </p>
 
       <a class="botao" href="#historia">
@@ -110,9 +126,6 @@
         <span class="etiqueta">
           O tempo entre nós
         </span>
-
-        <h2>Nossa história em números</h2>
-      </header>
 
       <div class="contadores__grade">
         <article class="contador" data-contador-data="2026-03-25T00:00:00">
@@ -127,7 +140,7 @@
         </article>
 
         <article class="contador" data-contador-data="2026-06-16T00:00:00">
-          <p class="contador__marco">Desde o pedido de namoro</p>
+          <p class="contador__marco">Desde que você se tornou minha</p>
           <time datetime="2026-06-16">16 de junho de 2026</time>
           <div class="contador__tempo">
             <div><strong data-unidade="dias">0</strong><span>dias</span></div>
@@ -139,13 +152,22 @@
       </div>
     </section>
 
+    <section class="mapa-destaque" id="mapa">
+      <header class="secao-cabecalho">
+        <span class="etiqueta">Nosso mapa</span>
+        <h2>Lugares onde ainda seremos nós</h2>
+        <p>Um espaço para guardar destinos, sonhos e futuros encontros.</p>
+      </header>
+      <div id="mapa-principal"></div>
+    </section>
+
     <section class="historia" id="historia">
       <header class="secao-cabecalho">
         <span class="etiqueta">
           Nossa história
         </span>
 
-        <h2>Cartas</h2>
+        <h2>De Juliana</h2>
 
         <p>
           Meu peito transborda amor, e minha alma deseja a sua.
@@ -165,7 +187,7 @@
     <section class="cantinho" id="cantinho">
       <header class="secao-cabecalho">
         <span class="etiqueta">Um espaço para você</span>
-        <h2>Cantinho da Rayane</h2>
+        <h2>De Rayane</h2>
         <p>
           Escreva aqui o que estiver sentindo, uma lembrança ou
           qualquer coisinha que queira guardar.
@@ -243,17 +265,12 @@
         botao.addEventListener(
           "click",
           function () {
-            abertura.classList.add(
-              "abertura--fechada"
-            );
-
-            document.body.classList.remove(
-              "abertura-ativa"
-            );
-
+            botao.classList.add("identidade--abrindo");
             window.setTimeout(function () {
-              abertura.remove();
-            }, 850);
+              abertura.classList.add("abertura--fechada");
+              document.body.classList.remove("abertura-ativa");
+              window.setTimeout(function () { abertura.remove(); }, 850);
+            }, 520);
           }
         );
       }

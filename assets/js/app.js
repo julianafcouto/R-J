@@ -1944,7 +1944,9 @@
 
     const componentes =
       Array.isArray(dados.componentes)
-        ? dados.componentes
+        ? dados.componentes.filter(function (componente) {
+            return normalizar(componente?.tipo) !== "mapa";
+          })
         : [];
 
     let puzzlePendente = null;
@@ -2144,18 +2146,54 @@
 
       container.innerHTML = "";
 
-      capitulos.forEach(function (dados, indice) {
+      const meses = new Map();
+      const nomesMeses = [
+        "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+        "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+      ];
+
+      capitulos.forEach(function (dados) {
+        const partes = String(dados.id || "").split("-");
+        const ano = Number(partes[0]);
+        const mes = Number(partes[1]);
+        const chave = Number.isFinite(ano) && mes >= 1 && mes <= 12
+          ? `${ano}-${String(mes).padStart(2, "0")}`
+          : "sem-data";
+
+        if (!meses.has(chave)) meses.set(chave, []);
+        meses.get(chave).push(dados);
+      });
+
+      meses.forEach(function (itens, chave) {
+        const grupo = document.createElement("section");
+        const [ano, mes] = chave.split("-").map(Number);
+        const titulo = chave === "sem-data"
+          ? "Outras memórias"
+          : `${nomesMeses[mes - 1]} de ${ano}`;
+
+        const idMes = `mes-${chave}`;
+        grupo.className = "mes-timeline";
+        grupo.innerHTML = `<header class="mes-timeline__cabecalho"><button type="button" class="mes-timeline__botao" aria-expanded="false" aria-controls="${escaparHTML(idMes)}"><span class="mes-timeline__titulo"><span class="mes-timeline__icone">♡</span><span><small>Nossa história</small><strong>${escaparHTML(titulo)}</strong></span></span><span class="mes-timeline__meta"><small>${itens.length} ${itens.length === 1 ? "capítulo" : "capítulos"}</small><i aria-hidden="true"></i></span></button></header><div class="mes-timeline__capitulos" id="${escaparHTML(idMes)}" hidden></div>`;
+        const lista = grupo.querySelector(".mes-timeline__capitulos");
+        const botaoMes = grupo.querySelector(".mes-timeline__botao");
+
+        botaoMes.addEventListener("click", function () {
+          const abrir = botaoMes.getAttribute("aria-expanded") !== "true";
+          botaoMes.setAttribute("aria-expanded", String(abrir));
+          grupo.classList.toggle("mes-timeline--aberto", abrir);
+          lista.hidden = !abrir;
+        });
+
+        itens.forEach(function (dados, indice) {
         try {
-          container.appendChild(
-            criarCapitulo(dados)
-          );
+          lista.appendChild(criarCapitulo(dados));
         } catch (erro) {
           console.error(
             `Erro no capítulo ${indice}:`,
             erro
           );
 
-          container.appendChild(
+          lista.appendChild(
             criarElementoErro(
               `Não foi possível mostrar o capítulo ${
                 dados?.titulo || indice + 1
@@ -2163,7 +2201,18 @@
             )
           );
         }
+        });
+
+        container.appendChild(grupo);
       });
+
+      const mapaPrincipal = document.getElementById("mapa-principal");
+      if (mapaPrincipal && !mapaPrincipal.children.length) {
+        const componenteMapa = capitulos
+          .flatMap(function (capitulo) { return Array.isArray(capitulo.componentes) ? capitulo.componentes : []; })
+          .find(function (componente) { return normalizar(componente?.tipo) === "mapa"; });
+        mapaPrincipal.appendChild(criarMapa(componenteMapa || { id: "nosso-mapa" }));
+      }
     } catch (erro) {
       console.error(
         "Erro ao carregar capítulos:",
@@ -2276,7 +2325,57 @@
         return;
       }
 
+      const nomesMeses = [
+        "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+        "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+      ];
+      const grupos = new Map();
+
+      function dataDaAnotacao(anotacao) {
+        if (anotacao.data) {
+          const partes = anotacao.data.split("-").map(Number);
+          return new Date(partes[0], partes[1] - 1, partes[2]);
+        }
+
+        return new Date(anotacao.criada_em || anotacao.criadaEm || Date.now());
+      }
+
+      function obterGrupo(anotacao) {
+        const dataReferencia = dataDaAnotacao(anotacao);
+        const ano = dataReferencia.getFullYear();
+        const mes = dataReferencia.getMonth();
+        const chave = `${ano}-${String(mes + 1).padStart(2, "0")}`;
+
+        if (grupos.has(chave)) return grupos.get(chave);
+
+        const grupo = document.createElement("section");
+        const lista = document.createElement("div");
+        const titulo = `${nomesMeses[mes]} de ${ano}`;
+        const id = `cantinho-${chave}`;
+
+        grupo.className = "cantinho-mes";
+        grupo.innerHTML = `<button type="button" class="cantinho-mes__botao" aria-expanded="false" aria-controls="${id}"><span class="cantinho-mes__titulo"><span class="cantinho-mes__icone">♡</span><span><small>Cantinho da Rayane</small><strong>${escaparHTML(titulo)}</strong></span></span><span class="cantinho-mes__meta"><small data-total>0 publicações</small><i aria-hidden="true"></i></span></button>`;
+        lista.className = "cantinho-mes__publicacoes";
+        lista.id = id;
+        lista.hidden = true;
+        grupo.appendChild(lista);
+
+        const botao = grupo.querySelector(".cantinho-mes__botao");
+        botao.addEventListener("click", function () {
+          const abrir = botao.getAttribute("aria-expanded") !== "true";
+          botao.setAttribute("aria-expanded", String(abrir));
+          grupo.classList.toggle("cantinho-mes--aberto", abrir);
+          lista.hidden = !abrir;
+        });
+
+        const dadosGrupo = { grupo, lista, total: 0 };
+        grupos.set(chave, dadosGrupo);
+        guardados.appendChild(grupo);
+        return dadosGrupo;
+      }
+
       anotacoes.forEach(function (anotacao) {
+        const grupo = obterGrupo(anotacao);
         const cartao = document.createElement("article");
         const cabecalho = document.createElement("div");
         const data = document.createElement("time");
@@ -2358,7 +2457,10 @@
           cartao.appendChild(acesso);
         }
 
-        guardados.appendChild(cartao);
+        grupo.lista.appendChild(cartao);
+        grupo.total += 1;
+        grupo.grupo.querySelector("[data-total]").textContent =
+          `${grupo.total} ${grupo.total === 1 ? "publicação" : "publicações"}`;
       });
     }
 
