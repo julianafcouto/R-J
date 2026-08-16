@@ -3202,3 +3202,44 @@ body {
 .momento__autora--nos {
   background: linear-gradient(90deg, var(--cor-juliana), var(--cor-rayane));
 }
+
+/* Bodas de sorvete */
+.sorveteria { width: 100%; margin: 0; background: linear-gradient(145deg, #fffaf6, #f9eff6); overflow: hidden; position: relative; }
+.sorveteria::before { content: ""; position: absolute; width: 280px; height: 280px; border-radius: 50%; background: #f5dce6; filter: blur(4px); opacity: .42; right: -100px; top: -120px; }
+.sorveteria__cabecalho { max-width: 710px; margin: 0 auto 42px; text-align: center; position: relative; }
+.sorveteria__mini { display: inline-block; color: #a85f78; font-size: .78rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.sorveteria__cabecalho h2 { margin: 12px 0; color: #593d48; font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.04; }
+.sorveteria__cabecalho p { margin: 0; color: #806b73; font-size: 1.03rem; line-height: 1.7; }
+.sorveteria__jogo { display: grid; grid-template-columns: minmax(280px, .85fr) minmax(300px, 1.15fr); gap: clamp(28px, 5vw, 64px); align-items: center; position: relative; }
+.sorveteria__palco { min-height: 470px; border-radius: 30px; background: radial-gradient(circle at 50% 35%, #fff 0 12%, #f5e7ed 62%, #edd8e1 100%); display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 30px; position: relative; overflow: hidden; }
+.sorveteria__coracao { position: absolute; top: 22px; right: 28px; font-size: 3rem; color: rgba(168,95,120,.22); transform: rotate(12deg); }
+.sorvete-montado { width: 210px; display: flex; flex-direction: column; align-items: center; filter: drop-shadow(0 18px 14px rgba(80,45,55,.16)); }
+.sorvete-montado__bolas { height: 230px; width: 210px; display: flex; flex-direction: column-reverse; justify-content: flex-start; align-items: center; }
+.sorvete-bola { flex: 0 0 105px; width: 112px; border-radius: 50%; margin-bottom: -46px; position: relative; cursor: pointer; animation: bola-entrar .4s cubic-bezier(.2,.9,.3,1.35); border: 3px solid rgba(255,255,255,.45); box-shadow: inset -12px -14px 20px rgba(80,35,45,.12), inset 9px 9px 16px rgba(255,255,255,.35); }
+.sorvete-bola:nth-child(2) { transform: translateX(-20px); }
+.sorvete-bola:nth-child(3) { transform: translateX(13px); }
+.sorvete-bola--flocos { background-color: #f4ebd8; background-image: radial-gradient(#4f332d 1.5px, transparent 2px), radial-gradient(#765448 1px, transparent 2px); background-size: 16px 17px, 21px 19px; }
+.sorvete-bola--chocolate { background: radial-gradient(circle at 32% 26%, #996044, #5d3127 72%); }
+.sorvete-bola--creme { background: radial-gradient(circle at 32% 26%, #fff9d9, #eadca8 75%); }
+.sorvete-bola--morango { background: radial-gradient(circle at 32% 26%, #f7a5ad, #d86f7d 75%); }
+.sorvete-montado__casquinha { width: 142px; height: 180px; background-color: #dba66a; background-image: linear-gradient(30deg, transparent 46%, rgba(132,79,35,.24) 48% 52%, transparent 54%), linear-gradient(-30deg, transparent 46%, rgba(132,79,35,.24) 48% 52%, transparent 54%); background-size: 27px 27px; clip-path: polygon(0 0, 100% 0, 50% 100%); position: relative; z-index: -1; }
+.sorveteria__instrucao { margin: 22px 0 0; color: #836772; font-weight: 700; }
+.sorveteria__passo { display: block; margin-bottom: 15px; color: #75535f; font-size: .82rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.sabores { display: grid; gap: 10px; }
+.sabor { width: 100%; border: 1px solid rgba(112,73,87,.12); border-radius: 18px; padding: 12px 14px; background: rgba(255,255,255,.74); display: flex; align-items: center; gap: 13px; color: #593d48; text-align: left; cursor: pointer; transition: transform .2s, border-color .2s, box-shadow .2s; }
+.sabor:hover, .sabor:focus-visible { transform: translateX(5px); border-color: rgba(168,95,120,.38); box-shadow: 0 9px 24px rgba(112,73,87,.1); outline: none; }
+.sabor i { flex: 0 0 46px; width: 46px; height: 46px; border-radius: 50%; box-shadow: inset -5px -6px 9px rgba(80,35,45,.12); }
+.sabor--flocos i { background-color: #f4ebd8; background-image: radial-gradient(#4f332d 1px, transparent 2px); background-size: 9px 9px; }
+.sabor--chocolate i { background: #73412f; }.sabor--creme i { background: #f5e9b9; }.sabor--morango i { background: #eb8e99; }
+.sabor span { display: flex; flex-direction: column; }.sabor strong { font-size: 1rem; }.sabor small { color: #937d85; margin-top: 2px; }
+.sorveteria__acoes { display: flex; gap: 10px; margin-top: 18px; }
+.sorveteria__acoes button { min-height: 48px; border-radius: 999px; padding: 0 19px; font: inherit; font-weight: 800; cursor: pointer; }
+.sorveteria__limpar { border: 1px solid rgba(112,73,87,.2); color: #795e68; background: transparent; }
+.sorveteria__finalizar { flex: 1; border: 0; color: white; background: linear-gradient(110deg, #b46681, #826b9b); box-shadow: 0 10px 22px rgba(153,82,111,.25); }
+.sorveteria__finalizar:disabled { opacity: .38; cursor: not-allowed; box-shadow: none; }
+.sorveteria__surpresa { margin-top: 34px; border-radius: 28px; padding: 34px 24px; text-align: center; color: #624550; background: linear-gradient(135deg, #f4dfe8, #e7e4f6); animation: surpresa-entrar .55s ease both; }
+.sorveteria__surpresa > span { font-size: 2.8rem; }.sorveteria__surpresa p { margin: 8px 0 3px; }.sorveteria__surpresa h3 { margin: 0 0 13px; font-size: clamp(1.45rem, 4vw, 2.35rem); }.sorveteria__surpresa strong, .sorveteria__surpresa small { display: block; }.sorveteria__surpresa small { margin-top: 9px; color: #846d76; }
+@keyframes bola-entrar { from { opacity: 0; transform: translateY(-55px) scale(.7); } }
+@keyframes surpresa-entrar { from { opacity: 0; transform: translateY(16px); } }
+@media (max-width: 760px) { .sorveteria__jogo { grid-template-columns: 1fr; }.sorveteria__palco { min-height: 420px; }.sorveteria__acoes { flex-direction: column; }.sorveteria__finalizar { flex: auto; } }
+@media (prefers-reduced-motion: reduce) { .sorvete-bola, .sorveteria__surpresa { animation: none; }.sabor { transition: none; } }

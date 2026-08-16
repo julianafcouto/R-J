@@ -7,6 +7,7 @@
     "conexo",
     "memoria",
     "puzzle",
+    "sorvete",
     "telescopio",
     "mapa"
   ]);
@@ -1580,6 +1581,44 @@
     return elemento;
   }
 
+  function criarPuzzleSorvete(dados) {
+    const elemento = document.createElement("article");
+    elemento.className = "componente puzzle sorveteria";
+    elemento.innerHTML = `
+      <span class="componente__etiqueta">Bodas de sorvete</span>
+      <h3>${escaparHTML(dados.titulo || "Monte seu sorvete")}</h3>
+      <p class="puzzle__descricao">${escaparHTML(dados.instrucao || "")}</p>
+      <div class="sorveteria__jogo">
+        <div class="sorveteria__palco" aria-live="polite">
+          <span class="sorveteria__coracao" aria-hidden="true">♡</span>
+          <div class="sorvete-montado"><div class="sorvete-montado__bolas" data-bolas></div><div class="sorvete-montado__casquinha" aria-hidden="true"></div></div>
+          <p class="sorveteria__instrucao" data-instrucao>Escolha a primeira bola</p>
+        </div>
+        <div class="sorveteria__painel">
+          <span class="sorveteria__passo">Sabores da nossa história</span>
+          <div class="sabores" role="group" aria-label="Escolha os sabores do sorvete">
+            <button class="sabor sabor--flocos" type="button" data-sabor="flocos"><i></i><span><strong>Flocos</strong><small>leve e cheio de surpresas</small></span></button>
+            <button class="sabor sabor--chocolate" type="button" data-sabor="chocolate"><i></i><span><strong>Chocolate</strong><small>intenso como o que sinto</small></span></button>
+            <button class="sabor sabor--creme" type="button" data-sabor="creme"><i></i><span><strong>Creme</strong><small>doce como o seu carinho</small></span></button>
+            <button class="sabor sabor--morango" type="button" data-sabor="morango"><i></i><span><strong>Morango</strong><small>romântico como nós duas</small></span></button>
+          </div>
+          <div class="sorveteria__acoes"><button class="sorveteria__limpar" data-limpar type="button">Recomeçar</button><button class="sorveteria__finalizar" data-finalizar type="button" disabled>Finalizar meu sorvete ♡</button></div>
+        </div>
+      </div>
+      <div class="sorveteria__surpresa" data-surpresa hidden><span>🍦</span><p>${escaparHTML(dados.mensagem || "")}</p><h3>${escaparHTML(dados.dedicatoria || "")}</h3><small>${escaparHTML(dados.final || "")}</small></div>`;
+
+    const nomes = { flocos: "Flocos", chocolate: "Chocolate", creme: "Creme", morango: "Morango" };
+    const bolas = elemento.querySelector("[data-bolas]");
+    const instrucao = elemento.querySelector("[data-instrucao]");
+    const finalizar = elemento.querySelector("[data-finalizar]");
+    const surpresa = elemento.querySelector("[data-surpresa]");
+    function atualizar() { const quantidade = bolas.children.length; instrucao.textContent = quantidade === 0 ? "Escolha a primeira bola" : quantidade < 3 ? `Mais ${3 - quantidade} ${quantidade === 2 ? "sabor" : "sabores"} para completar` : "Sua combinação está pronta!"; finalizar.disabled = quantidade !== 3; }
+    elemento.querySelectorAll("[data-sabor]").forEach(function (botao) { botao.addEventListener("click", function () { if (bolas.children.length >= 3) return; const sabor = botao.dataset.sabor; const bola = document.createElement("button"); bola.type = "button"; bola.className = `sorvete-bola sorvete-bola--${sabor}`; bola.setAttribute("aria-label", `Remover bola de ${nomes[sabor]}`); bola.addEventListener("click", function () { bola.remove(); surpresa.hidden = true; atualizar(); }); bolas.appendChild(bola); surpresa.hidden = true; atualizar(); }); });
+    elemento.querySelector("[data-limpar]").addEventListener("click", function () { bolas.replaceChildren(); surpresa.hidden = true; atualizar(); });
+    finalizar.addEventListener("click", function () { surpresa.hidden = false; finalizar.disabled = true; concluirPuzzle(elemento); });
+    return elemento;
+  }
+
   function criarTelescopio(dados) {
     const elemento = document.createElement("article");
 
@@ -1862,6 +1901,9 @@
 
         case "puzzle":
           return criarPuzzleFrase(dados);
+
+        case "sorvete":
+          return criarPuzzleSorvete(dados);
 
         case "telescopio":
           return criarTelescopio(dados);

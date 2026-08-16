@@ -367,5 +367,35 @@
         "bloqueada": true
       }
     ]
+  },
+  {
+    "id": "2026-08-16",
+    "titulo": "Bodas de sorvete",
+    "data": "16.08.2026",
+    "subtitulo": "Dois meses de nós",
+    "componentes": [
+      {
+        "tipo": "carta",
+        "titulo": "Dois meses de nós",
+        "texto": "Hoje, 16 de agosto, celebramos dois meses de nós. Dois meses de descobertas, saudades, aprendizados e muito amor. Dois meses morando no abraço mais gentil e feliz do mundo!\n\nObrigada, bê. Obrigada por fazer com que eu me sinta amada, compreendida e desejada. Obrigada por me mostrar que o amor pode ser leve e divertido.\n\nSem duvidas, quero poder te escolher e ser escolhida por você todos os dias, por toda a vida.\n\nSó aprendi a ser feliz com você!"
+      },
+      {
+        "tipo": "sorvete",
+        "titulo": "Monte o nosso amor em forma de sorvete",
+        "instrucao": "Escolha três sabores, do jeitinho que quiser. Cada pedacinho dessa receita tem um pouco de nós.",
+        "mensagem": "Não importa a combinação… a minha favorita sempre será nós duas.",
+        "dedicatoria": "Feliz 2 meses, meu amor!",
+        "final": "Eu escolheria você em todos os sabores, em todos os dias, para sempre."
+      },
+      {
+        "tipo": "musica",
+        "titulo": "AMAReSÓ",
+        "artista": "Carol Biazin",
+        "capa": "./assets/imagens/capas/amareso.jpg",
+        "link": "https://open.spotify.com/intl-pt/track/6HDGusXxkSrxZ7iAKbc6eu?si=d76320f05b1744f9",
+        "mensagem": "Dois meses vivendo a leveza do nosso amor. Feliz bodas de sorvete! ESPOSA!",
+        "bloqueada": true
+      }
+    ]
   }
 ]
