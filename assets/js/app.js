@@ -208,6 +208,87 @@
   }
 
   /*
+   * Vale-night
+   */
+
+  function criarValeNight(dados) {
+    const elemento = document.createElement("article");
+    const direitos = Array.isArray(dados.direitos) ? dados.direitos : [];
+
+    elemento.className = "componente vale-night";
+    elemento.innerHTML = `
+      <div class="vale-night__cabecalho">
+        <div>
+          <span class="vale-night__etiqueta">Passe livre para ser feliz</span>
+          <h3>${escaparHTML(dados.titulo || "Vale-night")}</h3>
+          <p>${escaparHTML(dados.subtitulo || "Uma noite inteira sem culpa")}</p>
+        </div>
+        <span class="vale-night__numero">Nº 2108</span>
+      </div>
+
+      <div class="vale-night__corpo">
+        <div class="vale-night__midia">
+          <video autoplay muted loop playsinline preload="metadata"
+            poster="${escaparHTML(dados.poster || "")}">
+            <source src="${escaparHTML(dados.video || "")}" type="video/mp4">
+          </video>
+          <button class="vale-night__reproduzir" type="button">▶ Tocar animação</button>
+          <span>Modo festa: ativado</span>
+        </div>
+
+        <div class="vale-night__conteudo">
+          <p class="vale-night__introducao">Este vale dá direito a:</p>
+          <ul>
+            ${direitos.map(function (direito) {
+              return `<li><span>✓</span>${escaparHTML(direito)}</li>`;
+            }).join("")}
+          </ul>
+
+          <dl class="vale-night__regras">
+            <div><dt>Validade</dt><dd>${escaparHTML(dados.validade || "Para sempre")}</dd></div>
+            <div><dt>Condições</dt><dd>${escaparHTML(dados.condicoes || "Nenhuma")}</dd></div>
+            <div><dt>Autorização</dt><dd>${escaparHTML(dados.autorizacao || "Desnecessária")}</dd></div>
+          </dl>
+        </div>
+      </div>
+
+      <div class="vale-night__mensagem">
+        <p>${escaparHTML(dados.mensagem || "")}</p>
+        <strong>${escaparHTML(dados.destaque || "Nosso relacionamento é casa, não prisão.")}</strong>
+        <p>${escaparHTML(dados.despedida || "Vai, aproveita muito — e depois volta para o meu abraço. 🤍")}</p>
+      </div>
+
+      <footer class="vale-night__rodape">
+        <span>Emitido com amor e confiança</span>
+        <span class="vale-night__assinatura">${escaparHTML(dados.assinatura || "Sua gatinha")}</span>
+      </footer>
+    `;
+
+    const video = elemento.querySelector("video");
+    const reproduzir = elemento.querySelector(".vale-night__reproduzir");
+
+    function iniciarVideo() {
+      if (!video) return;
+      video.defaultMuted = true;
+      video.muted = true;
+      video.volume = 0;
+      const tentativa = video.play();
+      if (tentativa && typeof tentativa.catch === "function") {
+        tentativa.then(function () {
+          elemento.classList.remove("vale-night--aguardando-toque");
+        }).catch(function () {
+          elemento.classList.add("vale-night--aguardando-toque");
+        });
+      }
+    }
+
+    reproduzir?.addEventListener("click", iniciarVideo);
+    video?.addEventListener("canplay", iniciarVideo, { once: true });
+
+    return elemento;
+  }
+
+  /*
    * Música
    */
 
@@ -1881,6 +1962,9 @@
         case "carta":
           return criarCarta(dados);
 
+        case "vale-night":
+          return criarValeNight(dados);
+
         case "musica":
           return criarMusica(dados);
 
@@ -2147,6 +2231,20 @@
       );
 
       container.hidden = !deveAbrir;
+
+      if (deveAbrir) {
+        container.querySelectorAll("video[autoplay]").forEach(function (video) {
+          video.defaultMuted = true;
+          video.muted = true;
+          video.volume = 0;
+          const tentativa = video.play();
+          if (tentativa && typeof tentativa.catch === "function") {
+            tentativa.catch(function () {
+              video.closest(".vale-night")?.classList.add("vale-night--aguardando-toque");
+            });
+          }
+        });
+      }
     });
 
     return capitulo;

@@ -397,5 +397,43 @@
         "bloqueada": true
       }
     ]
+  },
+  {
+    "id": "2026-08-21",
+    "titulo": "Vale-night",
+    "data": "21.08.2026",
+    "subtitulo": "Liberdade também é amor",
+    "componentes": [
+      {
+        "tipo": "vale-night",
+        "titulo": "VALE-NIGHT",
+        "subtitulo": "Uma noite inteira para curtir sem culpa e sem medo",
+        "video": "./assets/imagens/knuckles-dancando.mp4",
+        "poster": "./assets/imagens/knuckles-dancando-poster.jpg",
+        "direitos": [
+          "Sair com os amigos",
+          "Dançar até cansar",
+          "Rir alto e aproveitar a noite",
+          "Voltar cheia de histórias para contar",
+          "Divertir-se sem culpa e sem medo"
+        ],
+        "validade": "Para sempre",
+        "condicoes": "Nenhuma",
+        "autorizacao": "Desnecessária",
+        "mensagem": "Você não precisa diminuir sua liberdade para proteger o nosso amor. Eu confio em você, fico feliz vendo você feliz e quero que, ao meu lado, você sempre se sinta livre para viver.",
+        "destaque": "Nosso relacionamento é casa, não prisão.",
+        "despedida": "Vai, aproveita muito, e depois volta para o meu abraço. 🤍",
+        "assinatura": "Sua gatinha"
+      },
+      {
+        "tipo": "musica",
+        "titulo": "Marroquina",
+        "artista": "Tom Ribeira",
+        "capa": "./assets/imagens/capas/marroquina.jpg",
+        "link": "https://open.spotify.com/intl-pt/track/5Qkas8wKzisXQaq3e0BDth?si=cf29584499364c5f",
+        "mensagem": "Te amo, bê! Te quero sempre bem e feliz.",
+        "bloqueada": true
+      }
+    ]
   }
 ]
