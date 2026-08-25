@@ -2544,6 +2544,16 @@
       }
     }
 
+    function guardarLocalmente(anotacao) {
+      const locais = lerLocais();
+      const jaExiste = locais.some(function (item) {
+        return item.id === anotacao.id;
+      });
+
+      if (!jaExiste) locais.push(anotacao);
+      localStorage.setItem(chaveLocal, JSON.stringify(locais));
+    }
+
     async function enviar(anotacao, codigoAcesso) {
       const resposta = await fetch(
         `${SUPABASE_URL}/rest/v1/rpc/criar_publicacao_rayane`,
@@ -2753,6 +2763,13 @@
       const linkDigitado = link.value.trim();
       const linkPreparado = prepararLink(linkDigitado);
       const codigoAcesso = codigo.value.trim();
+      const anotacao = {
+        id: globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`,
+        texto: valor,
+        data: dataEscolhida.value,
+        link: linkPreparado,
+        criadaEm: new Date().toISOString()
+      };
 
       if (!valor) {
         aviso.textContent = "Escreva alguma coisinha antes de guardar.";
@@ -2775,12 +2792,7 @@
       guardar.disabled = true;
       try {
         await migrarLocais(codigoAcesso);
-        await enviar({
-          id: globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`,
-          texto: valor,
-          data: dataEscolhida.value,
-          link: linkPreparado
-        }, codigoAcesso);
+        await enviar(anotacao, codigoAcesso);
 
         localStorage.setItem(chaveCodigo, codigoAcesso);
         texto.value = "";
@@ -2790,9 +2802,22 @@
         aviso.textContent = "Guardado com carinho. ♡";
         await carregarPublicacoes();
       } catch (erro) {
-        aviso.textContent = erro.message === "codigo"
-          ? "Código de acesso incorreto."
-          : "Não foi possível publicar. Confira sua conexão.";
+        if (erro.message === "codigo") {
+          aviso.textContent = "Código de acesso incorreto.";
+        } else {
+          try {
+            guardarLocalmente(anotacao);
+            localStorage.setItem(chaveCodigo, codigoAcesso);
+            texto.value = "";
+            link.value = "";
+            dataEscolhida.value = new Date().toLocaleDateString("en-CA");
+            contador.textContent = "0 de 16000000";
+            mostrar(lerLocais().slice().reverse());
+            aviso.textContent = "Guardado neste aparelho. Será sincronizado quando a conexão voltar. ♡";
+          } catch (erroLocal) {
+            aviso.textContent = "Não foi possível guardar neste aparelho. Verifique o espaço disponível do navegador.";
+          }
+        }
       } finally {
         guardar.disabled = false;
       }
