@@ -7,6 +7,7 @@
     "conexo",
     "memoria",
     "puzzle",
+    "boa-noite",
     "sorvete",
     "telescopio",
     "mapa"
@@ -284,6 +285,111 @@
 
     reproduzir?.addEventListener("click", iniciarVideo);
     video?.addEventListener("canplay", iniciarVideo, { once: true });
+
+    return elemento;
+  }
+
+  /*
+   * Ritual de boa-noite
+   */
+
+  function criarBoaNoite(dados) {
+    const elemento = document.createElement("article");
+    elemento.className = "componente puzzle boa-noite";
+    elemento.innerHTML = `
+      <span class="componente__etiqueta">Nosso ritual</span>
+      <h3>${escaparHTML(dados.titulo || "Antes de dormir")}</h3>
+      <p class="puzzle__descricao">${escaparHTML(dados.instrucao || "Refaça comigo o caminho de volta para a nossa chamada.")}</p>
+
+      <div class="boa-noite__telefone" data-telefone>
+        <div class="boa-noite__status"><span>22:47</span><span data-status>Celular no silencioso</span></div>
+        <div class="boa-noite__ceu" aria-hidden="true"><i></i><i></i><i></i><i></i><span>☾</span></div>
+        <div class="boa-noite__tela">
+          <p class="boa-noite__passo" data-passo>Primeiro, tire o celular do silencioso.</p>
+          <button class="boa-noite__som" type="button" data-som aria-pressed="false">
+            <span data-icone>🔕</span><strong data-som-texto>Ativar o som</strong>
+          </button>
+          <div class="boa-noite__chamada" data-chamada hidden>
+            <span class="boa-noite__avatar">R</span>
+            <small>chamada de boa-noite</small>
+            <strong>Rayane ♡</strong>
+            <button type="button" data-atender>Atender</button>
+          </div>
+          <div class="boa-noite__juntas" data-juntas hidden>
+            <div class="boa-noite__ondas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+            <p>${escaparHTML(dados.mensagemChamada || "Agora estou aqui. Sem pressa, até o sono chegar.")}</p>
+            <button class="boa-noite__ficar" type="button" data-ficar>
+              <span data-progresso></span><strong>Segure para ficar com você</strong>
+            </button>
+          </div>
+          <div class="boa-noite__final" data-final hidden>
+            <span aria-hidden="true">☾</span>
+            <strong>${escaparHTML(dados.mensagemFinal || "Boa noite, meu amor.")}</strong>
+            <p>${escaparHTML(dados.dedicatoria || "Hoje eu não posso refazer aquela noite. Mas posso cuidar melhor de todas as próximas.")}</p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const telefone = elemento.querySelector("[data-telefone]");
+    const status = elemento.querySelector("[data-status]");
+    const passo = elemento.querySelector("[data-passo]");
+    const som = elemento.querySelector("[data-som]");
+    const chamada = elemento.querySelector("[data-chamada]");
+    const juntas = elemento.querySelector("[data-juntas]");
+    const final = elemento.querySelector("[data-final]");
+    const ficar = elemento.querySelector("[data-ficar]");
+    let inicio = 0;
+    let animacao = 0;
+
+    som.addEventListener("click", function () {
+      som.setAttribute("aria-pressed", "true");
+      som.querySelector("[data-icone]").textContent = "🔔";
+      som.querySelector("[data-som-texto]").textContent = "Som ativado";
+      som.disabled = true;
+      status.textContent = "Som ativado";
+      passo.textContent = "Desta vez, eu vi você chamar.";
+      chamada.hidden = false;
+    });
+
+    elemento.querySelector("[data-atender]").addEventListener("click", function () {
+      som.hidden = true;
+      chamada.hidden = true;
+      passo.textContent = "Chamada atendida · 00:01";
+      juntas.hidden = false;
+    });
+
+    function parar() {
+      window.cancelAnimationFrame(animacao);
+      inicio = 0;
+      ficar.style.setProperty("--progresso", "0%");
+    }
+
+    function acompanhar(agora) {
+      if (!inicio) inicio = agora;
+      const progresso = Math.min(1, (agora - inicio) / 2600);
+      ficar.style.setProperty("--progresso", `${progresso * 100}%`);
+      if (progresso < 1) {
+        animacao = window.requestAnimationFrame(acompanhar);
+        return;
+      }
+      juntas.hidden = true;
+      passo.hidden = true;
+      final.hidden = false;
+      telefone.classList.add("boa-noite__telefone--dormindo");
+      concluirPuzzle(elemento);
+    }
+
+    ["pointerdown", "keydown"].forEach(function (evento) {
+      ficar.addEventListener(evento, function (e) {
+        if (evento === "keydown" && !["Enter", " "].includes(e.key)) return;
+        e.preventDefault();
+        if (!inicio) animacao = window.requestAnimationFrame(acompanhar);
+      });
+    });
+    ["pointerup", "pointercancel", "pointerleave", "keyup", "blur"].forEach(function (evento) {
+      ficar.addEventListener(evento, parar);
+    });
 
     return elemento;
   }
@@ -1985,6 +2091,9 @@
 
         case "puzzle":
           return criarPuzzleFrase(dados);
+
+        case "boa-noite":
+          return criarBoaNoite(dados);
 
         case "sorvete":
           return criarPuzzleSorvete(dados);

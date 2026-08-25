@@ -435,5 +435,35 @@
         "bloqueada": true
       }
     ]
+  },
+  {
+    "id": "2026-08-24",
+    "titulo": "Quando o dia termina",
+    "data": "24.08.2026",
+    "subtitulo": "Ainda quero estar com você",
+    "componentes": [
+      {
+        "tipo": "carta",
+        "titulo": "Sobre ontem à noite",
+        "texto": "Bê, hoje eu falhei com você em um momento que é muito importante para nós. Deixei o celular no silencioso, não vi sua mensagem pedindo para eu colocar você para dormir e continuei jogando enquanto você acabou dormindo sozinha.\n\nEu sinto muito. Não por achar que um gesto bonito apaga o que aconteceu, nem para tentar compensar a sua tristeza. Sinto muito porque entendo que você me procurou e eu não estava presente quando deveria estar.\n\nNossas chamadas antes de dormir podem parecer uma coisa pequena para quem olha de fora. Para mim, não são. Eu amo ouvir sua voz ficando baixinha, dividir os últimos minutos do dia com você e permanecer ali até que uma de nós adormeça. Amo a intimidade simples de saber que, mesmo longe, encontramos um jeito de terminar o dia juntas.\n\nOntem eu não cuidei desse momento como ele merecia. E sei que meu celular estar no silencioso explica por que não vi, mas não diminui o fato de que você precisou de mim e dormiu sem a nossa companhia.\n\nEu não posso voltar e atender aquela chamada. Posso, porém, te pedir desculpas com sinceridade e ser mais cuidadosa daqui para a frente. Quero que você saiba que eu me importo, que valorizo profundamente o nosso ritual e que nunca quero tratar a sua presença como algo garantido.\n\nDesculpa por ter deixado você dormir sozinha, meu amor. Quando o seu dia terminar, eu ainda quero ser a voz do outro lado dizendo: estou aqui."
+      },
+      {
+        "tipo": "boa-noite",
+        "titulo": "Desta vez, eu estou aqui",
+        "instrucao": "Atenda comigo a chamada que eu queria ter atendido.",
+        "mensagemChamada": "Agora estou aqui. Sem pressa, até o sono chegar.",
+        "mensagemFinal": "Boa noite, meu amor.",
+        "dedicatoria": "Hoje eu não posso refazer aquela noite. Mas posso cuidar melhor de todas as próximas."
+      },
+      {
+        "tipo": "musica",
+        "titulo": "Só Nós Dois",
+        "artista": "Tim Bernardes",
+        "capa": "./assets/imagens/capas/so-nos-dois.jpg",
+        "link": "https://open.spotify.com/intl-pt/track/3AdZFK0JBBnJdJd0rcSFUj?si=4029cfdc3f084a5b",
+        "mensagem": "Que todas as minhas noites tenham a doçura e o amor da sua voz. Eu te amo, pra sempre!",
+        "bloqueada": true
+      }
+    ]
   }
 ]
