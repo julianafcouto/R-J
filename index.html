@@ -222,7 +222,7 @@
 
       <div class="cantinho__cartao" data-somente-proprietaria>
         <label for="cantinho-texto">O que você quer guardar hoje?</label>
-        <textarea id="cantinho-texto" rows="6" maxlength="16000000"
+        <textarea id="cantinho-texto" rows="6" maxlength="700000"
           placeholder="Pode escrever do seu jeito..."></textarea>
 
         <div class="cantinho__campos-extras">
@@ -245,7 +245,7 @@
         </div>
 
         <div class="cantinho__acoes">
-          <span id="cantinho-contador">0 de 16000000</span>
+          <span id="cantinho-contador">0 de 700000</span>
           <button class="botao" id="cantinho-guardar" type="button">Guardar</button>
         </div>
 
@@ -388,8 +388,12 @@
   </script>
 
   <script src="./assets/vendor/leaflet/leaflet.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.2.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.2.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore-compat.js"></script>
+  <script src="./assets/js/firebase-cantinho.js?v=20260827a"></script>
   <script
-    src="./assets/js/app.js?v=20260827b"
+    src="./assets/js/app.js?v=20260827c"
     defer
   ></script>
 </body>

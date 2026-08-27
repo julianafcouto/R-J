@@ -2673,7 +2673,7 @@
   }
 
   function iniciarCantinho() {
-    const SUPABASE_URL = "https://mmipkjzdnnrgovvlihlp.supabase.co";
+    const SUPABASE_URL = "https://firebase.rayane.local";
     const SUPABASE_KEY = "sb_publishable_vokCdlS5rBIiogRyIy0WPA_D5xTADIN";
     const texto = document.getElementById("cantinho-texto");
     const dataEscolhida = document.getElementById("cantinho-data");
@@ -2934,7 +2934,7 @@
     }
 
     texto.addEventListener("input", function () {
-      contador.textContent = `${texto.value.length} de 16000000`;
+      contador.textContent = `${texto.value.length} de 700000`;
       aviso.textContent = "";
     });
 
@@ -2978,7 +2978,7 @@
         texto.value = "";
         link.value = "";
         dataEscolhida.value = new Date().toLocaleDateString("en-CA");
-        contador.textContent = "0 de 16000000";
+        contador.textContent = "0 de 700000";
         aviso.textContent = "Guardado com carinho. ♡";
         await carregarPublicacoes();
       } catch (erro) {
@@ -2991,7 +2991,7 @@
             texto.value = "";
             link.value = "";
             dataEscolhida.value = new Date().toLocaleDateString("en-CA");
-            contador.textContent = "0 de 16000000";
+            contador.textContent = "0 de 700000";
             mostrar(lerLocais().slice().reverse());
             aviso.textContent = "Guardado neste aparelho. Será sincronizado quando a conexão voltar. ♡";
           } catch (erroLocal) {
@@ -3295,6 +3295,7 @@
         }
         sessionStorage.setItem("rj-cartas-abertas", "sim");
         sessionStorage.setItem("rj-perfil", perfil);
+        sessionStorage.setItem("rj-firebase-codigo", entrada.value.trim());
         aplicarPerfil(perfil);
         document.dispatchEvent(new CustomEvent("rj-acesso-alterado", { detail: { perfil } }));
         modal.classList.add("senha-cartas--saindo");
