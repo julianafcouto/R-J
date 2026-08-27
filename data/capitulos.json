@@ -465,5 +465,68 @@
         "bloqueada": true
       }
     ]
+  },
+  {
+    "id": "2026-08-27",
+    "titulo": "Assumo os riscos",
+    "data": "27.08.2026",
+    "subtitulo": "Minha opinião sobre o novo álbum da Carol Biazin",
+    "descricao": "Desta vez, as favoritas vêm acompanhadas de nota.",
+    "componentes": [
+      {
+        "tipo": "carta",
+        "titulo": "Carol Biazin — Assumo os Riscos",
+        "texto": "Você já sabe que ouvir os cantores que você gosta virou uma das minhas formas favoritas de entrar um pouquinho mais no seu mundo. Desta vez, além de escolher minhas favoritas, resolvi assumir outro risco: dar nota para cada faixa. Mas antes de revelar, quero saber o quanto você consegue prever a minha opinião."
+      },
+      {
+        "tipo": "ranking-album",
+        "titulo": "Como você acha que eu avaliei cada música?",
+        "descricao": "Toque em uma faixa e coloque-a na categoria em que acha que eu a deixei. Você pode mudar suas escolhas quantas vezes quiser antes de revelar.",
+        "notaAlbum": 8.5,
+        "mensagemResultado": "Já sabe reconhecer quando eu finjo que não gostei? ♡",
+        "mensagemFinal": "Esse é o meu ranking.",
+        "faixas": [
+          {
+            "titulo": "Morrer de Viver",
+            "nota": 7,
+            "comentario": "Quero te amar no sol da manhã da segunda-feira. Não gostei tanto dessa viu? Mas, cê realmente tira o peso do mundo quando põe minha mão na tua cintura, e cê trouxe taaaantoooooo pra mim!!!!!!!!"
+          },
+          {
+            "titulo": "BH",
+            "nota": 9,
+            "comentario": "Deveria ser proibido me colocar pra ouvir qualquer coisa que me lembre de você te tendo longe. Sem muito o que falar por aqui, só morrendo de saudade... tu sabe bem como. E ta bem claro que, meu tesão tem nome."
+          },
+          {
+            "titulo": "Nem Vale a Pena",
+            "nota": 10,
+            "comentario": "Tu me deixa frenesi!!! E assim como essa musica, tu é a minha parada favorita!"
+          },
+          {
+            "titulo": "Tudo com Você",
+            "nota": 7,
+            "comentario": "IlhaBela é aqui... kkkkkk (e na musica esta escrito errado, ok?). Gostei do ritmo, gostei da letra, mas não muito da sonoridade das vozes. Mas quero tudo com você! Alias, te levar em um chalé beira mar em IlhaBela é um dos meus objetivos ok? Sempre disponivel para você."
+          },
+          {
+            "titulo": "A Dona dos Futuros Versos",
+            "nota": 7,
+            "comentario": "Essa é boazinha. Não é minha favorita, mas tu é a dona dos meus futuros versos. Com certeza somos suficientes!"
+          },
+          {
+            "titulo": "Assumo os Riscos",
+            "nota": 1,
+            "comentario": "Apenas NÃO. NÃO NÃO E NÃO!"
+          }
+        ]
+      },
+      {
+        "tipo": "musica",
+        "titulo": "Nem Vale a Pena",
+        "artista": "Carol Biazin",
+        "capa": "./assets/imagens/capas/nem-vale-a-pena.jpg",
+        "link": "https://open.spotify.com/intl-pt/track/4auYo56WbVPyG1QOdCFD0Y?si=33f0fc4571754afe",
+        "mensagem": "Entre todas as faixas, essa foi a única que chegou ao 10. Talvez porque, no meio dela, encontrei um pouco do que sinto por você: a certeza de que nenhuma vida valeria tanto a pena se eu não pudesse vivê-la ao seu lado. Você é a minha pessoa, a minha parada e a minha escolha favorita.\n\nTe amo, bê! E, se o amor pudesse ser medido em notas, você seria a minha nota máxima.\n\nPS: ainda incredula que gostei tanto de uma música da Carol Biazin... saco. Mas deixando claro que foi só porque me lembrou de você.",
+        "bloqueada": true
+      }
+    ]
   }
 ]

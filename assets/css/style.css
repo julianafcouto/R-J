@@ -1812,6 +1812,102 @@ body.senha-cartas-aberta { overflow: hidden; }
   margin-top: 26px;
 }
 
+/* Ranking do álbum */
+
+.ranking-album__faixas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 26px 0;
+}
+
+.ranking-album__faixa {
+  padding: 11px 16px;
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  background: white;
+  color: var(--texto);
+  cursor: pointer;
+  font-weight: 700;
+  transition: 180ms ease;
+}
+
+.ranking-album__faixa:hover,
+.ranking-album__faixa--selecionada {
+  border-color: var(--roxo);
+  transform: translateY(-2px);
+}
+
+.ranking-album__faixa--selecionada {
+  background: var(--roxo-escuro);
+  color: white;
+}
+
+.ranking-album__faixa--colocada:not(.ranking-album__faixa--selecionada) {
+  background: rgba(102, 132, 109, 0.12);
+  color: var(--verde);
+}
+
+.ranking-album__categorias {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.ranking-album__categoria {
+  min-height: 135px;
+  padding: 18px;
+  border: 1px solid rgba(119, 99, 143, 0.2);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--texto);
+  cursor: pointer;
+  text-align: left;
+}
+
+.ranking-album__categoria strong,
+.ranking-album__categoria small { display: block; }
+.ranking-album__categoria strong { color: var(--roxo-escuro); font-family: var(--titulo); font-size: 1.08rem; }
+.ranking-album__categoria small { margin-top: 3px; color: var(--texto-suave); }
+.ranking-album__categoria:hover { border-color: var(--roxo); }
+.ranking-album__categoria--favorita { background: rgba(226, 195, 108, 0.16); }
+
+.ranking-album__lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 13px;
+}
+
+.ranking-album__lista span {
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: rgba(119, 99, 143, 0.1);
+  font-size: 0.72rem;
+}
+
+.ranking-album__acoes { display: flex; justify-content: center; gap: 11px; margin-top: 26px; }
+.ranking-album__revelacao { margin-top: 28px; animation: aparecer 500ms ease; }
+.ranking-album__placar,
+.ranking-album__nota-final { display: grid; justify-items: center; padding: 22px; border-radius: 20px; background: rgba(119, 99, 143, 0.1); text-align: center; }
+.ranking-album__placar strong { margin: 2px 0; color: var(--roxo-escuro); font-family: var(--titulo); font-size: 2rem; }
+.ranking-album__placar small { color: var(--texto-suave); }
+.ranking-album__resultado { display: grid; gap: 9px; margin: 14px 0; }
+.ranking-album__resultado article { display: grid; grid-template-columns: 34px 1fr auto; align-items: center; gap: 12px; padding: 14px; border: 1px solid var(--borda); border-radius: 16px; background: white; }
+.ranking-album__resultado article > span { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 50%; background: rgba(119, 99, 143, 0.1); color: var(--roxo); font-weight: 800; }
+.ranking-album__resultado article strong { color: var(--texto); }
+.ranking-album__resultado article p { margin: 4px 0 0; color: var(--texto-suave); font-size: 0.82rem; line-height: 1.45; }
+.ranking-album__resultado article b { color: var(--roxo-escuro); font-size: 1.08rem; }
+.ranking-album__nota-final strong { color: var(--roxo-escuro); font-family: var(--titulo); font-size: 3.2rem; line-height: 1; }
+.ranking-album__nota-final small { color: var(--texto-suave); }
+
+@media (max-width: 620px) {
+  .ranking-album__categorias { grid-template-columns: 1fr; }
+  .ranking-album__acoes { flex-direction: column; }
+  .ranking-album__resultado article { grid-template-columns: 30px 1fr auto; }
+}
+
 /* Memória */
 
 .memoria__informacoes {

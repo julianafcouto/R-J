@@ -5,6 +5,7 @@
     "cofre",
     "termo",
     "conexo",
+    "ranking-album",
     "memoria",
     "puzzle",
     "boa-noite",
@@ -1410,6 +1411,182 @@
   }
 
   /*
+   * Ranking do álbum
+   */
+
+  function criarRankingAlbum(dados) {
+    const elemento = document.createElement("article");
+    elemento.className = "componente puzzle ranking-album";
+
+    const faixas = Array.isArray(dados.faixas)
+      ? dados.faixas.filter(function (faixa) {
+          return faixa && faixa.titulo && Number.isFinite(Number(faixa.nota));
+        })
+      : [];
+
+    const categorias = [
+      { id: "nao-pegou", titulo: "Não me pegou", legenda: "até 5" },
+      { id: "gostei", titulo: "Gostei", legenda: "de 6 a 7" },
+      { id: "playlist", titulo: "Entraria na playlist", legenda: "de 8 a 9" },
+      { id: "favorita", titulo: "Favorita do álbum", legenda: "nota 10" }
+    ];
+
+    function categoriaDaNota(nota) {
+      if (nota <= 5) return "nao-pegou";
+      if (nota <= 7) return "gostei";
+      if (nota < 10) return "playlist";
+      return "favorita";
+    }
+
+    let selecionada = "";
+    const palpites = {};
+
+    elemento.innerHTML = `
+      <span class="componente__etiqueta">Monte meu ranking</span>
+      <h3>${escaparHTML(dados.titulo || "Como você acha que eu avaliei?")}</h3>
+      <p class="puzzle__descricao">${escaparHTML(
+        dados.descricao || "Toque em uma faixa e escolha a categoria em que acha que eu a coloquei."
+      )}</p>
+      <div class="ranking-album__faixas" data-faixas></div>
+      <div class="ranking-album__categorias" data-categorias></div>
+      <div class="ranking-album__acoes">
+        <button class="botao" type="button" data-revelar>Revelar meu ranking</button>
+        <button class="botao botao--secundario" type="button" data-recomecar>Recomeçar</button>
+      </div>
+      <p class="puzzle__feedback" data-feedback aria-live="polite"></p>
+      <div class="ranking-album__revelacao" data-revelacao hidden></div>
+    `;
+
+    const areaFaixas = elemento.querySelector("[data-faixas]");
+    const areaCategorias = elemento.querySelector("[data-categorias]");
+    const feedback = elemento.querySelector("[data-feedback]");
+    const revelacao = elemento.querySelector("[data-revelacao]");
+    const botaoRevelar = elemento.querySelector("[data-revelar]");
+    const botaoRecomecar = elemento.querySelector("[data-recomecar]");
+
+    const botoesFaixas = {};
+    embaralhar(faixas).forEach(function (faixa) {
+      const botao = document.createElement("button");
+      botao.type = "button";
+      botao.className = "ranking-album__faixa";
+      botao.textContent = faixa.titulo;
+      botao.dataset.faixa = faixa.titulo;
+      botao.addEventListener("click", function () {
+        selecionada = faixa.titulo;
+        Object.values(botoesFaixas).forEach(function (item) {
+          item.classList.toggle("ranking-album__faixa--selecionada", item === botao);
+        });
+        feedback.textContent = "Agora escolha uma categoria para esta faixa.";
+        feedback.className = "puzzle__feedback";
+      });
+      botoesFaixas[faixa.titulo] = botao;
+      areaFaixas.appendChild(botao);
+    });
+
+    function atualizarCategorias() {
+      areaCategorias.querySelectorAll("[data-lista]").forEach(function (lista) {
+        lista.innerHTML = "";
+        const categoria = lista.dataset.lista;
+        Object.keys(palpites).forEach(function (titulo) {
+          if (palpites[titulo] !== categoria) return;
+          const item = document.createElement("span");
+          item.textContent = titulo;
+          lista.appendChild(item);
+        });
+      });
+      Object.keys(botoesFaixas).forEach(function (titulo) {
+        botoesFaixas[titulo].classList.toggle(
+          "ranking-album__faixa--colocada",
+          Boolean(palpites[titulo])
+        );
+      });
+    }
+
+    categorias.forEach(function (categoria) {
+      const botao = document.createElement("button");
+      botao.type = "button";
+      botao.className = `ranking-album__categoria ranking-album__categoria--${categoria.id}`;
+      botao.innerHTML = `
+        <strong>${escaparHTML(categoria.titulo)}</strong>
+        <small>${escaparHTML(categoria.legenda)}</small>
+        <span class="ranking-album__lista" data-lista="${categoria.id}"></span>
+      `;
+      botao.addEventListener("click", function () {
+        if (!selecionada) {
+          feedback.textContent = "Escolha uma música primeiro.";
+          feedback.className = "puzzle__feedback puzzle__feedback--erro";
+          return;
+        }
+        palpites[selecionada] = categoria.id;
+        botoesFaixas[selecionada].classList.remove("ranking-album__faixa--selecionada");
+        selecionada = "";
+        atualizarCategorias();
+        feedback.textContent = "Faixa posicionada. ♡";
+        feedback.className = "puzzle__feedback puzzle__feedback--certo";
+      });
+      areaCategorias.appendChild(botao);
+    });
+
+    botaoRecomecar.addEventListener("click", function () {
+      Object.keys(palpites).forEach(function (titulo) { delete palpites[titulo]; });
+      selecionada = "";
+      atualizarCategorias();
+      Object.values(botoesFaixas).forEach(function (botao) {
+        botao.classList.remove("ranking-album__faixa--selecionada");
+      });
+      feedback.textContent = "Ranking limpo. Pode tentar de novo.";
+      feedback.className = "puzzle__feedback";
+    });
+
+    botaoRevelar.addEventListener("click", function () {
+      if (Object.keys(palpites).length !== faixas.length) {
+        feedback.textContent = "Coloque todas as músicas em uma categoria antes de revelar.";
+        feedback.className = "puzzle__feedback puzzle__feedback--erro";
+        return;
+      }
+
+      const acertos = faixas.filter(function (faixa) {
+        return palpites[faixa.titulo] === categoriaDaNota(Number(faixa.nota));
+      }).length;
+      const ordenadas = [...faixas].sort(function (a, b) { return Number(b.nota) - Number(a.nota); });
+      revelacao.innerHTML = `
+        <div class="ranking-album__placar">
+          <span>Você acertou</span>
+          <strong>${acertos} de ${faixas.length}</strong>
+          <small>${escaparHTML(dados.mensagemResultado || "Já sabe reconhecer quando eu finjo que não gostei? ♡")}</small>
+        </div>
+        <div class="ranking-album__resultado">
+          ${ordenadas.map(function (faixa, indice) {
+            const comentario = String(faixa.comentario || "").trim();
+            return `<article>
+              <span>${indice + 1}</span>
+              <div><strong>${escaparHTML(faixa.titulo)}</strong>${
+                comentario ? `<p>${escaparHTML(comentario)}</p>` : ""
+              }</div>
+              <b>${escaparHTML(String(faixa.nota).replace(".", ","))}/10</b>
+            </article>`;
+          }).join("")}
+        </div>
+        <div class="ranking-album__nota-final">
+          <span>Minha nota para o álbum</span>
+          <strong>${escaparHTML(String(dados.notaAlbum).replace(".", ","))}</strong>
+          <small>de 10</small>
+        </div>
+      `;
+      revelacao.hidden = false;
+      botaoRevelar.disabled = true;
+      botaoRecomecar.disabled = true;
+      areaFaixas.querySelectorAll("button").forEach(function (botao) { botao.disabled = true; });
+      areaCategorias.querySelectorAll("button").forEach(function (botao) { botao.disabled = true; });
+      feedback.textContent = dados.mensagemFinal || "Esse é o meu ranking. Agora quero saber o seu. ♡";
+      feedback.className = "puzzle__feedback puzzle__feedback--certo";
+      concluirPuzzle(elemento);
+    });
+
+    return elemento;
+  }
+
+  /*
    * Memória
    */
 
@@ -2085,6 +2262,9 @@
 
         case "conexo":
           return criarConexo(dados);
+
+        case "ranking-album":
+          return criarRankingAlbum(dados);
 
         case "memoria":
           return criarMemoria(dados);
