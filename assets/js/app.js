@@ -2,17 +2,17 @@
 
 (function () {
   const TIPOS_PUZZLE = new Set([
-    "cofre",
-    "termo",
-    "conexo",
-    "ranking-album",
-    "memoria",
-    "puzzle",
-    "boa-noite",
-    "sorvete",
-    "telescopio",
-    "mapa"
-  ]);
+  "cofre",
+  "termo",
+  "conexo",
+  "ranking-album",
+  "memoria",
+  "puzzle",
+  "boa-noite",
+  "sorvete",
+  "telescopio",
+  "sonic-flores",
+]);
 
   function escaparHTML(valor) {
     return String(valor ?? "")
@@ -2064,178 +2064,6 @@
     return elemento;
   }
 
-  /*
-   * Seleção de componentes
-   */
-
-  function criarMapa(dados) {
-    const elemento = document.createElement("article");
-    const chave = `rj-mapa-${dados.id || "destinos"}`;
-    const chaveCodigo = "rayane-cantinho-codigo-v1";
-    const prefixoMapa = "__MAPA_RJ__";
-    const SUPABASE_URL = "https://mmipkjzdnnrgovvlihlp.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_vokCdlS5rBIiogRyIy0WPA_D5xTADIN";
-    let pontos = [];
-    let posicaoNova = { lat: -15, lng: -48 };
-    try { pontos = JSON.parse(localStorage.getItem(chave) || "[]"); if (!Array.isArray(pontos)) pontos = []; }
-    catch (_) { pontos = []; }
-
-    pontos = pontos.map(function (ponto) {
-      if (Number.isFinite(ponto.lat) && Number.isFinite(ponto.lng)) return ponto;
-      return { ...ponto, lat: 85 - (Number(ponto.y) || 50) * 1.7, lng: (Number(ponto.x) || 50) * 3.6 - 180 };
-    });
-
-    elemento.className = "componente puzzle mapa-afetivo";
-    elemento.innerHTML = `
-      <span class="componente__etiqueta">Nosso mapa do futuro</span>
-      <h3>${escaparHTML(dados.titulo || "Lugares onde ainda seremos nós")}</h3>
-      <p class="puzzle__descricao">${escaparHTML(dados.descricao || "Toque no mapa e guarde um destino, uma imagem e um sonho.")}</p>
-      <div class="mapa-afetivo__barra"><span>Arraste para passear pelo mundo e toque nos corações para ler.</span><button type="button" class="botao mapa-afetivo__adicionar" data-adicionar>♡ Marcar lugar</button></div>
-      <div class="mapa-afetivo__quadro mapa-afetivo__quadro--real" data-mapa aria-label="Mapa-múndi interativo"></div>
-      <form class="mapa-afetivo__formulario" data-form hidden>
-        <div class="mapa-afetivo__form-cabecalho"><strong>Novo destino</strong><button type="button" class="mapa-afetivo__fechar" data-fechar aria-label="Fechar">×</button></div>
-        <label>Que lugar é esse?<input type="text" name="lugar" maxlength="80" placeholder="Ex.: ver o pôr do sol em Paraty" required></label>
-        <label>O que você quer viver lá?<textarea name="observacao" rows="3" maxlength="500" placeholder="Uma ideia, promessa ou detalhe para lembrar..."></textarea></label>
-        <label class="mapa-afetivo__foto">Uma imagem para esse sonho <span>(opcional)</span><input type="file" name="imagem" accept="image/*"></label>
-        <label>Código de acesso<input type="password" name="codigo" autocomplete="current-password" placeholder="O mesmo código do Cantinho" required></label>
-        <button class="botao" type="submit">Guardar no mapa ♡</button><p class="puzzle__feedback" data-feedback aria-live="polite"></p>
-      </form><div class="mapa-afetivo__lugares" data-lugares></div>`;
-
-    const mapa = elemento.querySelector("[data-mapa]");
-    const formulario = elemento.querySelector("[data-form]");
-    const lugares = elemento.querySelector("[data-lugares]");
-    const feedback = elemento.querySelector("[data-feedback]");
-    let modoAdicionar = false;
-    let mapaReal = null;
-    let camadaPontos = null;
-    formulario.elements.codigo.value = localStorage.getItem(chaveCodigo) || "";
-
-    function opcoesRequisicao(extras) {
-      return { ...extras, headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json", ...(extras?.headers || {}) } };
-    }
-
-    async function enviarPonto(ponto, codigo) {
-      const dadosPonto = { id: ponto.id, lugar: ponto.lugar, observacao: ponto.observacao, imagem: ponto.imagem, lat: ponto.lat, lng: ponto.lng };
-      const resposta = await fetch(`${SUPABASE_URL}/rest/v1/rpc/criar_publicacao_rayane`, opcoesRequisicao({ method: "POST", body: JSON.stringify({ p_id: ponto.id, p_texto: prefixoMapa + JSON.stringify(dadosPonto), p_data: null, p_link: null, p_codigo: codigo }) }));
-      if (!resposta.ok) { const detalhe = await resposta.text(); throw new Error(detalhe.includes("codigo_incorreto") ? "codigo" : "envio"); }
-      ponto.online = true;
-    }
-
-    async function apagarPontoOnline(ponto, codigo) {
-      if (!ponto.online) return;
-      const resposta = await fetch(`${SUPABASE_URL}/rest/v1/rpc/apagar_publicacao_rayane`, opcoesRequisicao({ method: "POST", body: JSON.stringify({ p_id: ponto.id, p_codigo: codigo }) }));
-      if (!resposta.ok) { const detalhe = await resposta.text(); throw new Error(detalhe.includes("codigo_incorreto") ? "codigo" : "exclusao"); }
-    }
-
-    async function carregarPontosOnline() {
-      try {
-        const resposta = await fetch(`${SUPABASE_URL}/rest/v1/publicacoes_rayane?select=id,texto&order=criada_em.asc`, opcoesRequisicao({ cache: "no-store" }));
-        if (!resposta.ok) throw new Error("leitura");
-        const remotos = (await resposta.json()).filter(function (item) { return String(item.texto || "").startsWith(prefixoMapa); }).map(function (item) {
-          try { return { ...JSON.parse(item.texto.slice(prefixoMapa.length)), id: item.id, online: true }; } catch (_) { return null; }
-        }).filter(Boolean);
-        const porId = new Map(pontos.map(function (ponto) { return [ponto.id, ponto]; }));
-        remotos.forEach(function (ponto) { porId.set(ponto.id, ponto); });
-        pontos = [...porId.values()]; salvar(); desenhar();
-        if (pontos.length > 0) concluirPuzzle(elemento);
-      } catch (_) {
-        feedback.textContent = "Sem conexão. Mostrando os lugares salvos neste aparelho.";
-      }
-    }
-
-    function salvar() {
-      try { localStorage.setItem(chave, JSON.stringify(pontos)); return true; }
-      catch (_) { feedback.textContent = "A imagem ficou grande demais para guardar. Tente uma foto menor."; feedback.className = "puzzle__feedback puzzle__feedback--erro"; return false; }
-    }
-    function desenhar() {
-      lugares.innerHTML = "";
-      if (camadaPontos) camadaPontos.clearLayers();
-      pontos.forEach(function (ponto) {
-        if (camadaPontos) {
-          const icone = L.divIcon({ className: "mapa-afetivo__icone", html: `<span><b>♡</b></span>`, iconSize: [46, 52], iconAnchor: [23, 50], popupAnchor: [0, -46] });
-          const conteudo = `<div class="mapa-afetivo__popup">${ponto.imagem ? `<img src="${ponto.imagem}" alt="Imagem escolhida para ${escaparHTML(ponto.lugar)}">` : ""}<span>Um lugar para nós</span><h4>${escaparHTML(ponto.lugar)}</h4><p>${escaparHTML(ponto.observacao || "Um sonho guardado no nosso mapa.")}</p><button type="button" class="mapa-afetivo__popup-remover" data-remover-ponto="${escaparHTML(ponto.id)}">Apagar destino</button></div>`;
-          L.marker([ponto.lat, ponto.lng], { icon: icone, title: ponto.lugar }).bindPopup(conteudo, { maxWidth: 310 }).addTo(camadaPontos);
-        }
-      });
-    }
-
-    mapa.addEventListener("click", async function (evento) {
-      const botaoRemover = evento.target.closest("[data-remover-ponto]");
-      if (!botaoRemover) return;
-
-      const ponto = pontos.find(function (item) { return item.id === botaoRemover.dataset.removerPonto; });
-      if (!ponto || !window.confirm(`Quer mesmo apagar ${ponto.lugar} do mapa de vocês?`)) return;
-
-      const codigoSalvo = localStorage.getItem(chaveCodigo) || formulario.elements.codigo.value.trim();
-      const codigo = codigoSalvo || window.prompt("Digite o código de acesso para apagar este destino:")?.trim();
-      if (!codigo) return;
-
-      botaoRemover.disabled = true;
-      try {
-        await apagarPontoOnline(ponto, codigo);
-        localStorage.setItem(chaveCodigo, codigo);
-        pontos = pontos.filter(function (item) { return item.id !== ponto.id; });
-        salvar();
-        desenhar();
-        feedback.textContent = "Lugar apagado do mapa compartilhado.";
-        feedback.className = "puzzle__feedback puzzle__feedback--certo";
-      } catch (erro) {
-        feedback.textContent = erro.message === "codigo" ? "Código de acesso incorreto." : "Não foi possível apagar. Confira a conexão.";
-        feedback.className = "puzzle__feedback puzzle__feedback--erro";
-        botaoRemover.disabled = false;
-      }
-    });
-    function abrirFormulario(lat, lng) { posicaoNova = { lat, lng }; formulario.hidden = false; formulario.scrollIntoView({ behavior: "smooth", block: "nearest" }); formulario.querySelector("input[name='lugar']").focus(); }
-    elemento.querySelector("[data-adicionar]").addEventListener("click", function () {
-      modoAdicionar = true; mapa.classList.add("mapa-afetivo__quadro--marcando");
-      this.textContent = "Agora toque no mapa ♡";
-    });
-    elemento.querySelector("[data-fechar]").addEventListener("click", function () { formulario.hidden = true; formulario.reset(); });
-    formulario.addEventListener("submit", function (evento) {
-      evento.preventDefault();
-      const lugar = formulario.elements.lugar.value.trim(); const observacao = formulario.elements.observacao.value.trim(); const arquivo = formulario.elements.imagem.files[0]; const codigo = formulario.elements.codigo.value.trim();
-      async function guardar(imagem) {
-        const pontoNovo = { id: globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`, lugar, observacao, imagem: imagem || "", lat: posicaoNova.lat, lng: posicaoNova.lng };
-        pontos.push(pontoNovo);
-        if (!salvar()) { pontos.pop(); return; }
-        try {
-          for (const ponto of pontos.filter(function (item) { return !item.online; })) await enviarPonto(ponto, codigo);
-          localStorage.setItem(chaveCodigo, codigo); salvar();
-          formulario.reset(); formulario.elements.codigo.value = codigo; formulario.hidden = true;
-          elemento.querySelector("[data-adicionar]").textContent = "♡ Marcar lugar"; desenhar(); concluirPuzzle(elemento);
-          feedback.textContent = "Guardado no mapa de vocês. ♡"; feedback.className = "puzzle__feedback puzzle__feedback--certo";
-        } catch (erro) {
-          feedback.textContent = erro.message === "codigo" ? "Código de acesso incorreto." : "O lugar ficou salvo neste aparelho, mas ainda não foi sincronizado.";
-          feedback.className = "puzzle__feedback puzzle__feedback--erro";
-        }
-      }
-      if (!arquivo) { guardar(""); return; }
-      if (arquivo.size > 1500000) { feedback.textContent = "Escolha uma imagem de até 1,5 MB."; feedback.className = "puzzle__feedback puzzle__feedback--erro"; return; }
-      const leitor = new FileReader(); leitor.onload = function () { guardar(leitor.result); }; leitor.readAsDataURL(arquivo);
-    });
-    if (window.L) {
-      mapaReal = L.map(mapa, { worldCopyJump: true, minZoom: 2 }).setView([-15, -48], 2);
-      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a>" }).addTo(mapaReal);
-      camadaPontos = L.layerGroup().addTo(mapaReal);
-      mapaReal.on("click", function (evento) {
-        if (!modoAdicionar) return;
-        modoAdicionar = false; mapa.classList.remove("mapa-afetivo__quadro--marcando");
-        abrirFormulario(evento.latlng.lat, evento.latlng.lng);
-      });
-      window.setTimeout(function () { mapaReal.invalidateSize(); }, 250);
-      if (window.ResizeObserver) {
-        const observadorMapa = new ResizeObserver(function () {
-          if (mapa.offsetWidth > 0) mapaReal.invalidateSize();
-        });
-        observadorMapa.observe(mapa);
-      }
-    } else {
-      mapa.innerHTML = `<p class="mapa-afetivo__erro">O mapa não conseguiu carregar. Verifique sua conexão e tente novamente.</p>`;
-    }
-    salvar(); desenhar(); carregarPontosOnline(); if (pontos.length > 0) window.setTimeout(function () { concluirPuzzle(elemento); }, 0);
-    return elemento;
-  }
-
   function criarComponente(dados) {
     const tipo =
       normalizar(dados?.tipo);
@@ -2281,8 +2109,8 @@
         case "telescopio":
           return criarTelescopio(dados);
 
-        case "mapa":
-          return criarMapa(dados);
+        case "sonic-flores":
+          return criarSonicFlores(dados);
 
         default:
           return criarElementoErro(
@@ -2303,6 +2131,251 @@
       );
     }
   }
+
+  /*
+ * Puzzle do Sonic — chuva de flores
+ */
+
+function criarSonicFlores(dados) {
+  const elemento = document.createElement("article");
+
+  elemento.className =
+    "componente puzzle sonic-flores";
+
+  elemento.innerHTML = `
+    <span class="componente__etiqueta">
+      Uma pequena surpresa
+    </span>
+
+    <h3>
+      ${escaparHTML(dados.titulo || "Tem alguma coisa escondida aqui...")}
+    </h3>
+
+    <p class="puzzle__descricao">
+      ${escaparHTML(
+        dados.descricao ||
+        "Acho que esse carinha está tentando te dizer alguma coisa."
+      )}
+    </p>
+
+    <button
+      class="sonic-flores__botao"
+      type="button"
+      aria-label="Clique no Sonic"
+    >
+      <span class="sonic-flores__brilho"></span>
+
+      <img
+        src="${escaparHTML(
+          dados.imagem ||
+          "./assets/imagens/sonic-zoiudo-flor.jpg"
+        )}"
+        alt="${escaparHTML(
+          dados.alt || "Sonic segurando uma flor"
+        )}"
+      >
+    </button>
+
+    <p class="sonic-flores__instrucao">
+      ${escaparHTML(
+        dados.instrucao || "Acho que você deveria clicar nele..."
+      )}
+    </p>
+  `;
+
+  const botao =
+    elemento.querySelector(".sonic-flores__botao");
+
+  let ativado = false;
+
+  function criarFlor() {
+    const flor = document.createElement("span");
+
+    const flores = [
+      "🌹",
+      "🌷",
+      "🌸",
+      "🌺",
+      "🌻",
+      "🌼",
+      "💐"
+    ];
+
+    flor.className = "sonic-flor";
+
+    flor.textContent =
+      flores[Math.floor(Math.random() * flores.length)];
+
+    flor.style.left =
+      `${Math.random() * 100}vw`;
+
+    flor.style.setProperty(
+      "--tamanho",
+      `${22 + Math.random() * 38}px`
+    );
+
+    flor.style.setProperty(
+      "--duracao",
+      `${3.5 + Math.random() * 3}s`
+    );
+
+    flor.style.setProperty(
+      "--atraso",
+      `${Math.random() * 1.8}s`
+    );
+
+    flor.style.setProperty(
+      "--rotacao",
+      `${-180 + Math.random() * 360}deg`
+    );
+
+    document.body.appendChild(flor);
+
+    window.setTimeout(function () {
+      flor.remove();
+    }, 8500);
+  }
+
+  function criarExplosao(x, y) {
+    const particulas = [
+      "🌹",
+      "🌷",
+      "🌸",
+      "🌺",
+      "🌻",
+      "🌼",
+      "💗",
+      "✨"
+    ];
+
+    for (let indice = 0; indice < 28; indice += 1) {
+      const particula =
+        document.createElement("span");
+
+      particula.className =
+        "sonic-flor-explosao";
+
+      particula.textContent =
+        particulas[
+          Math.floor(
+            Math.random() * particulas.length
+          )
+        ];
+
+      particula.style.left = `${x}px`;
+      particula.style.top = `${y}px`;
+
+      const angulo =
+        Math.random() * Math.PI * 2;
+
+      const distancia =
+        100 + Math.random() * 300;
+
+      particula.style.setProperty(
+        "--x",
+        `${Math.cos(angulo) * distancia}px`
+      );
+
+      particula.style.setProperty(
+        "--y",
+        `${Math.sin(angulo) * distancia}px`
+      );
+
+      document.body.appendChild(particula);
+
+      window.setTimeout(function () {
+        particula.remove();
+      }, 1800);
+    }
+  }
+
+  function mostrarTelaFinal() {
+    const tela =
+      document.createElement("div");
+
+    tela.className =
+      "sonic-flores__tela";
+
+    tela.innerHTML = `
+      <div class="sonic-flores__fundo"></div>
+
+      <div class="sonic-flores__mensagem">
+        <span class="sonic-flores__para">
+          ${escaparHTML(
+            dados.mensagemPequena ||
+            "para você, Rayane"
+          )}
+        </span>
+
+        <h2>
+          ${escaparHTML(
+            dados.mensagemTitulo ||
+            "Algumas coisas simplesmente florescem."
+          )}
+        </h2>
+
+        <p>
+          ${escaparHTML(
+            dados.mensagemFinal ||
+            "Principalmente quando encontram a pessoa certa. ❤️"
+          )}
+        </p>
+      </div>
+    `;
+
+    document.body.appendChild(tela);
+
+    window.setTimeout(function () {
+      tela.classList.add(
+        "sonic-flores__tela--visivel"
+      );
+    }, 50);
+
+    for (let indice = 0; indice < 110; indice += 1) {
+      window.setTimeout(function () {
+        criarFlor();
+      }, indice * 22);
+    }
+
+    window.setTimeout(function () {
+      tela.classList.add(
+        "sonic-flores__tela--saindo"
+      );
+    }, 6500);
+
+    window.setTimeout(function () {
+      tela.remove();
+    }, 8500);
+  }
+
+  botao.addEventListener("click", function (evento) {
+    if (ativado) {
+      return;
+    }
+
+    ativado = true;
+
+    elemento.classList.add(
+      "sonic-flores--ativado"
+    );
+
+    const rect =
+      botao.getBoundingClientRect();
+
+    criarExplosao(
+      rect.left + rect.width / 2,
+      rect.top + rect.height / 2
+    );
+
+    window.setTimeout(function () {
+      mostrarTelaFinal();
+
+      concluirPuzzle(elemento);
+    }, 500);
+  });
+
+  return elemento;
+}
 
   /*
    * Capítulo
@@ -2645,13 +2718,6 @@
         container.appendChild(grupo);
       });
 
-      const mapaPrincipal = document.getElementById("mapa-principal");
-      if (mapaPrincipal && !mapaPrincipal.children.length) {
-        const componenteMapa = capitulos
-          .flatMap(function (capitulo) { return Array.isArray(capitulo.componentes) ? capitulo.componentes : []; })
-          .find(function (componente) { return normalizar(componente?.tipo) === "mapa"; });
-        mapaPrincipal.appendChild(criarMapa(componenteMapa || { id: "nosso-mapa" }));
-      }
     } catch (erro) {
       console.error(
         "Erro ao carregar capítulos:",

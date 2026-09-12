@@ -341,34 +341,6 @@
     ]
   },
   {
-    "id": "2026-08-09",
-    "titulo": "Onde ainda seremos nós",
-    "data": "09.08.2026",
-    "subtitulo": "Nosso mapa do futuro",
-    "componentes": [
-      {
-        "tipo": "carta",
-        "titulo": "Todos os lugares levam a você",
-        "texto": "Quero conhecer o mundo com você. Não só os lugares enormes, distantes e bonitos, mas também as esquinas tranquilas, os cafés escondidos e qualquer caminho que fique especial porque percorremos juntas.\n\nEste mapa é para guardarmos nossos próximos destinos, e, aos poucos, transformarmos vontade em memória."
-      },
-      {
-        "tipo": "mapa",
-        "id": "nosso-mapa",
-        "titulo": "Lugares onde ainda seremos nós",
-        "descricao": "Toque em qualquer ponto do mapa. Dê um nome ao destino, deixe uma foto e escreva o que você quer viver nele comigo."
-      },
-      {
-        "tipo": "musica",
-        "titulo": "Volta",
-        "artista": "O Terno",
-        "capa": "./assets/imagens/capas/volta.jpg",
-        "link": "https://open.spotify.com/intl-pt/track/2AmlCuy1DBxmjxmfY4h463?si=a4bf005ab83a4d07",
-        "mensagem": "Para todos os lugares onde formos e para todas as vezes em que o caminho nos trouxer de volta uma para a outra.",
-        "bloqueada": true
-      }
-    ]
-  },
-  {
     "id": "2026-08-16",
     "titulo": "Bodas de sorvete",
     "data": "16.08.2026",
@@ -525,6 +497,40 @@
         "capa": "./assets/imagens/capas/nem-vale-a-pena.jpg",
         "link": "https://open.spotify.com/intl-pt/track/4auYo56WbVPyG1QOdCFD0Y?si=33f0fc4571754afe",
         "mensagem": "Entre todas as faixas, essa foi a única que chegou ao 10. Talvez porque, no meio dela, encontrei um pouco do que sinto por você: a certeza de que nenhuma vida valeria tanto a pena se eu não pudesse vivê-la ao seu lado. Você é a minha pessoa, a minha parada e a minha escolha favorita.\n\nTe amo, bê! E, se o amor pudesse ser medido em notas, você seria a minha nota máxima.\n\nPS: ainda incredula que gostei tanto de uma música da Carol Biazin... saco. Mas deixando claro que foi só porque me lembrou de você.",
+        "bloqueada": true
+      }
+    ]
+  },
+  {
+      "id": "2026-09-12",
+      "titulo": "Dias comuns",
+      "data": "12.09.2026",
+      "subtitulo": "Ainda tem uma surpresa...",
+      "componentes": [
+      {
+        "tipo": "carta",
+        "titulo": "Uma pequena carta",
+        "texto": "Faz tempo que não apareço por aqui, né? Acho que a rotina, as conversas e a vida em si acabaram me cobrando um pouco mais do que gostaria kkkk. Mas quero que saiba que até mesmo nos dias comuns, eu penso em você. \n\nE talvez eu não consiga te entregar bons presentes ou textos elaborados todos os dias, mas quero que viva na certeza de que eu te amo, te desejo e te aprecio SEMPRE! \n\nVocê é a minha escolha de todos os dias, e sou feliz e grata em ser a sua.\n\nObrigada por salvar os meus dias tediosos, e trazer o amor para os dias comuns."
+      },
+
+      {
+    "tipo": "sonic-flores",
+    "titulo": "Tem uma última coisinha...",
+    "descricao": "Acho que esse Sonic tem alguma coisa para te entregar.",
+    "imagem": "./assets/imagens/sonic-zoiudo-flor.jpg",
+    "alt": "Sonic segurando uma flor",
+    "instrucao": "Talvez você devesse clicar nele...",
+    "mensagemPequena": "para você, Rayane",
+    "mensagemTitulo": "Algumas coisas florescem em dias simples.",
+    "mensagemFinal": "Principalmente quando encontram a pessoa certa. ❤️"
+      },
+      {
+        "tipo": "musica",
+        "titulo": "Dilemas da vida moderna",
+        "artista": "Carol Biazin",
+        "capa": "./assets/imagens/capas/amareso.jpg",
+        "link": "https://open.spotify.com/intl-pt/track/6TKBDgjEsyB2AGprNMpZyy?si=fa703a74f8004686",
+        "mensagem": "Por incrivel que pareça, notei que essa ainda não foi dedicada aqui, mesmo sendo tão nós.\n\nTe quero para sempre, minha moça bonita!",
         "bloqueada": true
       }
     ]
