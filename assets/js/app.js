@@ -2064,75 +2064,7 @@
     return elemento;
   }
 
-  function criarComponente(dados) {
-    const tipo =
-      normalizar(dados?.tipo);
-
-    try {
-      switch (tipo) {
-        case "carta":
-          return criarCarta(dados);
-
-        case "vale-night":
-          return criarValeNight(dados);
-
-        case "musica":
-          return criarMusica(dados);
-
-        case "cofre":
-          return criarCofre(dados);
-
-        case "termo":
-          return criarTermo(dados);
-
-        case "contexto":
-          return criarContexto(dados);
-
-        case "conexo":
-          return criarConexo(dados);
-
-        case "ranking-album":
-          return criarRankingAlbum(dados);
-
-        case "memoria":
-          return criarMemoria(dados);
-
-        case "puzzle":
-          return criarPuzzleFrase(dados);
-
-        case "boa-noite":
-          return criarBoaNoite(dados);
-
-        case "sorvete":
-          return criarPuzzleSorvete(dados);
-
-        case "telescopio":
-          return criarTelescopio(dados);
-
-        case "sonic-flores":
-          return criarSonicFlores(dados);
-
-        default:
-          return criarElementoErro(
-            `Tipo não reconhecido: ${
-              tipo || "sem tipo"
-            }`
-          );
-      }
-    } catch (erro) {
-      console.error(
-        `Erro no componente "${tipo}":`,
-        erro,
-        dados
-      );
-
-      return criarElementoErro(
-        `Não foi possível mostrar o componente "${tipo}".`
-      );
-    }
-  }
-
-  /*
+    /*
  * Puzzle do Sonic — chuva de flores
  */
 
@@ -2418,6 +2350,74 @@ function criarSonicFlores(dados) {
 
   return elemento;
 }
+
+  function criarComponente(dados) {
+    const tipo =
+      normalizar(dados?.tipo);
+
+    try {
+      switch (tipo) {
+        case "carta":
+          return criarCarta(dados);
+
+        case "vale-night":
+          return criarValeNight(dados);
+
+        case "musica":
+          return criarMusica(dados);
+
+        case "cofre":
+          return criarCofre(dados);
+
+        case "termo":
+          return criarTermo(dados);
+
+        case "contexto":
+          return criarContexto(dados);
+
+        case "conexo":
+          return criarConexo(dados);
+
+        case "ranking-album":
+          return criarRankingAlbum(dados);
+
+        case "memoria":
+          return criarMemoria(dados);
+
+        case "puzzle":
+          return criarPuzzleFrase(dados);
+
+        case "boa-noite":
+          return criarBoaNoite(dados);
+
+        case "sorvete":
+          return criarPuzzleSorvete(dados);
+
+        case "telescopio":
+          return criarTelescopio(dados);
+
+        case "sonic-flores":
+          return criarSonicFlores(dados);
+
+        default:
+          return criarElementoErro(
+            `Tipo não reconhecido: ${
+              tipo || "sem tipo"
+            }`
+          );
+      }
+    } catch (erro) {
+      console.error(
+        `Erro no componente "${tipo}":`,
+        erro,
+        dados
+      );
+
+      return criarElementoErro(
+        `Não foi possível mostrar o componente "${tipo}".`
+      );
+    }
+  }
 
   /*
    * Capítulo
