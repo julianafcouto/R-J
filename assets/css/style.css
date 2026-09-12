@@ -3630,3 +3630,357 @@ body {
       scale(1);
   }
 }
+
+/* =========================================
+   SONIC — CORREÇÃO MOBILE
+========================================= */
+
+.sonic-flores {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.sonic-flores__botao {
+  display: block;
+
+  width: min(360px, calc(100vw - 40px));
+
+  max-width: 100%;
+
+  margin: 28px auto 18px;
+
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  cursor: pointer;
+
+  touch-action: manipulation;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sonic-flores__botao img {
+  display: block;
+
+  width: 100%;
+
+  height: auto;
+
+  max-width: 100%;
+
+  border-radius: 24px;
+
+  object-fit: contain;
+
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.16);
+}
+
+.sonic-flores__instrucao {
+  margin: 15px auto 0;
+
+  padding: 0 15px;
+
+  font-size: 0.85rem;
+
+  opacity: 0.55;
+}
+
+
+/* =========================================
+   OVERLAY
+========================================= */
+
+.sonic-flores__tela {
+  position: fixed !important;
+
+  inset: 0 !important;
+
+  width: 100vw !important;
+
+  height: 100dvh !important;
+
+  min-height: 100vh;
+
+  overflow: hidden;
+
+  z-index: 2147483647;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  padding:
+    max(20px, env(safe-area-inset-top))
+    max(20px, env(safe-area-inset-right))
+    max(20px, env(safe-area-inset-bottom))
+    max(20px, env(safe-area-inset-left));
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255, 244, 249, 0.97),
+      rgba(255, 205, 226, 0.99)
+    );
+
+  opacity: 0;
+
+  transition:
+    opacity 0.7s ease;
+}
+
+.sonic-flores__tela--visivel {
+  opacity: 1;
+}
+
+.sonic-flores__tela--saindo {
+  opacity: 0;
+}
+
+
+/* Bloqueia scroll atrás do overlay */
+
+html.sonic-flores-aberto,
+body.sonic-flores-aberto {
+  overflow: hidden !important;
+
+  overscroll-behavior: none !important;
+}
+
+
+/* =========================================
+   MENSAGEM
+========================================= */
+
+.sonic-flores__mensagem {
+  position: relative;
+
+  z-index: 10;
+
+  width: min(650px, calc(100vw - 36px));
+
+  max-height: calc(100dvh - 40px);
+
+  box-sizing: border-box;
+
+  overflow: auto;
+
+  padding:
+    clamp(28px, 7vw, 55px)
+    clamp(20px, 6vw, 40px);
+
+  text-align: center;
+
+  border-radius: 28px;
+
+  background:
+    rgba(255, 255, 255, 0.86);
+
+  backdrop-filter: blur(18px);
+
+  -webkit-backdrop-filter: blur(18px);
+
+  box-shadow:
+    0 25px 80px
+    rgba(100, 25, 65, 0.2);
+
+  animation:
+    sonic-mensagem
+    0.9s cubic-bezier(.16,1,.3,1)
+    both;
+}
+
+.sonic-flores__para {
+  display: block;
+
+  margin-bottom: 14px;
+
+  font-size: 0.72rem;
+
+  letter-spacing: 3px;
+
+  text-transform: uppercase;
+
+  opacity: 0.55;
+}
+
+.sonic-flores__mensagem h2 {
+  margin: 0;
+
+  font-size:
+    clamp(2rem, 8vw, 4.5rem);
+
+  line-height: 1.05;
+
+  letter-spacing: -1.5px;
+
+  font-weight: 500;
+}
+
+.sonic-flores__mensagem p {
+  margin: 18px auto 0;
+
+  font-size:
+    clamp(1rem, 4vw, 1.35rem);
+
+  line-height: 1.55;
+
+  opacity: 0.72;
+}
+
+.sonic-flores__fechar {
+  margin-top: 25px;
+
+  padding: 12px 20px;
+
+  border: 0;
+
+  border-radius: 999px;
+
+  background: rgba(0, 0, 0, 0.08);
+
+  color: inherit;
+
+  cursor: pointer;
+
+  touch-action: manipulation;
+}
+
+
+/* =========================================
+   FLORES
+========================================= */
+
+.sonic-flor {
+  position: absolute;
+
+  top: -80px;
+
+  z-index: 5;
+
+  font-size: var(--tamanho);
+
+  line-height: 1;
+
+  pointer-events: none;
+
+  animation:
+    sonic-flor-caindo
+    var(--duracao)
+    linear
+    var(--atraso)
+    forwards;
+}
+
+@keyframes sonic-flor-caindo {
+
+  0% {
+    transform:
+      translateY(-100px)
+      rotate(0deg)
+      scale(0.2);
+
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  100% {
+    transform:
+      translateY(120dvh)
+      rotate(360deg)
+      scale(1);
+      
+    opacity: 0.95;
+  }
+}
+
+
+/* =========================================
+   EXPLOSÃO
+========================================= */
+
+.sonic-flor-explosao {
+  position: fixed;
+
+  z-index: 2147483646;
+
+  pointer-events: none;
+
+  line-height: 1;
+
+  font-size: 30px;
+
+  animation:
+    sonic-explodir
+    1.5s
+    cubic-bezier(.16,.8,.3,1)
+    forwards;
+}
+
+@keyframes sonic-explodir {
+
+  0% {
+    transform:
+      translate(-50%, -50%)
+      scale(0.2);
+
+    opacity: 1;
+  }
+
+  100% {
+    transform:
+      translate(
+        calc(-50% + var(--x)),
+        calc(-50% + var(--y))
+      )
+      scale(1.4)
+      rotate(360deg);
+
+    opacity: 0;
+  }
+}
+
+
+/* =========================================
+   TELAS PEQUENAS
+========================================= */
+
+@media (max-width: 600px) {
+
+  .sonic-flores__botao {
+    width: min(
+      320px,
+      calc(100vw - 32px)
+    );
+
+    margin-top: 22px;
+  }
+
+  .sonic-flores__botao img {
+    border-radius: 20px;
+  }
+
+  .sonic-flores__mensagem {
+    width: calc(100vw - 28px);
+
+    border-radius: 24px;
+  }
+
+  .sonic-flores__mensagem h2 {
+    font-size:
+      clamp(1.8rem, 9vw, 3rem);
+  }
+
+}

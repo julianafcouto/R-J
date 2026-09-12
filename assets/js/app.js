@@ -2144,17 +2144,20 @@ function criarSonicFlores(dados) {
 
   elemento.innerHTML = `
     <span class="componente__etiqueta">
-      Uma pequena surpresa
+      ${escaparHTML(dados.etiqueta || "Uma pequena surpresa")}
     </span>
 
     <h3>
-      ${escaparHTML(dados.titulo || "Tem alguma coisa escondida aqui...")}
+      ${escaparHTML(
+        dados.titulo ||
+        "Tem alguma coisa escondida aqui..."
+      )}
     </h3>
 
     <p class="puzzle__descricao">
       ${escaparHTML(
         dados.descricao ||
-        "Acho que esse carinha está tentando te dizer alguma coisa."
+        "Acho que esse carinha tem alguma coisa para te entregar."
       )}
     </p>
 
@@ -2163,22 +2166,22 @@ function criarSonicFlores(dados) {
       type="button"
       aria-label="Clique no Sonic"
     >
-      <span class="sonic-flores__brilho"></span>
-
       <img
         src="${escaparHTML(
           dados.imagem ||
           "./assets/imagens/sonic-zoiudo-flor.jpg"
         )}"
         alt="${escaparHTML(
-          dados.alt || "Sonic segurando uma flor"
+          dados.alt ||
+          "Sonic segurando uma flor"
         )}"
-      >
+      />
     </button>
 
     <p class="sonic-flores__instrucao">
       ${escaparHTML(
-        dados.instrucao || "Acho que você deveria clicar nele..."
+        dados.instrucao ||
+        "Talvez você devesse clicar nele..."
       )}
     </p>
   `;
@@ -2188,9 +2191,61 @@ function criarSonicFlores(dados) {
 
   let ativado = false;
 
-  function criarFlor() {
-    const flor = document.createElement("span");
+  function criarExplosao(x, y) {
+    const flores = [
+      "🌹",
+      "🌷",
+      "🌸",
+      "🌺",
+      "🌻",
+      "🌼",
+      "💐",
+      "💗",
+      "✨"
+    ];
 
+    for (let i = 0; i < 30; i++) {
+      const flor =
+        document.createElement("span");
+
+      flor.className =
+        "sonic-flor-explosao";
+
+      flor.textContent =
+        flores[
+          Math.floor(
+            Math.random() * flores.length
+          )
+        ];
+
+      flor.style.left = `${x}px`;
+      flor.style.top = `${y}px`;
+
+      const angulo =
+        Math.random() * Math.PI * 2;
+
+      const distancia =
+        100 + Math.random() * 280;
+
+      flor.style.setProperty(
+        "--x",
+        `${Math.cos(angulo) * distancia}px`
+      );
+
+      flor.style.setProperty(
+        "--y",
+        `${Math.sin(angulo) * distancia}px`
+      );
+
+      document.body.appendChild(flor);
+
+      setTimeout(() => {
+        flor.remove();
+      }, 1800);
+    }
+  }
+
+  function criarChuvaDeFlores(tela) {
     const flores = [
       "🌹",
       "🌷",
@@ -2201,95 +2256,49 @@ function criarSonicFlores(dados) {
       "💐"
     ];
 
-    flor.className = "sonic-flor";
+    for (let i = 0; i < 130; i++) {
+      setTimeout(() => {
+        const flor =
+          document.createElement("span");
 
-    flor.textContent =
-      flores[Math.floor(Math.random() * flores.length)];
+        flor.className =
+          "sonic-flor";
 
-    flor.style.left =
-      `${Math.random() * 100}vw`;
+        flor.textContent =
+          flores[
+            Math.floor(
+              Math.random() * flores.length
+            )
+          ];
 
-    flor.style.setProperty(
-      "--tamanho",
-      `${22 + Math.random() * 38}px`
-    );
+        flor.style.left =
+          `${Math.random() * 100}%`;
 
-    flor.style.setProperty(
-      "--duracao",
-      `${3.5 + Math.random() * 3}s`
-    );
+        flor.style.setProperty(
+          "--tamanho",
+          `${20 + Math.random() * 30}px`
+        );
 
-    flor.style.setProperty(
-      "--atraso",
-      `${Math.random() * 1.8}s`
-    );
+        flor.style.setProperty(
+          "--duracao",
+          `${3 + Math.random() * 3}s`
+        );
 
-    flor.style.setProperty(
-      "--rotacao",
-      `${-180 + Math.random() * 360}deg`
-    );
+        flor.style.setProperty(
+          "--atraso",
+          `${Math.random() * 0.5}s`
+        );
 
-    document.body.appendChild(flor);
+        tela.appendChild(flor);
 
-    window.setTimeout(function () {
-      flor.remove();
-    }, 8500);
-  }
-
-  function criarExplosao(x, y) {
-    const particulas = [
-      "🌹",
-      "🌷",
-      "🌸",
-      "🌺",
-      "🌻",
-      "🌼",
-      "💗",
-      "✨"
-    ];
-
-    for (let indice = 0; indice < 28; indice += 1) {
-      const particula =
-        document.createElement("span");
-
-      particula.className =
-        "sonic-flor-explosao";
-
-      particula.textContent =
-        particulas[
-          Math.floor(
-            Math.random() * particulas.length
-          )
-        ];
-
-      particula.style.left = `${x}px`;
-      particula.style.top = `${y}px`;
-
-      const angulo =
-        Math.random() * Math.PI * 2;
-
-      const distancia =
-        100 + Math.random() * 300;
-
-      particula.style.setProperty(
-        "--x",
-        `${Math.cos(angulo) * distancia}px`
-      );
-
-      particula.style.setProperty(
-        "--y",
-        `${Math.sin(angulo) * distancia}px`
-      );
-
-      document.body.appendChild(particula);
-
-      window.setTimeout(function () {
-        particula.remove();
-      }, 1800);
+        setTimeout(() => {
+          flor.remove();
+        }, 7500);
+      }, i * 25);
     }
   }
 
-  function mostrarTelaFinal() {
+  function abrirSurpresa() {
     const tela =
       document.createElement("div");
 
@@ -2300,6 +2309,7 @@ function criarSonicFlores(dados) {
       <div class="sonic-flores__fundo"></div>
 
       <div class="sonic-flores__mensagem">
+
         <span class="sonic-flores__para">
           ${escaparHTML(
             dados.mensagemPequena ||
@@ -2320,59 +2330,91 @@ function criarSonicFlores(dados) {
             "Principalmente quando encontram a pessoa certa. ❤️"
           )}
         </p>
+
+        <button
+          type="button"
+          class="sonic-flores__fechar"
+        >
+          continuar ♡
+        </button>
+
       </div>
     `;
 
     document.body.appendChild(tela);
 
-    window.setTimeout(function () {
+    // Impede a página de rolar por trás da surpresa
+    document.documentElement.classList.add(
+      "sonic-flores-aberto"
+    );
+
+    document.body.classList.add(
+      "sonic-flores-aberto"
+    );
+
+    requestAnimationFrame(() => {
       tela.classList.add(
         "sonic-flores__tela--visivel"
       );
-    }, 50);
+    });
 
-    for (let indice = 0; indice < 110; indice += 1) {
-      window.setTimeout(function () {
-        criarFlor();
-      }, indice * 22);
-    }
+    criarChuvaDeFlores(tela);
 
-    window.setTimeout(function () {
+    const fechar =
+      tela.querySelector(
+        ".sonic-flores__fechar"
+      );
+
+    function fecharSurpresa() {
       tela.classList.add(
         "sonic-flores__tela--saindo"
       );
-    }, 6500);
 
-    window.setTimeout(function () {
-      tela.remove();
-    }, 8500);
-  }
+      document.documentElement.classList.remove(
+        "sonic-flores-aberto"
+      );
 
-  botao.addEventListener("click", function (evento) {
-    if (ativado) {
-      return;
+      document.body.classList.remove(
+        "sonic-flores-aberto"
+      );
+
+      setTimeout(() => {
+        tela.remove();
+      }, 800);
     }
 
-    ativado = true;
-
-    elemento.classList.add(
-      "sonic-flores--ativado"
+    fechar.addEventListener(
+      "click",
+      fecharSurpresa
     );
+  }
 
-    const rect =
-      botao.getBoundingClientRect();
+  botao.addEventListener(
+    "click",
+    function () {
+      if (ativado) return;
 
-    criarExplosao(
-      rect.left + rect.width / 2,
-      rect.top + rect.height / 2
-    );
+      ativado = true;
 
-    window.setTimeout(function () {
-      mostrarTelaFinal();
+      elemento.classList.add(
+        "sonic-flores--ativado"
+      );
 
-      concluirPuzzle(elemento);
-    }, 500);
-  });
+      const rect =
+        botao.getBoundingClientRect();
+
+      criarExplosao(
+        rect.left + rect.width / 2,
+        rect.top + rect.height / 2
+      );
+
+      setTimeout(() => {
+        abrirSurpresa();
+
+        concluirPuzzle(elemento);
+      }, 450);
+    }
+  );
 
   return elemento;
 }
