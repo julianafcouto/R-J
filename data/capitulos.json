@@ -512,26 +512,26 @@
         "titulo": "Uma pequena carta",
         "texto": "Faz tempo que não apareço por aqui, né? Acho que a rotina, as conversas e a vida em si acabaram me cobrando um pouco mais do que gostaria kkkk. Mas quero que saiba que até mesmo nos dias comuns, eu penso em você. \n\nE talvez eu não consiga te entregar bons presentes ou textos elaborados todos os dias, mas quero que viva na certeza de que eu te amo, te desejo e te aprecio SEMPRE! \n\nVocê é a minha escolha de todos os dias, e sou feliz e grata em ser a sua.\n\nObrigada por salvar os meus dias tediosos, e trazer o amor para os dias comuns."
       },
-
       {
-    "tipo": "sonic-flores",
-    "titulo": "Tem uma última coisinha...",
-    "descricao": "Acho que esse Sonic tem alguma coisa para te entregar.",
-    "imagem": "./assets/imagens/sonic-zoiudo-flor.jpg",
-    "alt": "Sonic segurando uma flor",
-    "instrucao": "Talvez você devesse clicar nele...",
-    "mensagemPequena": "para você, Rayane",
-    "mensagemTitulo": "Algumas coisas florescem em dias simples.",
-    "mensagemFinal": "Principalmente quando encontram a pessoa certa. ❤️"
+  "id": "sonic-rayane",
+  "tipo": "sonic-flores",
+  "titulo": "Tem uma última coisinha...",
+  "descricao": "Acho que o Sonic tem alguma coisa para te entregar.",
+  "imagem": "./assets/imagens/sonic-zoiudo-flor.jpg",
+  "alt": "Sonic segurando uma flor",
+  "instrucao": "Talvez você devesse clicar nele...",
+  "mensagemPequena": "para você, Rayane",
+  "mensagemTitulo": "Algumas coisas florescem em dias simples.",
+  "mensagemFinal": "Principalmente quando encontram a pessoa certa. ❤️"
       },
       {
-        "tipo": "musica",
-        "titulo": "Dilemas da vida moderna",
-        "artista": "Carol Biazin",
-        "capa": "./assets/imagens/capas/amareso.jpg",
-        "link": "https://open.spotify.com/intl-pt/track/6TKBDgjEsyB2AGprNMpZyy?si=fa703a74f8004686",
-        "mensagem": "Por incrivel que pareça, notei que essa ainda não foi dedicada aqui, mesmo sendo tão nós.\n\nTe quero para sempre, minha moça bonita!",
-        "bloqueada": true
+  "tipo": "musica",
+  "titulo": "Dilemas da vida moderna",
+  "artista": "Carol Biazin",
+  "capa": "./assets/imagens/capas/amareso.jpg",
+  "link": "https://open.spotify.com/intl-pt/track/6TKBDgjEsyB2AGprNMpZyy?si=fa703a74f8004686",
+  "mensagem": "Por incrivel que pareça, notei que essa ainda não foi dedicada aqui, mesmo sendo tão nós.\n\nTe quero para sempre, minha moça bonita!",
+  "bloqueada": true
       }
     ]
   }

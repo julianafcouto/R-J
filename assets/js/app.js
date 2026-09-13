@@ -13,7 +13,6 @@
   "telescopio",
   "sonic-flores",
 ]);
-
   function escaparHTML(valor) {
     return String(valor ?? "")
       .replaceAll("&", "&amp;")
@@ -399,76 +398,217 @@
    * Música
    */
 
-  function criarMusica(dados) {
-    const elemento =
-      document.createElement("article");
+  function criarMusica(dados = {}) {
 
-    const bloqueada =
-      dados.bloqueada === true;
+  const elemento = document.createElement("article");
 
-    const link =
-      dados.link ||
-      dados.spotify ||
-      "#";
+  const bloqueada =
+    dados.bloqueada === true;
 
-    elemento.className = bloqueada
+  const link =
+    dados.link ||
+    dados.spotify ||
+    "#";
+
+  elemento.className =
+    bloqueada
       ? "componente musica musica--bloqueada"
       : "componente musica";
 
-    elemento.innerHTML = `
-      <div class="musica__bloqueio">
-        <span class="musica__cadeado">♡</span>
+  elemento.dataset.musicaBloqueada =
+    bloqueada ? "true" : "false";
 
-        <strong>Música guardada</strong>
+  elemento.innerHTML = `
 
-        <p>
-          Resolva o desafio anterior para revelar
-          esta parte da história.
+    <div
+      class="musica__bloqueio"
+      ${bloqueada ? "" : "hidden"}
+    >
+
+      <span class="musica__cadeado">
+        ♡
+      </span>
+
+      <strong>
+        Música guardada
+      </strong>
+
+      <p>
+        Resolva o desafio anterior para revelar
+        esta parte da história.
+      </p>
+
+    </div>
+
+
+    <div
+      class="musica__interior"
+      ${bloqueada ? "hidden" : ""}
+    >
+
+      <div class="musica__capa">
+
+        <img
+          src="${escaparHTML(dados.capa || "")}"
+          alt="Capa de ${escaparHTML(
+            dados.titulo || "música"
+          )}"
+          loading="lazy"
+        >
+
+      </div>
+
+
+      <div class="musica__conteudo">
+
+        <span class="componente__etiqueta">
+          Uma música para você
+        </span>
+
+        <h3>
+          ${escaparHTML(
+            dados.titulo || "Música"
+          )}
+        </h3>
+
+        <p class="musica__artista">
+          ${escaparHTML(
+            dados.artista || ""
+          )}
         </p>
+
+        <p class="musica__mensagem">
+          ${escaparHTML(
+            dados.mensagem || ""
+          )}
+        </p>
+
+        <a
+          class="botao"
+          href="${escaparHTML(link)}"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Ouvir música
+        </a>
+
       </div>
 
-      <div class="musica__interior">
-        <div class="musica__capa">
-          <img
-            src="${escaparHTML(dados.capa || "")}"
-            alt="Capa de ${escaparHTML(
-              dados.titulo || "música"
-            )}"
-            loading="lazy"
-          >
-        </div>
+    </div>
 
-        <div class="musica__conteudo">
-          <span class="componente__etiqueta">
-            Uma música para você
-          </span>
+  `;
 
-          <h3>
-            ${escaparHTML(dados.titulo || "Música")}
-          </h3>
+  const bloqueio =
+    elemento.querySelector(
+      ".musica__bloqueio"
+    );
 
-          <p class="musica__artista">
-            ${escaparHTML(dados.artista || "")}
-          </p>
 
-          <p class="musica__mensagem">
-            ${escaparHTML(dados.mensagem || "")}
-          </p>
+  const interior =
+    elemento.querySelector(
+      ".musica__interior"
+    );
 
-          <a
-            class="botao"
-            href="${escaparHTML(link)}"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Ouvir música
-          </a>
-        </div>
-      </div>
-    `;
 
-    return elemento;
+  /*
+   * =====================================================
+   * DESBLOQUEAR MÚSICA
+   * =====================================================
+   */
+
+  function desbloquearMusica() {
+
+    elemento.classList.remove(
+      "musica--bloqueada"
+    );
+
+
+    elemento.classList.add(
+      "musica--desbloqueada"
+    );
+
+
+    if (bloqueio) {
+
+      bloqueio.hidden =
+        true;
+
+    }
+
+
+    if (interior) {
+
+      interior.hidden =
+        false;
+
+    }
+
   }
+
+
+  /*
+   * =====================================================
+   * OUVIR O PUZZLE DO SONIC
+   * =====================================================
+   *
+   * O Sonic dispara:
+   *
+   * puzzle:concluido
+   *
+   * quando termina.
+   */
+
+  function quandoPuzzleConcluir(evento) {
+
+    const puzzleId =
+      String(
+        evento.detail?.puzzleId ||
+        ""
+      );
+
+
+    /*
+     * Só desbloqueia se for o Sonic.
+     */
+
+    if (
+      puzzleId === "sonic-rayane"
+    ) {
+
+      desbloquearMusica();
+
+    }
+
+  }
+
+
+  document.addEventListener(
+    "puzzle:concluido",
+    quandoPuzzleConcluir
+  );
+
+
+  /*
+   * =====================================================
+   * IMPORTANTE
+   * =====================================================
+   *
+   * A função também pode receber o evento
+   * customizado diretamente pelo puzzle Sonic.
+   */
+
+  document.addEventListener(
+    "puzzle-sonic-concluido",
+    function () {
+
+      desbloquearMusica();
+
+    }
+  );
+
+
+  return elemento;
+}
 
   /*
    * Cofre
@@ -2064,66 +2204,96 @@
     return elemento;
   }
 
-    /*
- * Puzzle do Sonic — chuva de flores
- */
+  function criarSonicFlores(dados = {}) {
 
-function criarSonicFlores(dados) {
   const elemento = document.createElement("article");
 
   elemento.className =
     "componente puzzle sonic-flores";
 
+  /*
+   * Escape LOCAL.
+   * O Sonic não depende mais de escaparHTML().
+   */
+  const seguro = function (valor) {
+    const div = document.createElement("div");
+    div.textContent = String(valor ?? "");
+    return div.innerHTML;
+  };
+
+  const imagem =
+    dados.imagem ||
+    "./assets/imagens/sonic-zoiudo-flor.jpg";
+
+  const titulo =
+    dados.titulo ||
+    "Tem uma última coisinha...";
+
+  const descricao =
+    dados.descricao ||
+    "Acho que o Sonic tem alguma coisa para te entregar.";
+
+  const instrucao =
+    dados.instrucao ||
+    "Talvez você devesse clicar nele...";
+
   elemento.innerHTML = `
     <span class="componente__etiqueta">
-      ${escaparHTML(dados.etiqueta || "Uma pequena surpresa")}
+      Uma pequena surpresa
     </span>
 
     <h3>
-      ${escaparHTML(
-        dados.titulo ||
-        "Tem alguma coisa escondida aqui..."
-      )}
+      ${seguro(titulo)}
     </h3>
 
     <p class="puzzle__descricao">
-      ${escaparHTML(
-        dados.descricao ||
-        "Acho que esse carinha tem alguma coisa para te entregar."
-      )}
+      ${seguro(descricao)}
     </p>
 
-    <button
-      class="sonic-flores__botao"
-      type="button"
-      aria-label="Clique no Sonic"
-    >
-      <img
-        src="${escaparHTML(
-          dados.imagem ||
-          "./assets/imagens/sonic-zoiudo-flor.jpg"
-        )}"
-        alt="${escaparHTML(
-          dados.alt ||
-          "Sonic segurando uma flor"
-        )}"
-      />
-    </button>
+    <div class="sonic-flores__area">
+
+      <button
+        type="button"
+        class="sonic-flores__botao"
+        aria-label="Clique no Sonic"
+      >
+
+        <img
+          src="${seguro(imagem)}"
+          alt="${seguro(
+            dados.alt ||
+            "Sonic segurando uma flor"
+          )}"
+          draggable="false"
+        >
+
+      </button>
+
+    </div>
 
     <p class="sonic-flores__instrucao">
-      ${escaparHTML(
-        dados.instrucao ||
-        "Talvez você devesse clicar nele..."
-      )}
+      ${seguro(instrucao)}
     </p>
   `;
 
+
   const botao =
-    elemento.querySelector(".sonic-flores__botao");
+    elemento.querySelector(
+      ".sonic-flores__botao"
+    );
+
 
   let ativado = false;
 
-  function criarExplosao(x, y) {
+
+  /*
+   * =====================================================
+   * EXPLOSÃO
+   * =====================================================
+   */
+
+  function explodir(x, y) {
+
     const flores = [
       "🌹",
       "🌷",
@@ -2132,11 +2302,18 @@ function criarSonicFlores(dados) {
       "🌻",
       "🌼",
       "💐",
+      "🌿",
       "💗",
       "✨"
     ];
 
-    for (let i = 0; i < 30; i++) {
+
+    for (
+      let i = 0;
+      i < 55;
+      i++
+    ) {
+
       const flor =
         document.createElement("span");
 
@@ -2146,18 +2323,29 @@ function criarSonicFlores(dados) {
       flor.textContent =
         flores[
           Math.floor(
-            Math.random() * flores.length
+            Math.random() *
+            flores.length
           )
         ];
 
-      flor.style.left = `${x}px`;
-      flor.style.top = `${y}px`;
+
+      flor.style.left =
+        `${x}px`;
+
+      flor.style.top =
+        `${y}px`;
+
 
       const angulo =
-        Math.random() * Math.PI * 2;
+        Math.random() *
+        Math.PI *
+        2;
 
       const distancia =
-        100 + Math.random() * 280;
+        120 +
+        Math.random() *
+        380;
+
 
       flor.style.setProperty(
         "--x",
@@ -2169,95 +2357,69 @@ function criarSonicFlores(dados) {
         `${Math.sin(angulo) * distancia}px`
       );
 
-      document.body.appendChild(flor);
+      flor.style.setProperty(
+        "--rotacao",
+        `${-180 + Math.random() * 360}deg`
+      );
 
-      setTimeout(() => {
-        flor.remove();
-      }, 1800);
-    }
-  }
+      flor.style.setProperty(
+        "--tamanho",
+        `${18 + Math.random() * 28}px`
+      );
 
-  function criarChuvaDeFlores(tela) {
-    const flores = [
-      "🌹",
-      "🌷",
-      "🌸",
-      "🌺",
-      "🌻",
-      "🌼",
-      "💐"
-    ];
 
-    for (let i = 0; i < 130; i++) {
-      setTimeout(() => {
-        const flor =
-          document.createElement("span");
+      document.body.appendChild(
+        flor
+      );
 
-        flor.className =
-          "sonic-flor";
 
-        flor.textContent =
-          flores[
-            Math.floor(
-              Math.random() * flores.length
-            )
-          ];
-
-        flor.style.left =
-          `${Math.random() * 100}%`;
-
-        flor.style.setProperty(
-          "--tamanho",
-          `${20 + Math.random() * 30}px`
-        );
-
-        flor.style.setProperty(
-          "--duracao",
-          `${3 + Math.random() * 3}s`
-        );
-
-        flor.style.setProperty(
-          "--atraso",
-          `${Math.random() * 0.5}s`
-        );
-
-        tela.appendChild(flor);
-
-        setTimeout(() => {
+      setTimeout(
+        function () {
           flor.remove();
-        }, 7500);
-      }, i * 25);
+        },
+        2200
+      );
     }
   }
 
-  function abrirSurpresa() {
+
+  /*
+   * =====================================================
+   * TELA DA SURPRESA
+   * =====================================================
+   */
+
+  function abrirTelaSurpresa() {
+
     const tela =
       document.createElement("div");
 
     tela.className =
       "sonic-flores__tela";
 
-    tela.innerHTML = `
-      <div class="sonic-flores__fundo"></div>
 
-      <div class="sonic-flores__mensagem">
+    tela.innerHTML = `
+
+      <div class="sonic-flores__flores"></div>
+
+      <div class="sonic-flores__conteudo">
 
         <span class="sonic-flores__para">
-          ${escaparHTML(
+          ${seguro(
             dados.mensagemPequena ||
             "para você, Rayane"
           )}
         </span>
 
         <h2>
-          ${escaparHTML(
+          ${seguro(
             dados.mensagemTitulo ||
-            "Algumas coisas simplesmente florescem."
+            "Algumas coisas florescem em dias simples."
           )}
         </h2>
 
         <p>
-          ${escaparHTML(
+          ${seguro(
             dados.mensagemFinal ||
             "Principalmente quando encontram a pessoa certa. ❤️"
           )}
@@ -2273,9 +2435,12 @@ function criarSonicFlores(dados) {
       </div>
     `;
 
-    document.body.appendChild(tela);
 
-    // Impede a página de rolar por trás da surpresa
+    document.body.appendChild(
+      tela
+    );
+
+
     document.documentElement.classList.add(
       "sonic-flores-aberto"
     );
@@ -2284,69 +2449,247 @@ function criarSonicFlores(dados) {
       "sonic-flores-aberto"
     );
 
-    requestAnimationFrame(() => {
-      tela.classList.add(
-        "sonic-flores__tela--visivel"
-      );
-    });
 
-    criarChuvaDeFlores(tela);
+    /*
+     * Entrada da tela
+     */
+
+    requestAnimationFrame(
+      function () {
+
+        tela.classList.add(
+          "sonic-flores__tela--visivel"
+        );
+
+      }
+    );
+
+
+    /*
+     * Chuva de flores
+     */
+
+    const containerFlores =
+      tela.querySelector(
+        ".sonic-flores__flores"
+      );
+
+
+    const flores = [
+      "🌹",
+      "🌷",
+      "🌸",
+      "🌺",
+      "🌻",
+      "🌼",
+      "💐",
+      "🌿",
+      "💗"
+    ];
+
+
+    for (
+      let i = 0;
+      i < 160;
+      i++
+    ) {
+
+      setTimeout(
+        function () {
+
+          if (
+            !tela.isConnected
+          ) {
+            return;
+          }
+
+
+          const flor =
+            document.createElement(
+              "span"
+            );
+
+
+          flor.className =
+            "sonic-flor";
+
+
+          flor.textContent =
+            flores[
+              Math.floor(
+                Math.random() *
+                flores.length
+              )
+            ];
+
+
+          flor.style.left =
+            `${Math.random() * 100}%`;
+
+
+          flor.style.fontSize =
+            `${18 + Math.random() * 25}px`;
+
+
+          flor.style.animationDuration =
+            `${3 + Math.random() * 4}s`;
+
+
+          flor.style.animationDelay =
+            `${Math.random() * 1.5}s`;
+
+
+          containerFlores.appendChild(
+            flor
+          );
+
+
+          setTimeout(
+            function () {
+              flor.remove();
+            },
+            8000
+          );
+
+        },
+        i * 18
+      );
+    }
+
+
+    /*
+     * Botão continuar
+     */
 
     const fechar =
       tela.querySelector(
         ".sonic-flores__fechar"
       );
 
-    function fecharSurpresa() {
-      tela.classList.add(
-        "sonic-flores__tela--saindo"
-      );
-
-      document.documentElement.classList.remove(
-        "sonic-flores-aberto"
-      );
-
-      document.body.classList.remove(
-        "sonic-flores-aberto"
-      );
-
-      setTimeout(() => {
-        tela.remove();
-      }, 800);
-    }
 
     fechar.addEventListener(
       "click",
-      fecharSurpresa
+      function (evento) {
+
+        evento.preventDefault();
+
+        evento.stopPropagation();
+
+
+        /*
+         * Fecha visualmente
+         */
+
+        tela.classList.add(
+          "sonic-flores__tela--saindo"
+        );
+
+
+        document.documentElement.classList.remove(
+          "sonic-flores-aberto"
+        );
+
+        document.body.classList.remove(
+          "sonic-flores-aberto"
+        );
+
+
+        /*
+         * Remove depois da animação
+         */
+
+        setTimeout(
+          function () {
+
+            tela.remove();
+
+          },
+          700
+        );
+
+      }
     );
+
   }
+
+
+  /*
+   * =====================================================
+   * CLIQUE NO SONIC
+   * =====================================================
+   */
 
   botao.addEventListener(
     "click",
     function () {
-      if (ativado) return;
+
+      if (ativado) {
+        return;
+      }
+
 
       ativado = true;
+
 
       elemento.classList.add(
         "sonic-flores--ativado"
       );
 
+
       const rect =
         botao.getBoundingClientRect();
 
-      criarExplosao(
-        rect.left + rect.width / 2,
-        rect.top + rect.height / 2
+
+      const x =
+        rect.left +
+        rect.width / 2;
+
+
+      const y =
+        rect.top +
+        rect.height / 2;
+
+
+      /*
+       * Explode flores
+       */
+
+      explodir(
+        x,
+        y
       );
 
-      setTimeout(() => {
-        abrirSurpresa();
 
-        concluirPuzzle(elemento);
-      }, 450);
+      /*
+       * Pequeno atraso para
+       * deixar a explosão acontecer
+       */
+
+      setTimeout(
+        function () {
+
+          abrirTelaSurpresa();
+
+
+          /*
+           * Marca o puzzle como resolvido.
+           *
+           * O próprio sistema do capítulo
+           * coloca dataset.chaveDesbloqueio
+           * no elemento.
+           */
+
+          concluirPuzzle(
+            elemento
+          );
+
+        },
+        450
+      );
+
     }
   );
+
 
   return elemento;
 }
@@ -2395,9 +2738,9 @@ function criarSonicFlores(dados) {
 
         case "telescopio":
           return criarTelescopio(dados);
-
+        
         case "sonic-flores":
-          return criarSonicFlores(dados);
+        return criarSonicFlores(dados);
 
         default:
           return criarElementoErro(
@@ -2491,6 +2834,7 @@ function criarSonicFlores(dados) {
 
     let puzzlePendente = null;
     let numeroPuzzle = 0;
+    let chavePuzzleAnterior = null;
 
     componentes.forEach(function (
       componente,
@@ -2504,30 +2848,38 @@ function criarSonicFlores(dados) {
           criarComponente(componente);
 
         if (TIPOS_PUZZLE.has(tipo)) {
-          numeroPuzzle += 1;
+  numeroPuzzle += 1;
 
-          puzzlePendente =
-            `${dados.id || "capitulo"}-puzzle-${numeroPuzzle}`;
+  puzzlePendente =
+    `${dados.id || "capitulo"}-puzzle-${numeroPuzzle}`;
 
-          elemento.dataset.chaveDesbloqueio =
-            puzzlePendente;
-        }
+  elemento.dataset.chaveDesbloqueio =
+    puzzlePendente;
+
+  elemento.dataset.puzzleId =
+    puzzlePendente;
+}
 
         if (
-          tipo === "musica" &&
-          componente.bloqueada === true
-        ) {
-          if (puzzlePendente) {
-            elemento.dataset.chaveDesbloqueio =
-              puzzlePendente;
-          } else {
-            elemento.classList.remove(
-              "musica--bloqueada"
-            );
-          }
+  tipo === "musica" &&
+  componente.bloqueada === true
+) {
 
-          puzzlePendente = null;
-        }
+  if (puzzlePendente) {
+
+    elemento.dataset.chaveDesbloqueio =
+      puzzlePendente;
+
+  } else {
+
+    elemento.classList.remove(
+      "musica--bloqueada"
+    );
+
+  }
+
+  puzzlePendente = null;
+}
 
         container.appendChild(elemento);
       } catch (erro) {
@@ -2651,6 +3003,65 @@ function criarSonicFlores(dados) {
       }
     });
 
+    capitulo.addEventListener(
+  "puzzle:concluido",
+  function (evento) {
+
+    const detalhe =
+      evento.detail || {};
+
+    const puzzleId =
+      detalhe.puzzleId ||
+      detalhe.elemento?.dataset?.puzzleId ||
+      "";
+
+    if (!puzzleId) {
+      return;
+    }
+
+    const musica =
+      capitulo.querySelector(
+        ".musica--bloqueada[data-chave-desbloqueio='" +
+        CSS.escape(String(puzzleId)) +
+        "']"
+      );
+
+    if (!musica) {
+      return;
+    }
+
+    const bloqueio =
+      musica.querySelector(
+        ".musica__bloqueio"
+      );
+
+    const interior =
+      musica.querySelector(
+        ".musica__interior"
+      );
+
+    musica.classList.remove(
+      "musica--bloqueada"
+    );
+
+    musica.classList.add(
+      "musica--desbloqueada"
+    );
+
+    musica.dataset.musicaBloqueada =
+      "false";
+
+    if (bloqueio) {
+      bloqueio.hidden = true;
+    }
+
+    if (interior) {
+      interior.hidden = false;
+    }
+
+  }
+);
+
     return capitulo;
   }
 
@@ -2760,6 +3171,13 @@ function criarSonicFlores(dados) {
         container.appendChild(grupo);
       });
 
+      const mapaPrincipal = document.getElementById("mapa-principal");
+      if (mapaPrincipal && !mapaPrincipal.children.length) {
+        const componenteMapa = capitulos
+          .flatMap(function (capitulo) { return Array.isArray(capitulo.componentes) ? capitulo.componentes : []; })
+          .find(function (componente) { return normalizar(componente?.tipo) === "mapa"; });
+        mapaPrincipal.appendChild(criarMapa(componenteMapa || { id: "nosso-mapa" }));
+      }
     } catch (erro) {
       console.error(
         "Erro ao carregar capítulos:",
