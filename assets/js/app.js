@@ -3210,8 +3210,7 @@
   }
 
   function iniciarCantinho() {
-    const SUPABASE_URL = "https://firebase.rayane.local";
-    const SUPABASE_KEY = "sb_publishable_vokCdlS5rBIiogRyIy0WPA_D5xTADIN";
+    const PUBLICACOES_URL = "https://firebase.rayane.local";
     const texto = document.getElementById("cantinho-texto");
     const dataEscolhida = document.getElementById("cantinho-data");
     const link = document.getElementById("cantinho-link");
@@ -3232,8 +3231,6 @@
       return {
         ...extras,
         headers: {
-          apikey: SUPABASE_KEY,
-          Authorization: `Bearer ${SUPABASE_KEY}`,
           "Content-Type": "application/json",
           ...(extras?.headers || {})
         }
@@ -3273,7 +3270,7 @@
 
     async function enviar(anotacao, codigoAcesso) {
       const resposta = await fetch(
-        `${SUPABASE_URL}/rest/v1/rpc/criar_publicacao_rayane`,
+        `${PUBLICACOES_URL}/rest/v1/rpc/criar_publicacao_rayane`,
         opcoesRequisicao({
           method: "POST",
           body: JSON.stringify({
@@ -3281,14 +3278,15 @@
             p_texto: anotacao.texto,
             p_data: anotacao.data || null,
             p_link: anotacao.link || null,
-            p_codigo: codigoAcesso
+            p_codigo: codigoAcesso,
+            p_criada_em: anotacao.criada_em || anotacao.criadaEm
           })
         })
       );
 
       if (!resposta.ok) {
         const detalhe = await resposta.text();
-        throw new Error(detalhe.includes("codigo_incorreto") ? "codigo" : "envio");
+        throw new Error(detalhe.includes("codigo_incorreto") ? "codigo" : detalhe);
       }
     }
 
@@ -3298,9 +3296,10 @@
 
       for (const anotacao of locais) {
         await enviar(anotacao, codigoAcesso);
+        localStorage.setItem(chaveLocal, JSON.stringify(lerLocais().filter(function (item) {
+          return item.id !== anotacao.id;
+        })));
       }
-
-      localStorage.removeItem(chaveLocal);
     }
 
     function mostrar(anotacoes) {
@@ -3404,7 +3403,7 @@
           excluir.disabled = true;
           try {
             const resposta = await fetch(
-              `${SUPABASE_URL}/rest/v1/rpc/apagar_publicacao_rayane`,
+              `${PUBLICACOES_URL}/rest/v1/rpc/apagar_publicacao_rayane`,
               opcoesRequisicao({
                 method: "POST",
                 body: JSON.stringify({
@@ -3450,23 +3449,43 @@
       });
     }
 
+    function mensagemErro(erro) {
+      const detalhe = erro.message || "";
+      if (/firebase_sdk_indisponivel/.test(detalhe)) return "O Firebase não carregou. Recarregue a página e verifique se o navegador está bloqueando o serviço.";
+      if (/codigo|auth\/invalid|auth\/wrong/.test(detalhe)) return "A senha não foi aceita pelo Firebase. Confira a senha da conta cadastrada.";
+      if (/permission-denied/.test(detalhe)) return "O Firebase recusou o acesso. Confira a conta e as regras do banco.";
+      if (/publicacao_grande/.test(detalhe)) return "A publicação ultrapassou o tamanho permitido. Reduza o conteúdo.";
+      if (/auth\//.test(detalhe)) return "Não foi possível entrar no Firebase. Código: " + detalhe;
+      return "Não foi possível confirmar o salvamento online. Confira a conexão e tente novamente.";
+    }
+
+    let carregando = false;
     async function carregarPublicacoes() {
+      if (carregando) return;
+      carregando = true;
       try {
+        const senha = codigo.value.trim() || sessionStorage.getItem("rj-firebase-codigo");
+        if (!senha) return;
+        const tinhaPendentes = lerLocais().length > 0;
+        await migrarLocais(senha);
         const resposta = await fetch(
-          `${SUPABASE_URL}/rest/v1/publicacoes_rayane?select=*&order=criada_em.desc`,
+          `${PUBLICACOES_URL}/rest/v1/publicacoes_rayane?select=*&order=criada_em.desc`,
           opcoesRequisicao({ cache: "no-store" })
         );
 
-        if (!resposta.ok) throw new Error("leitura");
+        if (!resposta.ok) throw new Error(await resposta.text());
         const publicacoes = await resposta.json();
         mostrar(publicacoes.filter(function (item) {
           const conteudo = String(item.texto || "");
           return !conteudo.startsWith("__MAPA_RJ__") && !conteudo.startsWith("__FEED_RJ__");
         }));
+        if (tinhaPendentes) aviso.textContent = "Publicações deste aparelho confirmadas no Firebase. ♡";
       } catch (erro) {
         const locais = lerLocais().slice().reverse();
         mostrar(locais);
-        aviso.textContent = "Sem conexão. Mostrando o que estava salvo neste aparelho.";
+        aviso.textContent = mensagemErro(erro) + (locais.length ? " Há publicações neste aparelho aguardando envio." : "");
+      } finally {
+        carregando = false;
       }
     }
 
@@ -3516,7 +3535,7 @@
         link.value = "";
         dataEscolhida.value = new Date().toLocaleDateString("en-CA");
         contador.textContent = "0 de 700000";
-        aviso.textContent = "Guardado com carinho. ♡";
+        aviso.textContent = "Guardado online no Firebase. ♡";
         await carregarPublicacoes();
       } catch (erro) {
         if (erro.message === "codigo") {
@@ -3530,7 +3549,7 @@
             dataEscolhida.value = new Date().toLocaleDateString("en-CA");
             contador.textContent = "0 de 700000";
             mostrar(lerLocais().slice().reverse());
-            aviso.textContent = "Guardado neste aparelho. Será sincronizado quando a conexão voltar. ♡";
+            aviso.textContent = mensagemErro(erro) + " Cópia preservada neste aparelho, aguardando envio.";
           } catch (erroLocal) {
             aviso.textContent = "Não foi possível guardar neste aparelho. Verifique o espaço disponível do navegador.";
           }
@@ -3540,12 +3559,14 @@
       }
     });
 
+    window.addEventListener("online", carregarPublicacoes);
+    document.addEventListener("rj-acesso-alterado", carregarPublicacoes);
+    codigo.addEventListener("change", carregarPublicacoes);
     carregarPublicacoes();
   }
 
   function iniciarMomentos() {
-    const SUPABASE_URL = "https://mmipkjzdnnrgovvlihlp.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_vokCdlS5rBIiogRyIy0WPA_D5xTADIN";
+    const PUBLICACOES_URL = "https://firebase.rayane.local";
     const PREFIXO = "__FEED_RJ__";
     const formulario = document.getElementById("momentos-form");
     const fotos = document.getElementById("momentos-fotos");
@@ -3566,8 +3587,6 @@
       return {
         ...extras,
         headers: {
-          apikey: SUPABASE_KEY,
-          Authorization: `Bearer ${SUPABASE_KEY}`,
           "Content-Type": "application/json",
           ...(extras?.headers || {})
         }
@@ -3665,7 +3684,7 @@
           const senha = codigo.value.trim() || window.prompt("Digite a senha para apagar:")?.trim();
           if (!senha) return;
           try {
-            const resposta = await fetch(`${SUPABASE_URL}/rest/v1/rpc/apagar_publicacao_rayane`, opcoesRequisicao({ method: "POST", body: JSON.stringify({ p_id: item.id, p_codigo: senha }) }));
+            const resposta = await fetch(`${PUBLICACOES_URL}/rest/v1/rpc/apagar_publicacao_rayane`, opcoesRequisicao({ method: "POST", body: JSON.stringify({ p_id: item.id, p_codigo: senha }) }));
             if (!resposta.ok) { const detalhe = await resposta.text(); throw new Error(detalhe.includes("codigo_incorreto") ? "codigo" : "exclusao"); }
             await carregar();
           } catch (erro) {
@@ -3679,7 +3698,7 @@
 
     async function carregar() {
       try {
-        const resposta = await fetch(`${SUPABASE_URL}/rest/v1/publicacoes_rayane?select=id,texto,criada_em&order=criada_em.desc`, opcoesRequisicao({ cache: "no-store" }));
+        const resposta = await fetch(`${PUBLICACOES_URL}/rest/v1/publicacoes_rayane?select=id,texto,criada_em&order=criada_em.desc`, opcoesRequisicao({ cache: "no-store" }));
         if (!resposta.ok) throw new Error("leitura");
         const itens = (await resposta.json()).filter(function (item) { return String(item.texto || "").startsWith(PREFIXO); }).map(function (item) {
           try { return { ...item, dados: JSON.parse(item.texto.slice(PREFIXO.length)) }; } catch (_) { return null; }
@@ -3709,7 +3728,7 @@
         }
         const payload = { imagens, descricao: descricao.value.trim(), data: data.value, autora: autora.value };
         aviso.textContent = "Publicando o momento...";
-        const resposta = await fetch(`${SUPABASE_URL}/rest/v1/rpc/criar_publicacao_rayane`, opcoesRequisicao({ method: "POST", body: JSON.stringify({ p_id: globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`, p_texto: PREFIXO + JSON.stringify(payload), p_data: data.value || null, p_link: null, p_codigo: senha }) }));
+        const resposta = await fetch(`${PUBLICACOES_URL}/rest/v1/rpc/criar_publicacao_rayane`, opcoesRequisicao({ method: "POST", body: JSON.stringify({ p_id: globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`, p_texto: PREFIXO + JSON.stringify(payload), p_data: data.value || null, p_link: null, p_codigo: senha }) }));
         if (!resposta.ok) { const detalhe = await resposta.text(); throw new Error(detalhe.includes("codigo_incorreto") ? "codigo" : "envio"); }
         localStorage.setItem("rayane-cantinho-codigo-v1", senha);
         formulario.reset();
@@ -3726,6 +3745,8 @@
       }
     });
 
+    window.addEventListener("online", carregar);
+    document.addEventListener("rj-acesso-alterado", carregar);
     carregar();
   }
 

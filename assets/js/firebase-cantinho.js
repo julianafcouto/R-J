@@ -17,12 +17,19 @@
   const fetchOriginal = window.fetch.bind(window);
   let autenticacaoEmAndamento = null;
 
-  if (!window.firebase) return;
+  if (!window.firebase) {
+    window.fetch = function (entrada, opcoes) {
+      const url = typeof entrada === "string" ? entrada : entrada.url;
+      if (!url.startsWith(URL_PONTE)) return fetchOriginal(entrada, opcoes);
+      return Promise.resolve(respostaJson({ erro: "firebase_sdk_indisponivel" }, 503));
+    };
+    return;
+  }
   if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 
   const auth = firebase.auth();
   const banco = firebase.firestore();
-  auth.setPersistence(firebase.auth.Auth.Persistence.SESSION).catch(function () {});
+  const persistencia = auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
 
   function respostaJson(dados, status) {
     return new Response(JSON.stringify(dados), {
@@ -37,6 +44,10 @@
   }
 
   async function autenticar(codigo) {
+    await persistencia;
+    await new Promise(function (resolve, reject) {
+      const cancelar = auth.onAuthStateChanged(function () { cancelar(); resolve(); }, reject);
+    });
     if (auth.currentUser && emailsAutorizados.includes(auth.currentUser.email || "")) {
       return auth.currentUser;
     }
@@ -76,7 +87,7 @@
   async function listar() {
     await autenticar(await esperarCodigo());
     const consulta = await banco.collection("publicacoes_rayane")
-      .orderBy("criada_em", "desc").get();
+      .orderBy("criada_em", "desc").get({ source: "server" });
     return consulta.docs.map(function (documento) {
       return { id: documento.id, ...documento.data() };
     });
@@ -84,7 +95,7 @@
 
   async function criar(parametros) {
     const usuario = await autenticar(parametros.p_codigo || "");
-    const agora = new Date().toISOString();
+    const agora = parametros.p_criada_em || new Date().toISOString();
     const dados = {
       id: String(parametros.p_id),
       texto: String(parametros.p_texto || ""),
@@ -93,7 +104,21 @@
       criada_em: agora,
       owner_uid: usuario.uid
     };
-    await banco.collection("publicacoes_rayane").doc(dados.id).set(dados);
+    if (dados.texto.length > 700000 || new TextEncoder().encode(JSON.stringify(dados)).length > 950000) {
+      throw new Error("publicacao_grande");
+    }
+    const referencia = banco.collection("publicacoes_rayane").doc(dados.id);
+    await banco.runTransaction(async function (transacao) {
+      const existente = await transacao.get(referencia);
+      if (existente.exists) {
+        const anterior = existente.data();
+        if (["texto", "data", "link"].some(function (campo) { return anterior[campo] !== dados[campo]; })) {
+          throw new Error("publicacao_conflitante");
+        }
+        return;
+      }
+      transacao.set(referencia, dados);
+    });
   }
 
   async function apagar(parametros) {
@@ -114,7 +139,7 @@
       return respostaJson({ ok: true });
     } catch (erro) {
       const codigo = erro.message === "codigo_incorreto" || erro.code === "auth/invalid-credential";
-      return respostaJson({ erro: codigo ? "codigo_incorreto" : "firebase_indisponivel" }, codigo ? 401 : 503);
+      return respostaJson({ erro: codigo ? "codigo_incorreto" : (erro.code || erro.message || "firebase_indisponivel") }, codigo ? 401 : 503);
     }
   };
 })();
