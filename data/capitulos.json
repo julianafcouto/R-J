@@ -535,4 +535,28 @@
       }
     ]
   }
+,
+{
+  "id": "2026-09-16",
+  "titulo": "Bodas de Algodão",
+  "data": "16.09.2026",
+  "subtitulo": "Três meses de nós.",
+  "componentes": [
+    {
+      "tipo": "carta",
+      "titulo": "Três meses de nós",
+      "texto": "Três meses.\n\nDizem que hoje são nossas bodas de algodão. E eu fiquei pensando na delicadeza de uma coisa que ainda está começando, e em tudo que ela já pode se tornar.\n\nO algodão vira fio. O fio encontra outro fio. E, quando eles se entrelaçam, aquilo que sozinho parecia tão delicado começa a ganhar força.\n\nTalvez amar alguém seja um pouco assim. Não chegar pronta. Não saber exatamente onde cada coisa vai ficar. Não ter todas as respostas. Mas querer descobrir, mesmo assim.\n\nHá três meses, começamos a chamar isso de casamento. E, entre as aspas de ‘casadas’, existe uma certeza minha que não precisa de aspas: eu escolho você.\n\nEscolho nas conversas longas e nos dias em que faltam palavras. Na saudade, na vontade de estar perto, nos planos que a gente faz e nas pequenas coisas que vão virando nossas.\n\nVocê foi se tornando esse lugar bonito para onde meu pensamento volta. Um cuidado no meio da rotina. Uma vontade de futuro. Casa, mesmo quando existe distância.\n\nAinda temos tanta coisa para aprender, tantos lugares para conhecer, tantas versões nossas que ainda nem encontramos. E eu gosto de pensar que não precisamos ter pressa.\n\nEu quero viver esse começo com você. Quero continuar escolhendo, cuidando e encontrando um jeito de ficar perto.\n\nTrês meses de nós.\n\nMas algumas coisas eu não quero te explicar. Quero que você construa comigo.\n\nFio por fio."
+    },
+    { "tipo": "puzzle-algodao", "titulo": "Entre Fios" },
+    {
+      "tipo": "musica",
+      "titulo": "Cabelos de Algodão",
+      "artista": "Banda Fly",
+      "capa": "./assets/imagens/capas/cabelos-de-algodao.jpg",
+      "link": "https://open.spotify.com/intl-pt/track/3EL9IRDqB9GRf8JSacc35v?si=ca4b2b2a448c4ed4",
+      "mensagem": "Desculpa voltar décadas no tempo, mas sem duvdas, essa é a música perfeita para o capítulo de hoje. Te amo! (não vira uma velha chata por favor)",
+      "bloqueada": true
+    }
+  ]
+}
 ]

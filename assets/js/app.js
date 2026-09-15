@@ -12,6 +12,7 @@
   "sorvete",
   "telescopio",
   "sonic-flores",
+  "puzzle-algodao",
 ]);
   function escaparHTML(valor) {
     return String(valor ?? "")
@@ -572,7 +573,8 @@
      */
 
     if (
-      puzzleId === "sonic-rayane"
+      puzzleId === "sonic-rayane" &&
+      elemento.closest(".capitulo")?.querySelector(".sonic-flores")
     ) {
 
       desbloquearMusica();
@@ -601,6 +603,7 @@
     "puzzle-sonic-concluido",
     function () {
 
+      if (!elemento.closest(".capitulo")?.querySelector(".sonic-flores")) return;
       desbloquearMusica();
 
     }
@@ -2742,6 +2745,9 @@
         case "sonic-flores":
         return criarSonicFlores(dados);
 
+        case "puzzle-algodao":
+          return window.criarPuzzleAlgodao(dados, concluirPuzzle);
+
         default:
           return criarElementoErro(
             `Tipo não reconhecido: ${
@@ -2937,6 +2943,11 @@
           musica.classList.add(
             "musica--desbloqueada"
           );
+          musica.dataset.musicaBloqueada = "false";
+          const bloqueio = musica.querySelector(".musica__bloqueio");
+          const interior = musica.querySelector(".musica__interior");
+          if (bloqueio) bloqueio.hidden = true;
+          if (interior) interior.hidden = false;
         }, 650);
       }
     );

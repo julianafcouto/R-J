@@ -1,0 +1,40 @@
+.algodao { background: #faf5eb; color: #654938; border: 1px solid #dfcdb8; overflow: hidden; text-align: center; }
+.algodao h3 { font-size: clamp(2rem, 6vw, 3.5rem); margin: 12px 0 0; font-family: Georgia, serif; font-weight: normal; }
+.algodao__subtitulo { letter-spacing: .15em; font-size: .85rem; }
+.algodao__instrucao { max-width: 540px; margin: 22px auto; line-height: 1.7; }
+.algodao__tecido { position: relative; width: 100%; max-width: 560px; height: 380px; margin: auto; border-radius: 24px; background-color: #f3e9d9; background-image: repeating-linear-gradient(0deg, transparent 0 3px, #bda58412 3px 4px), repeating-linear-gradient(90deg, transparent 0 3px, #bda58416 3px 4px); box-shadow: inset 0 0 55px #c2a58026; }
+.algodao__linhas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.algodao__linhas path { fill: none; stroke: #a35450; stroke-width: .7; stroke-dasharray: 1; stroke-dashoffset: 0; animation: algodao-costurar .8s ease both; }
+.algodao__linhas path.algodao__erro { stroke: #b49278; animation: algodao-soltar .8s ease forwards; }
+.algodao button { cursor: pointer; font: inherit; }
+.algodao button:focus-visible { outline: 3px solid #794735; outline-offset: 5px; }
+.algodao__no { position: absolute; transform: translate(-50%, -50%); min-width: 72px; min-height: 48px; padding: 10px; border-radius: 50%; border: 1px solid #c9b193; background: #fffaf0; color: #654938; font-size: .72rem !important; letter-spacing: .08em; touch-action: none; box-shadow: 0 3px 8px #79503616; }
+.algodao__no--feito { background: #ead5c8; border-color: #a35450; }
+.algodao__no[aria-pressed=true] { box-shadow: 0 0 0 5px #a3545020; }
+.algodao__status { min-height: 3.5em; margin: 22px auto 8px; line-height: 1.7; max-width: 500px; }
+.algodao__frases { list-style: none; padding: 0; font-family: Georgia, serif; font-style: italic; line-height: 1.8; }
+.algodao__frases li { animation: algodao-aparecer .6s ease; }
+.algodao__bordado { position: absolute; width: 90%; height: 85%; left: 5%; top: 0; }
+.algodao__bordado path { fill: none; stroke: #a35450; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 0; filter: drop-shadow(1px 2px 1px #71402e30); }
+.algodao__coracao { animation: algodao-costurar 1.8s ease both; }
+.algodao__laco { opacity: 0; }
+.algodao[data-etapa=segredo] .algodao__laco { opacity: 1; animation: algodao-costurar .8s ease both; }
+.algodao[data-etapa=final] .algodao__coracao { visibility: hidden; }
+.algodao__bordado .algodao__numero { stroke-dashoffset: 1; }
+.algodao__uniao { position: absolute; bottom: 18px; left: 0; width: 100%; }
+.algodao__uniao button { background: #fffaf0; border: 1px dashed #a35450; border-radius: 20px; padding: 12px 22px; color: #654938; touch-action: none; }
+.algodao__uniao span { margin: 0 20px; color: #a35450; }
+.algodao__ponta { position: absolute; width: 65px; height: 80px; left: 48%; bottom: 0; background: transparent; border: none; padding: 0; }
+.algodao__ponta svg { width: 100%; height: 100%; fill: none; stroke: #a35450; stroke-width: 2; }
+.algodao[data-etapa=desfazendo] .algodao__coracao, .algodao[data-etapa=final] .algodao__coracao { animation: algodao-soltar 2s ease forwards; }
+.algodao[data-etapa=final] .algodao__numero { animation: algodao-costurar 1.5s ease forwards; }
+.algodao__final strong { display: block; font: 4rem Georgia, serif; color: #a35450; }
+.algodao__final span { letter-spacing: .15em; }
+.algodao__final h4 { font: 1.6rem Georgia, serif; margin: 22px 0; }
+.algodao__final p { max-width: 470px; margin: auto; line-height: 1.8; }
+.algodao [hidden] { display: none !important; }
+@keyframes algodao-costurar { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes algodao-soltar { from { stroke-dashoffset: 0; } to { stroke-dashoffset: 1; } }
+@keyframes algodao-aparecer { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media(max-width: 480px) { .algodao__tecido { height: 340px; } .algodao__no { min-width: 62px; font-size: .62rem !important; padding: 7px; } }
+@media(prefers-reduced-motion: reduce) { .algodao *, .algodao *::before { animation-duration: .01ms !important; transition: none !important; } }
