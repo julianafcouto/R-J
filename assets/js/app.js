@@ -2,20 +2,6 @@
 
 (function () {
   const TIPOS_PUZZLE = new Set([
-<<<<<<< HEAD
-  "cofre",
-  "termo",
-  "conexo",
-  "ranking-album",
-  "memoria",
-  "puzzle",
-  "boa-noite",
-  "sorvete",
-  "telescopio",
-  "sonic-flores",
-  "puzzle-algodao",
-]);
-=======
     "cofre",
     "termo",
     "conexo",
@@ -26,10 +12,10 @@
     "boa-noite",
     "sorvete",
     "telescopio",
+    "sonic-flores",
+    "puzzle-algodao",
     "mapa"
   ]);
-
->>>>>>> a631b66 (Sua e só)
   function escaparHTML(valor) {
     return String(valor ?? "")
       .replaceAll("&", "&amp;")
