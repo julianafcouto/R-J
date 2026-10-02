@@ -2,6 +2,7 @@
 
 (function () {
   const TIPOS_PUZZLE = new Set([
+<<<<<<< HEAD
   "cofre",
   "termo",
   "conexo",
@@ -14,6 +15,21 @@
   "sonic-flores",
   "puzzle-algodao",
 ]);
+=======
+    "cofre",
+    "termo",
+    "conexo",
+    "ranking-album",
+    "memoria",
+    "memoria-complementos",
+    "puzzle",
+    "boa-noite",
+    "sorvete",
+    "telescopio",
+    "mapa"
+  ]);
+
+>>>>>>> a631b66 (Sua e só)
   function escaparHTML(valor) {
     return String(valor ?? "")
       .replaceAll("&", "&amp;")
@@ -2013,6 +2029,498 @@
   }
 
   /*
+ * Memória de complementos
+ * Capítulo 03.10.2026
+ */
+
+function criarMemoriaComplementos(dados) {
+  const elemento = document.createElement("article");
+
+  elemento.className =
+    "componente puzzle memoria memoria-complementos";
+
+  const pares = Array.isArray(dados.pares)
+    ? dados.pares
+    : [];
+
+  elemento.innerHTML = `
+    <span class="componente__etiqueta">
+      ${escaparHTML(dados.etiqueta || "O que completa?")}
+    </span>
+
+    <h3>
+      ${escaparHTML(
+        dados.titulo ||
+        "Algumas coisas só fazem sentido juntas"
+      )}
+    </h3>
+
+    <p class="puzzle__descricao">
+      ${escaparHTML(
+        dados.descricao ||
+        "Encontre aquilo que completa cada coisa."
+      )}
+    </p>
+
+    <div class="memoria__informacoes">
+      <span>
+        Movimentos:
+        <strong data-movimentos>0</strong>
+      </span>
+
+      <span>
+        Encontros:
+        <strong data-pares>
+          0/${pares.length}
+        </strong>
+      </span>
+    </div>
+
+    <div class="memoria__grade"></div>
+
+    <div
+      class="memoria-complementos__encontro"
+      data-encontro
+      aria-live="polite"
+    ></div>
+
+    <div class="memoria__acoes">
+      <button
+        class="botao botao--secundario"
+        data-reiniciar
+        type="button"
+      >
+        Embaralhar novamente
+      </button>
+    </div>
+
+    <p
+      class="puzzle__feedback"
+      data-feedback
+      aria-live="polite"
+    ></p>
+
+    <div
+      class="memoria-complementos__final"
+      data-final
+      hidden
+    >
+      <span class="memoria-complementos__final-etiqueta">
+        O último encontro
+      </span>
+
+      <div class="memoria-complementos__equacao">
+        <strong>EU</strong>
+        <span>+</span>
+        <strong>VOCÊ</strong>
+      </div>
+
+      <div class="memoria-complementos__nos">
+        NÓS.
+      </div>
+
+      <p>
+        ${escaparHTML(
+          dados.mensagemFinal ||
+          "No meio de tantas coisas que se completam, eu encontrei você."
+        )}
+      </p>
+
+      <strong class="memoria-complementos__assinatura">
+        ${escaparHTML(
+          dados.assinatura ||
+          "Seu. E só. ♡"
+        )}
+      </strong>
+    </div>
+  `;
+
+  const grade =
+    elemento.querySelector(".memoria__grade");
+
+  const movimentosElemento =
+    elemento.querySelector("[data-movimentos]");
+
+  const paresElemento =
+    elemento.querySelector("[data-pares]");
+
+  const feedback =
+    elemento.querySelector("[data-feedback]");
+
+  const encontro =
+    elemento.querySelector("[data-encontro]");
+
+  const final =
+    elemento.querySelector("[data-final]");
+
+  const reiniciar =
+    elemento.querySelector("[data-reiniciar]");
+
+  let primeira = null;
+  let segunda = null;
+  let bloqueado = false;
+  let movimentos = 0;
+  let encontrados = 0;
+
+  function atualizar() {
+    movimentosElemento.textContent =
+      String(movimentos);
+
+    paresElemento.textContent =
+      `${encontrados}/${pares.length}`;
+  }
+
+  function limparCartas() {
+    primeira = null;
+    segunda = null;
+    bloqueado = false;
+  }
+
+  /*
+   * Cada carta deste jogo pode ter
+   * emoji + texto ao mesmo tempo.
+   */
+  function criarConteudoComplemento(carta) {
+    return `
+      <span class="memoria-complementos__conteudo">
+        ${
+          carta.emoji
+            ? `
+              <span class="memoria-complementos__emoji">
+                ${escaparHTML(carta.emoji)}
+              </span>
+            `
+            : ""
+        }
+
+        ${
+          carta.texto
+            ? `
+              <span class="memoria-complementos__texto">
+                ${escaparHTML(carta.texto)}
+              </span>
+            `
+            : ""
+        }
+      </span>
+    `;
+  }
+
+  function mostrarEncontro(par) {
+    if (!encontro) {
+      return;
+    }
+
+    encontro.innerHTML = `
+      <span>♡</span>
+
+      <p>
+        ${escaparHTML(
+          par.mensagem ||
+          "Algumas coisas simplesmente se encontram."
+        )}
+      </p>
+    `;
+
+    encontro.classList.remove(
+      "memoria-complementos__encontro--visivel"
+    );
+
+    void encontro.offsetWidth;
+
+    encontro.classList.add(
+      "memoria-complementos__encontro--visivel"
+    );
+  }
+
+  /*
+   * Folha decorativa que atravessa o puzzle.
+   */
+  function criarFolha() {
+    const folha =
+      document.createElement("span");
+
+    folha.className =
+      "memoria-complementos__folha";
+
+    folha.textContent = "🍃";
+
+    folha.style.left =
+      `${Math.random() * 90}%`;
+
+    folha.style.setProperty(
+      "--folha-duracao",
+      `${3 + Math.random() * 3}s`
+    );
+
+    elemento.appendChild(folha);
+
+    window.setTimeout(function () {
+      folha.remove();
+    }, 6500);
+  }
+
+  function chuvaDeFolhas() {
+    for (let indice = 0; indice < 16; indice += 1) {
+      window.setTimeout(function () {
+        criarFolha();
+      }, indice * 120);
+    }
+  }
+
+  function revelarFinal() {
+    bloqueado = true;
+
+    feedback.textContent = "";
+    reiniciar.disabled = true;
+
+    chuvaDeFolhas();
+
+    window.setTimeout(function () {
+      grade.classList.add(
+        "memoria-complementos__grade--finalizada"
+      );
+
+      final.hidden = false;
+
+      window.requestAnimationFrame(function () {
+        final.classList.add(
+          "memoria-complementos__final--visivel"
+        );
+      });
+    }, 600);
+
+    /*
+     * Primeiro aparece EU + VOCÊ.
+     * Depois a animação transforma em NÓS.
+     */
+    window.setTimeout(function () {
+      final.classList.add(
+        "memoria-complementos__final--nos"
+      );
+    }, 1900);
+
+    /*
+     * Só desbloqueia o próximo componente
+     * depois da animação terminar.
+     */
+    window.setTimeout(function () {
+      concluirPuzzle(elemento);
+    }, 3400);
+  }
+
+  function selecionar(carta) {
+    if (
+      bloqueado ||
+      carta.disabled ||
+      carta === primeira
+    ) {
+      return;
+    }
+
+    carta.classList.add(
+      "memoria__carta--aberta"
+    );
+
+    if (!primeira) {
+      primeira = carta;
+      return;
+    }
+
+    segunda = carta;
+    bloqueado = true;
+    movimentos += 1;
+
+    atualizar();
+
+    const acertou =
+      primeira.dataset.par ===
+      segunda.dataset.par;
+
+    if (acertou) {
+      const idPar =
+        primeira.dataset.par;
+
+      const par =
+        pares.find(function (item, indice) {
+          return (
+            String(item.id || `par-${indice}`) ===
+            idPar
+          );
+        });
+
+      primeira.disabled = true;
+      segunda.disabled = true;
+
+      primeira.classList.add(
+        "memoria__carta--encontrada"
+      );
+
+      segunda.classList.add(
+        "memoria__carta--encontrada"
+      );
+
+      encontrados += 1;
+
+      atualizar();
+
+      if (par) {
+        mostrarEncontro(par);
+      }
+
+      criarFolha();
+      criarFolha();
+
+      limparCartas();
+
+      if (encontrados === pares.length) {
+        revelarFinal();
+      }
+
+      return;
+    }
+
+    feedback.textContent =
+      "Ainda não. Essas duas não se completam.";
+
+    feedback.className =
+      "puzzle__feedback puzzle__feedback--erro";
+
+    window.setTimeout(function () {
+      primeira?.classList.remove(
+        "memoria__carta--aberta"
+      );
+
+      segunda?.classList.remove(
+        "memoria__carta--aberta"
+      );
+
+      limparCartas();
+    }, 900);
+  }
+
+  function montar() {
+    grade.innerHTML = "";
+
+    primeira = null;
+    segunda = null;
+    bloqueado = false;
+    movimentos = 0;
+    encontrados = 0;
+
+    elemento.dataset.resolvido = "false";
+
+    elemento.classList.remove(
+      "puzzle--resolvido"
+    );
+
+    grade.classList.remove(
+      "memoria-complementos__grade--finalizada"
+    );
+
+    final.hidden = true;
+
+    final.classList.remove(
+      "memoria-complementos__final--visivel",
+      "memoria-complementos__final--nos"
+    );
+
+    reiniciar.disabled = false;
+
+    feedback.textContent = "";
+    feedback.className = "puzzle__feedback";
+
+    encontro.innerHTML = "";
+
+    encontro.classList.remove(
+      "memoria-complementos__encontro--visivel"
+    );
+
+    atualizar();
+
+    const cartas = [];
+
+    pares.forEach(function (par, indice) {
+      const id =
+        String(par.id || `par-${indice}`);
+
+      /*
+       * Diferentemente da memória antiga,
+       * aqui A e B são cartas diferentes.
+       */
+      const cartaA =
+        par.a || {
+          texto: "A"
+        };
+
+      const cartaB =
+        par.b || {
+          texto: "B"
+        };
+
+      cartas.push({
+        ...cartaA,
+        identificador: id
+      });
+
+      cartas.push({
+        ...cartaB,
+        identificador: id
+      });
+    });
+
+    embaralhar(cartas).forEach(
+      function (dadosCarta) {
+        const botao =
+          document.createElement("button");
+
+        botao.type = "button";
+
+        botao.className =
+          "memoria__carta memoria-complementos__carta";
+
+        botao.dataset.par =
+          dadosCarta.identificador;
+
+        botao.innerHTML = `
+          <span class="memoria__interior">
+
+            <span class="memoria__verso">
+              ♡
+            </span>
+
+            <span class="memoria__frente">
+              ${criarConteudoComplemento(
+                dadosCarta
+              )}
+            </span>
+
+          </span>
+        `;
+
+        botao.addEventListener(
+          "click",
+          function () {
+            selecionar(botao);
+          }
+        );
+
+        grade.appendChild(botao);
+      }
+    );
+  }
+
+  reiniciar.addEventListener(
+    "click",
+    montar
+  );
+
+  montar();
+
+  return elemento;
+}
+
+  /*
    * Telescópio
    */
 
@@ -2729,6 +3237,9 @@
 
         case "memoria":
           return criarMemoria(dados);
+
+        case "memoria-complementos":
+          return criarMemoriaComplementos(dados);
 
         case "puzzle":
           return criarPuzzleFrase(dados);

@@ -3232,6 +3232,7 @@ body {
 @media (prefers-reduced-motion: reduce) { .boa-noite__ondas i, .boa-noite__chamada, .boa-noite__juntas, .boa-noite__final { animation: none; } }
 
 /* =========================================================
+<<<<<<< HEAD
    SONIC — PUZZLE DE FLORES
    ========================================================= */
 
@@ -3357,10 +3358,171 @@ body {
       )
       scale(1.15)
       rotate(calc(var(--rotacao) * 0.4));
+=======
+   MEMÓRIA DE COMPLEMENTOS — 03.10.2026
+   ========================================================= */
+
+.memoria-complementos {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Cartas */
+
+.memoria-complementos .memoria__grade {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.memoria-complementos__carta {
+  min-height: 135px;
+}
+
+.memoria-complementos__carta .memoria__frente {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  text-align: center;
+}
+
+.memoria-complementos__conteudo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.memoria-complementos__emoji {
+  display: block;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.memoria-complementos__texto {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: 0.03em;
+}
+
+/* Quando encontra um par */
+
+.memoria-complementos__carta.memoria__carta--encontrada {
+  animation: memoria-complementos-acerto 0.65s ease;
+}
+
+@keyframes memoria-complementos-acerto {
+  0% {
+    transform: scale(1);
+  }
+
+  45% {
+    transform: scale(1.06);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Mensagem que aparece após cada encontro */
+
+.memoria-complementos__encontro {
+  position: relative;
+  z-index: 3;
+  min-height: 58px;
+  margin: 18px auto 4px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+}
+
+.memoria-complementos__encontro--visivel {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.memoria-complementos__encontro > span {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 1.3rem;
+}
+
+.memoria-complementos__encontro p {
+  margin: 0;
+  font-size: 0.95rem;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   FOLHAS AO VENTO
+   ========================================================= */
+
+.memoria-complementos__folha {
+  position: absolute;
+  z-index: 10;
+  top: -50px;
+
+  pointer-events: none;
+  user-select: none;
+
+  font-size: 1.35rem;
+
+  animation:
+    memoria-complementos-folha
+    var(--folha-duracao, 4s)
+    linear
+    forwards;
+}
+
+@keyframes memoria-complementos-folha {
+  0% {
+    opacity: 0;
+    transform:
+      translate3d(0, -20px, 0)
+      rotate(0deg);
+  }
+
+  10% {
+    opacity: 0.9;
+  }
+
+  30% {
+    transform:
+      translate3d(35px, 180px, 0)
+      rotate(100deg);
+  }
+
+  55% {
+    transform:
+      translate3d(-30px, 350px, 0)
+      rotate(210deg);
+  }
+
+  80% {
+    opacity: 0.8;
+    transform:
+      translate3d(50px, 520px, 0)
+      rotate(310deg);
+>>>>>>> a631b66 (Sua e só)
   }
 
   100% {
     opacity: 0;
+<<<<<<< HEAD
 
     transform:
       translate(-50%, -50%)
@@ -3695,4 +3857,224 @@ body {
     font-size: 0.98rem;
   }
 
+=======
+    transform:
+      translate3d(-20px, 720px, 0)
+      rotate(430deg);
+  }
+}
+
+/* =========================================================
+   FINAL
+   ========================================================= */
+
+.memoria-complementos__grade--finalizada {
+  opacity: 0.18;
+  filter: blur(2px);
+  transform: scale(0.97);
+
+  transition:
+    opacity 0.8s ease,
+    filter 0.8s ease,
+    transform 0.8s ease;
+}
+
+.memoria-complementos__final {
+  position: relative;
+  z-index: 5;
+
+  max-width: 580px;
+  margin: 26px auto 4px;
+  padding: 30px 22px;
+
+  text-align: center;
+
+  opacity: 0;
+  transform: translateY(18px) scale(0.97);
+
+  transition:
+    opacity 0.8s ease,
+    transform 0.8s ease;
+}
+
+.memoria-complementos__final[hidden] {
+  display: none;
+}
+
+.memoria-complementos__final--visivel {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.memoria-complementos__final-etiqueta {
+  display: block;
+  margin-bottom: 22px;
+
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+
+  opacity: 0.7;
+}
+
+/* EU + VOCÊ */
+
+.memoria-complementos__equacao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+
+  min-height: 72px;
+
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s ease;
+}
+
+.memoria-complementos__equacao strong {
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
+  letter-spacing: 0.08em;
+}
+
+.memoria-complementos__equacao span {
+  font-size: 1.4rem;
+  opacity: 0.55;
+}
+
+/* NÓS começa escondido */
+
+.memoria-complementos__nos {
+  position: absolute;
+
+  left: 50%;
+  top: 77px;
+
+  font-size: clamp(2.3rem, 8vw, 4.2rem);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+
+  opacity: 0;
+
+  transform:
+    translate(-50%, 12px)
+    scale(0.7);
+
+  transition:
+    opacity 0.9s ease,
+    transform 0.9s cubic-bezier(
+      0.22,
+      1,
+      0.36,
+      1
+    );
+}
+
+/* Transformação EU + VOCÊ -> NÓS */
+
+.memoria-complementos__final--nos
+.memoria-complementos__equacao {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.memoria-complementos__final--nos
+.memoria-complementos__nos {
+  opacity: 1;
+
+  transform:
+    translate(-50%, 0)
+    scale(1);
+}
+
+/* Texto final */
+
+.memoria-complementos__final > p {
+  max-width: 470px;
+  margin: 32px auto 14px;
+
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.memoria-complementos__assinatura {
+  display: block;
+
+  margin-top: 16px;
+
+  font-size: 1.05rem;
+  font-style: italic;
+}
+
+/* =========================================================
+   RESPONSIVO
+   ========================================================= */
+
+@media (max-width: 700px) {
+  .memoria-complementos .memoria__grade {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+
+    gap: 10px;
+  }
+
+  .memoria-complementos__carta {
+    min-height: 110px;
+  }
+
+  .memoria-complementos__emoji {
+    font-size: 1.7rem;
+  }
+
+  .memoria-complementos__texto {
+    font-size: 0.78rem;
+  }
+}
+
+@media (max-width: 430px) {
+  .memoria-complementos .memoria__grade {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+
+    gap: 8px;
+  }
+
+  .memoria-complementos__carta {
+    min-height: 96px;
+  }
+
+  .memoria-complementos__carta
+  .memoria__frente {
+    padding: 8px;
+  }
+
+  .memoria-complementos__conteudo {
+    gap: 5px;
+  }
+
+  .memoria-complementos__emoji {
+    font-size: 1.45rem;
+  }
+
+  .memoria-complementos__texto {
+    font-size: 0.7rem;
+  }
+
+  .memoria-complementos__final {
+    padding: 26px 12px;
+  }
+}
+
+/* Acessibilidade */
+
+@media (prefers-reduced-motion: reduce) {
+  .memoria-complementos *,
+  .memoria-complementos *::before,
+  .memoria-complementos *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+>>>>>>> a631b66 (Sua e só)
 }

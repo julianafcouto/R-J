@@ -554,9 +554,126 @@
       "artista": "Banda Fly",
       "capa": "./assets/imagens/capas/cabelos-de-algodao.jpg",
       "link": "https://open.spotify.com/intl-pt/track/3EL9IRDqB9GRf8JSacc35v?si=ca4b2b2a448c4ed4",
-      "mensagem": "Desculpa voltar décadas no tempo, mas sem duvdas, essa é a música perfeita para o capítulo de hoje. Te amo! (não vira uma velha chata por favor)",
+            "mensagem": "Desculpa voltar décadas no tempo, mas sem duvdas, essa é a música perfeita para o capítulo de hoje. Te amo! (não vira uma velha chata por favor)"
+    }
+  ]
+},
+{
+  "id": "2026-10-03",
+  "titulo": "Eu te amo",
+  "data": "03.10.2026",
+  "subtitulo": "Só quero dizer que te amo",
+  "descricao": "Não vou me cansar, nunca, de te dizer tudo o que sinto",
+  "componentes": [
+    {
+      "tipo": "carta",
+      "titulo": "Sua e só!",
+      "texto": "Oi, minha princesa!\n\n Já apareci aqui falando sobre dias comuns, que soam tão pré estabelecidos na minha vida calculadamente pacata. Mas, quarta-feira, enquanto deixava de me arrumar para o trabalho para poder jogar roblox e te passar, eu percebi que não vivo dias tão comuns. A definição de comum é algo proximo a simples, desinteressante ou até sem valor. E já fazem quase oito meses que os meus dias deixaram de ser simples. Que os meus pensamentos se fazem bem interessantes. Que tudo a minha volta parece ter muito valor, pois tudo tem você. Os dias comuns saíram de uma forma tão sutil e ao mesmo tempo tão maluca. Graças a sua linda chegada. \n\n Eu desconhecia a magia dos dialogos, da companhia, do cuidado, do amor. Desconhecia a falta das conversas soltas, das poucas mensagens mandadas do nada em um dia corrido. Até você acontecer. Posso falar com tranquilidade, um sorriso bobo e o peito apertado de saudade, que você foi e vai ser para sempre o melhor que me aconteceu. \n\n Obrigada por não ter avançado de forma casual. Obrigada por não ter aceitado se afastar de mim. Obrigada por ser maluca. Obrigada por ser deliciosa. Obrigada por ter chorado igual um feijão no dia que eu ia embora. Obrigada por ser TÃO VOCÊ! \n\n Você é o amor da minha vida! A futura mãe dos meus filhos! A velhinha que vai trocar minhas fraldas...\n\n É você!\n\n Isso, definitivamente não chega perto do texto que li enquanto estava groge indo trabalhar atrasada, mas quero retribuir o que tem feito por mim. Nesses meses juntas, tive a visão plena de como é ser amada por inteiro, sem medo e de forma intensa. Eu te amo! E sei que você me ama!"
+    },
+    {
+      "tipo": "memoria-complementos",
+      "etiqueta": "Seu e só",
+      "titulo": "Tem coisas que simplesmente se completam",
+      "descricao": "Encontre aquilo que pertence ao outro. Algumas combinações são sutis. Outras parecem inevitáveis.",
+      "pares": [
+        {
+          "id": "folhas-vento",
+          "a": {
+            "emoji": "🍃",
+            "texto": "Folhas"
+          },
+          "b": {
+            "emoji": "🌬️",
+            "texto": "Vento"
+          },
+          "mensagem": "Folhas — vento."
+        },
+        {
+          "id": "sombras-sol",
+          "a": {
+            "emoji": "🌑",
+            "texto": "Sombras"
+          },
+          "b": {
+            "emoji": "☀️",
+            "texto": "Sol"
+          },
+          "mensagem": "Sombras — sol."
+        },
+        {
+          "id": "rugas-tempo",
+          "a": {
+            "emoji": "〰️",
+            "texto": "Rugas"
+          },
+          "b": {
+            "emoji": "⌛",
+            "texto": "Tempo"
+          },
+          "mensagem": "Rugas — tempo."
+        },
+        {
+          "id": "dores-homem",
+          "a": {
+            "emoji": "🩹",
+            "texto": "Dores"
+          },
+          "b": {
+            "emoji": "🫀",
+            "texto": "Homem"
+          },
+          "mensagem": "Dores — homem."
+        },
+        {
+          "id": "lacos-nos",
+          "a": {
+            "emoji": "🎀",
+            "texto": "Laços"
+          },
+          "b": {
+            "emoji": "🪢",
+            "texto": "Nós"
+          },
+          "mensagem": "Laços — nós."
+        },
+        {
+          "id": "gostos-fome",
+          "a": {
+            "emoji": "😋",
+            "texto": "Gostos"
+          },
+          "b": {
+            "emoji": "🍽️",
+            "texto": "Fome"
+          },
+          "mensagem": "Gostos — fome."
+        },
+        {
+          "id": "eu-sua",
+          "a": {
+            "emoji": "♡",
+            "texto": "EU"
+          },
+          "b": {
+            "emoji": "♡",
+            "texto": "SOU SUA E SÓ"
+          },
+          "mensagem": "Eu — sou sua e só. ♡"
+        }
+      ],
+      "mensagemFinal": "No meio de tantas coisas que se completam, existe uma combinação que eu escolheria em todas as vezes: eu e você.",
+      "assinatura": "Sua. E só. ♡"
+    },
+    {
+      "tipo": "musica",
+      "titulo": "Seu e só",
+      "artista": "Lagum",
+      "capa": "./assets/imagens/capas/seu-e-so.jpg",
+      "link": "https://open.spotify.com/track/1RYsDCcabDoTOYN73xVT3l",
+      "mensagem": "Só pra reforçar ainda mais, pra tu nem correr o risco de se esquecer. Nos dias felizes, tristes, tranquilos, agitados, surpreendentes ou comuns, eu sou sua, e só!\n\nPS: Espero que tenha gostado do girassol... testando flores novas.",
       "bloqueada": true
     }
   ]
 }
 ]
+
