@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mobile Preview — Para Rayane</title>
+<style>
+:root{color-scheme:dark;font-family:Inter,system-ui,Arial,sans-serif}*{box-sizing:border-box}body{margin:0;background:#17191f;color:#f4f4f6;min-height:100vh}.toolbar{padding:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:#22252d;border-bottom:1px solid #343842}button,select,input{background:#303540;color:#fff;border:1px solid #4c5360;border-radius:8px;padding:9px;font:inherit}button{cursor:pointer}button:hover{background:#404957}.address{flex:1 1 210px;min-width:120px}.toolbar label{font-size:12px;display:flex;gap:6px;align-items:center}.toolbar input[type=checkbox]{accent-color:#a1a8ff}.workspace{height:calc(100vh - 76px);min-height:400px;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:20px 10px}.scale-area{position:relative;flex:none}.phone{background:#0a0b0e;border:3px solid #626774;border-radius:48px;padding:10px;box-shadow:0 20px 45px #0009;position:absolute;top:0;left:0;transform-origin:top left;display:flex;flex-direction:column}.display{flex:1;min-height:0;background:white;border-radius:35px;overflow:hidden;position:relative}.status{height:34px;background:#fafafa;color:#111;display:flex;align-items:center;justify-content:space-between;padding:0 25px;font-size:12px;font-weight:700;position:relative}.island{position:absolute;left:50%;top:5px;transform:translateX(-50%);width:95px;height:23px;background:#050505;border-radius:20px}.screen{width:100%;height:calc(100% - 34px);border:0;background:white}.bottom{height:13px;display:grid;place-items:center}.home{height:4px;width:105px;background:#d4d6db;border-radius:8px}.info{padding:0 16px 16px;text-align:center;color:#9fa6b5;font-size:12px}body.landscape .phone{border-radius:36px}body.landscape .display{border-radius:25px}body.landscape .island{width:70px}
+</style>
+</head>
+<body>
+<div class="toolbar">
+<input class="address" id="address" aria-label="Endereço do site" value="http://127.0.0.1:5500/index.html">
+<button id="open">Abrir</button>
+<select id="device" aria-label="Dispositivo"><option value="393,852">iPhone 15/16</option><option value="390,844">iPhone 13/14</option><option value="360,800">Android compacto</option><option value="412,915">Android grande</option></select>
+<button id="rotate" title="Girar tela">↻ Girar</button><button id="reload" title="Recarregar">⟳ Atualizar</button>
+<label><input type="checkbox" id="auto" checked> Auto (3s)</label>
+</div>
+<div class="workspace" id="workspace"><div class="scale-area" id="scaleArea"><div class="phone" id="phone"><div class="display"><div class="status"><span>9:41</span><div class="island"></div><span>● ▰</span></div><iframe class="screen" id="frame" title="Prévia do site Para Rayane"></iframe></div><div class="bottom"><div class="home"></div></div></div></div></div>
+<div class="info" id="info"></div>
+<script>
+const $=id=>document.getElementById(id);let landscape=false;let lastUrl='';
+function targetUrl(){try{const u=new URL($('address').value.trim(),location.href);if(!['http:','https:'].includes(u.protocol))throw Error();return u.href}catch{alert('Informe um endereço HTTP ou HTTPS válido.');return null}}
+function openSite(){const url=targetUrl();if(!url)return;lastUrl=url;$('frame').src=url}
+function reload(){if(!lastUrl)return;try{const u=new URL(lastUrl);u.searchParams.set('_mobile_preview',Date.now().toString());$('frame').src=u.href}catch{}}
+function fit(){const [w,h]=$('device').value.split(',').map(Number);const width=landscape?h:w,height=landscape?w:h;const outerW=width+26,outerH=height+26;const space=$('workspace');const maxW=Math.max(180,space.clientWidth-20),maxH=Math.max(220,space.clientHeight-30);const scale=Math.min(1,maxW/outerW,maxH/outerH);const phone=$('phone');phone.style.width=outerW+'px';phone.style.height=outerH+'px';phone.style.transform=`scale(${scale})`;$('scaleArea').style.width=outerW*scale+'px';$('scaleArea').style.height=outerH*scale+'px';$('info').textContent=`Viewport: ${width} × ${height}px · Escala: ${Math.round(scale*100)}%`;document.body.classList.toggle('landscape',landscape)}
+$('open').onclick=openSite;$('address').addEventListener('keydown',e=>{if(e.key==='Enter')openSite()});$('reload').onclick=reload;$('device').onchange=fit;$('rotate').onclick=()=>{landscape=!landscape;fit()};new ResizeObserver(fit).observe($('workspace'));setInterval(()=>{if($('auto').checked&&lastUrl&&!document.hidden)reload()},3000);fit();openSite();
+</script>
+</body>
+</html>

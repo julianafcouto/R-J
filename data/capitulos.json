@@ -250,63 +250,63 @@
         "texto": "Tu me conhece e sabe que eu sou maluca. \n\nHoje, voltei no teu passado. E uma frase rodou na minha cabeça a manhã inteira: 'até a lua'. \n\nPensei muito sobre ela. \n\nTalvez, em algum momento, a lua tenha sido a maior distância que alguém conseguiu imaginar. Talvez ela tenha sido a forma mais bonita de dizer 'eu te amo'. \n\nMas hoje eu percebi uma coisa. Se o amor pudesse ser medido em quilômetros, eu perderia. \n\nPorque o que eu sinto por você não cabe em distância alguma. \n\nNão vai até a lua, nem até as estrelas. nem até o fim do universo. \n\nEle simplesmente fica. \n\n Fica em cada bom dia, em cada silêncio confortável, em cada abraço que parece colocar o mundo no lugar, em cada plano que fazemos sem perceber. \n\nA lua é um destino. \n\nVocê nunca foi um destino. \n\nVocê é a minha casa!"
       },
       {
-      "tipo": "puzzle",
-      "titulo": "Só mais uma coisa",
-      "instrucao": "Complete a frase para desbloquear a música.",
-      "frase": "Eu te amo daqui até",
-      "placeholder": "Digite o lugar mais distante que conseguir imaginar...",
-      "botao": "Confirmar",
-      "respostaCorreta": "você",
-      "ignorarAcentos": true,
-      "ignorarMaiusculas": true,
-      "fluxoErro": [
-        {
-          "texto": "Analisando resposta...",
-          "duracao": 1200
-        },
-        {
-          "texto": "Distância detectada.",
-          "duracao": 1000
-        },
-        {
-          "texto": "Corrigindo...",
-          "duracao": 1000
-        }
-      ],
-      "apagarResposta": true,
-      "textoDigitadoAutomaticamente": "você.",
-      "velocidadeDigitacao": 180,
-      "mensagensFinais": [
-        {
-          "texto": "Porque nunca foi sobre distância.",
-          "duracao": 1400
-        },
-        {
-          "texto": "Sempre foi sobre onde o amor escolhe ficar.",
-          "duracao": 1600
-        },
-        {
-          "texto": "E o meu escolheu você.",
-          "duracao": 1800
-        }
-      ],
-      "fluxoAcerto": [
-        {
-          "texto": "Analisando resposta...",
-          "duracao": 1000
-        },
-        {
-          "texto": "Resposta correta.",
-          "duracao": 1000
-        },
-        {
-          "texto": "Sabia que você entenderia.",
-          "duracao": 1600
-        }
-      ],
-      "mensagemDesbloqueio": "Música desbloqueada.",
-      "desbloqueia": "musica-ter-o-coracao-no-chao"
-    },
+        "tipo": "puzzle",
+        "titulo": "Só mais uma coisa",
+        "instrucao": "Complete a frase para desbloquear a música.",
+        "frase": "Eu te amo daqui até",
+        "placeholder": "Digite o lugar mais distante que conseguir imaginar...",
+        "botao": "Confirmar",
+        "respostaCorreta": "você",
+        "ignorarAcentos": true,
+        "ignorarMaiusculas": true,
+        "fluxoErro": [
+          {
+            "texto": "Analisando resposta...",
+            "duracao": 1200
+          },
+          {
+            "texto": "Distância detectada.",
+            "duracao": 1000
+          },
+          {
+            "texto": "Corrigindo...",
+            "duracao": 1000
+          }
+        ],
+        "apagarResposta": true,
+        "textoDigitadoAutomaticamente": "você.",
+        "velocidadeDigitacao": 180,
+        "mensagensFinais": [
+          {
+            "texto": "Porque nunca foi sobre distância.",
+            "duracao": 1400
+          },
+          {
+            "texto": "Sempre foi sobre onde o amor escolhe ficar.",
+            "duracao": 1600
+          },
+          {
+            "texto": "E o meu escolheu você.",
+            "duracao": 1800
+          }
+        ],
+        "fluxoAcerto": [
+          {
+            "texto": "Analisando resposta...",
+            "duracao": 1000
+          },
+          {
+            "texto": "Resposta correta.",
+            "duracao": 1000
+          },
+          {
+            "texto": "Sabia que você entenderia.",
+            "duracao": 1600
+          }
+        ],
+        "mensagemDesbloqueio": "Música desbloqueada.",
+        "desbloqueia": "musica-ter-o-coracao-no-chao"
+      },
       {
         "tipo": "musica",
         "titulo": "Ter o coração no chão",
@@ -502,178 +502,191 @@
     ]
   },
   {
-      "id": "2026-09-12",
-      "titulo": "Dias comuns",
-      "data": "12.09.2026",
-      "subtitulo": "Ainda tem uma surpresa...",
-      "componentes": [
+    "id": "2026-09-12",
+    "titulo": "Dias comuns",
+    "data": "12.09.2026",
+    "subtitulo": "Ainda tem uma surpresa...",
+    "componentes": [
       {
         "tipo": "carta",
         "titulo": "Uma pequena carta",
         "texto": "Faz tempo que não apareço por aqui, né? Acho que a rotina, as conversas e a vida em si acabaram me cobrando um pouco mais do que gostaria kkkk. Mas quero que saiba que até mesmo nos dias comuns, eu penso em você. \n\nE talvez eu não consiga te entregar bons presentes ou textos elaborados todos os dias, mas quero que viva na certeza de que eu te amo, te desejo e te aprecio SEMPRE! \n\nVocê é a minha escolha de todos os dias, e sou feliz e grata em ser a sua.\n\nObrigada por salvar os meus dias tediosos, e trazer o amor para os dias comuns."
       },
       {
-  "id": "sonic-rayane",
-  "tipo": "sonic-flores",
-  "titulo": "Tem uma última coisinha...",
-  "descricao": "Acho que o Sonic tem alguma coisa para te entregar.",
-  "imagem": "./assets/imagens/sonic-zoiudo-flor.jpg",
-  "alt": "Sonic segurando uma flor",
-  "instrucao": "Talvez você devesse clicar nele...",
-  "mensagemPequena": "para você, Rayane",
-  "mensagemTitulo": "Algumas coisas florescem em dias simples.",
-  "mensagemFinal": "Principalmente quando encontram a pessoa certa. ❤️"
+        "id": "sonic-rayane",
+        "tipo": "sonic-flores",
+        "titulo": "Tem uma última coisinha...",
+        "descricao": "Acho que o Sonic tem alguma coisa para te entregar.",
+        "imagem": "./assets/imagens/sonic-zoiudo-flor.jpg",
+        "alt": "Sonic segurando uma flor",
+        "instrucao": "Talvez você devesse clicar nele...",
+        "mensagemPequena": "para você, Rayane",
+        "mensagemTitulo": "Algumas coisas florescem em dias simples.",
+        "mensagemFinal": "Principalmente quando encontram a pessoa certa. ❤️"
       },
       {
-  "tipo": "musica",
-  "titulo": "Dilemas da vida moderna",
-  "artista": "Carol Biazin",
-  "capa": "./assets/imagens/capas/amareso.jpg",
-  "link": "https://open.spotify.com/intl-pt/track/6TKBDgjEsyB2AGprNMpZyy?si=fa703a74f8004686",
-  "mensagem": "Por incrivel que pareça, notei que essa ainda não foi dedicada aqui, mesmo sendo tão nós.\n\nTe quero para sempre, minha moça bonita!",
-  "bloqueada": true
+        "tipo": "musica",
+        "titulo": "Dilemas da vida moderna",
+        "artista": "Carol Biazin",
+        "capa": "./assets/imagens/capas/amareso.jpg",
+        "link": "https://open.spotify.com/intl-pt/track/6TKBDgjEsyB2AGprNMpZyy?si=fa703a74f8004686",
+        "mensagem": "Por incrivel que pareça, notei que essa ainda não foi dedicada aqui, mesmo sendo tão nós.\n\nTe quero para sempre, minha moça bonita!",
+        "bloqueada": true
+      }
+    ]
+  },
+  {
+    "id": "2026-09-16",
+    "titulo": "Bodas de Algodão",
+    "data": "16.09.2026",
+    "subtitulo": "Três meses de nós.",
+    "componentes": [
+      {
+        "tipo": "carta",
+        "titulo": "Três meses de nós",
+        "texto": "Três meses.\n\nDizem que hoje são nossas bodas de algodão. E eu fiquei pensando na delicadeza de uma coisa que ainda está começando, e em tudo que ela já pode se tornar.\n\nO algodão vira fio. O fio encontra outro fio. E, quando eles se entrelaçam, aquilo que sozinho parecia tão delicado começa a ganhar força.\n\nTalvez amar alguém seja um pouco assim. Não chegar pronta. Não saber exatamente onde cada coisa vai ficar. Não ter todas as respostas. Mas querer descobrir, mesmo assim.\n\nHá três meses, começamos a chamar isso de casamento. E, entre as aspas de ‘casadas’, existe uma certeza minha que não precisa de aspas: eu escolho você.\n\nEscolho nas conversas longas e nos dias em que faltam palavras. Na saudade, na vontade de estar perto, nos planos que a gente faz e nas pequenas coisas que vão virando nossas.\n\nVocê foi se tornando esse lugar bonito para onde meu pensamento volta. Um cuidado no meio da rotina. Uma vontade de futuro. Casa, mesmo quando existe distância.\n\nAinda temos tanta coisa para aprender, tantos lugares para conhecer, tantas versões nossas que ainda nem encontramos. E eu gosto de pensar que não precisamos ter pressa.\n\nEu quero viver esse começo com você. Quero continuar escolhendo, cuidando e encontrando um jeito de ficar perto.\n\nTrês meses de nós.\n\nMas algumas coisas eu não quero te explicar. Quero que você construa comigo.\n\nFio por fio."
+      },
+      {
+        "tipo": "puzzle-algodao",
+        "titulo": "Entre Fios"
+      },
+      {
+        "tipo": "musica",
+        "titulo": "Cabelos de Algodão",
+        "artista": "Banda Fly",
+        "capa": "./assets/imagens/capas/cabelos-de-algodao.jpg",
+        "link": "https://open.spotify.com/intl-pt/track/3EL9IRDqB9GRf8JSacc35v?si=ca4b2b2a448c4ed4",
+        "mensagem": "Desculpa voltar décadas no tempo, mas sem duvdas, essa é a música perfeita para o capítulo de hoje. Te amo! (não vira uma velha chata por favor)"
+      }
+    ]
+  },
+  {
+    "id": "2026-10-03",
+    "titulo": "Eu te amo",
+    "data": "03.10.2026",
+    "subtitulo": "Só quero dizer que te amo",
+    "descricao": "Não vou me cansar, nunca, de te dizer tudo o que sinto",
+    "componentes": [
+      {
+        "tipo": "carta",
+        "titulo": "Sua e só!",
+        "texto": "Oi, minha princesa!\n\n Já apareci aqui falando sobre dias comuns, que soam tão pré estabelecidos na minha vida calculadamente pacata. Mas, quarta-feira, enquanto deixava de me arrumar para o trabalho para poder jogar roblox e te passar, eu percebi que não vivo dias tão comuns. A definição de comum é algo proximo a simples, desinteressante ou até sem valor. E já fazem quase oito meses que os meus dias deixaram de ser simples. Que os meus pensamentos se fazem bem interessantes. Que tudo a minha volta parece ter muito valor, pois tudo tem você. Os dias comuns saíram de uma forma tão sutil e ao mesmo tempo tão maluca. Graças a sua linda chegada. \n\n Eu desconhecia a magia dos dialogos, da companhia, do cuidado, do amor. Desconhecia a falta das conversas soltas, das poucas mensagens mandadas do nada em um dia corrido. Até você acontecer. Posso falar com tranquilidade, um sorriso bobo e o peito apertado de saudade, que você foi e vai ser para sempre o melhor que me aconteceu. \n\n Obrigada por não ter avançado de forma casual. Obrigada por não ter aceitado se afastar de mim. Obrigada por ser maluca. Obrigada por ser deliciosa. Obrigada por ter chorado igual um feijão no dia que eu ia embora. Obrigada por ser TÃO VOCÊ! \n\n Você é o amor da minha vida! A futura mãe dos meus filhos! A velhinha que vai trocar minhas fraldas...\n\n É você!\n\n Isso, definitivamente não chega perto do texto que li enquanto estava groge indo trabalhar atrasada, mas quero retribuir o que tem feito por mim. Nesses meses juntas, tive a visão plena de como é ser amada por inteiro, sem medo e de forma intensa. Eu te amo! E sei que você me ama!"
+      },
+      {
+        "tipo": "memoria-complementos",
+        "etiqueta": "Seu e só",
+        "titulo": "Tem coisas que simplesmente se completam",
+        "descricao": "Encontre aquilo que pertence ao outro. Algumas combinações são sutis. Outras parecem inevitáveis.",
+        "pares": [
+          {
+            "id": "folhas-vento",
+            "a": {
+              "emoji": "🍃",
+              "texto": "Folhas"
+            },
+            "b": {
+              "emoji": "🌬️",
+              "texto": "Vento"
+            },
+            "mensagem": "Folhas — vento."
+          },
+          {
+            "id": "sombras-sol",
+            "a": {
+              "emoji": "🌑",
+              "texto": "Sombras"
+            },
+            "b": {
+              "emoji": "☀️",
+              "texto": "Sol"
+            },
+            "mensagem": "Sombras — sol."
+          },
+          {
+            "id": "rugas-tempo",
+            "a": {
+              "emoji": "〰️",
+              "texto": "Rugas"
+            },
+            "b": {
+              "emoji": "⌛",
+              "texto": "Tempo"
+            },
+            "mensagem": "Rugas — tempo."
+          },
+          {
+            "id": "dores-homem",
+            "a": {
+              "emoji": "🩹",
+              "texto": "Dores"
+            },
+            "b": {
+              "emoji": "🫀",
+              "texto": "Homem"
+            },
+            "mensagem": "Dores — homem."
+          },
+          {
+            "id": "lacos-nos",
+            "a": {
+              "emoji": "🎀",
+              "texto": "Laços"
+            },
+            "b": {
+              "emoji": "🪢",
+              "texto": "Nós"
+            },
+            "mensagem": "Laços — nós."
+          },
+          {
+            "id": "gostos-fome",
+            "a": {
+              "emoji": "😋",
+              "texto": "Gostos"
+            },
+            "b": {
+              "emoji": "🍽️",
+              "texto": "Fome"
+            },
+            "mensagem": "Gostos — fome."
+          },
+          {
+            "id": "eu-sua",
+            "a": {
+              "emoji": "♡",
+              "texto": "EU"
+            },
+            "b": {
+              "emoji": "♡",
+              "texto": "SOU SUA E SÓ"
+            },
+            "mensagem": "Eu — sou sua e só. ♡"
+          }
+        ],
+        "mensagemFinal": "No meio de tantas coisas que se completam, existe uma combinação que eu escolheria em todas as vezes: eu e você.",
+        "assinatura": "Sua. E só. ♡"
+      },
+      {
+        "tipo": "musica",
+        "titulo": "Seu e só",
+        "artista": "Lagum",
+        "capa": "./assets/imagens/capas/seu-e-so.jpg",
+        "link": "https://open.spotify.com/track/1RYsDCcabDoTOYN73xVT3l",
+        "mensagem": "Só pra reforçar ainda mais, pra tu nem correr o risco de se esquecer. Nos dias felizes, tristes, tranquilos, agitados, surpreendentes ou comuns, eu sou sua, e só!\n\nPS: Espero que tenha gostado do girassol... testando flores novas.",
+        "bloqueada": true
+      }
+    ]
+  },
+  {
+    "id": "2026-10-16",
+    "titulo": "O Caso da Garota que Não Era Luisa",
+    "data": "16.10.2026",
+    "subtitulo": "Quatro meses de nós · Bodas de Pipoca",
+    "componentes": [
+      {
+        "tipo": "investigacao-pipoca",
+        "titulo": "Arquivo confidencial 004"
       }
     ]
   }
-,
-{
-  "id": "2026-09-16",
-  "titulo": "Bodas de Algodão",
-  "data": "16.09.2026",
-  "subtitulo": "Três meses de nós.",
-  "componentes": [
-    {
-      "tipo": "carta",
-      "titulo": "Três meses de nós",
-      "texto": "Três meses.\n\nDizem que hoje são nossas bodas de algodão. E eu fiquei pensando na delicadeza de uma coisa que ainda está começando, e em tudo que ela já pode se tornar.\n\nO algodão vira fio. O fio encontra outro fio. E, quando eles se entrelaçam, aquilo que sozinho parecia tão delicado começa a ganhar força.\n\nTalvez amar alguém seja um pouco assim. Não chegar pronta. Não saber exatamente onde cada coisa vai ficar. Não ter todas as respostas. Mas querer descobrir, mesmo assim.\n\nHá três meses, começamos a chamar isso de casamento. E, entre as aspas de ‘casadas’, existe uma certeza minha que não precisa de aspas: eu escolho você.\n\nEscolho nas conversas longas e nos dias em que faltam palavras. Na saudade, na vontade de estar perto, nos planos que a gente faz e nas pequenas coisas que vão virando nossas.\n\nVocê foi se tornando esse lugar bonito para onde meu pensamento volta. Um cuidado no meio da rotina. Uma vontade de futuro. Casa, mesmo quando existe distância.\n\nAinda temos tanta coisa para aprender, tantos lugares para conhecer, tantas versões nossas que ainda nem encontramos. E eu gosto de pensar que não precisamos ter pressa.\n\nEu quero viver esse começo com você. Quero continuar escolhendo, cuidando e encontrando um jeito de ficar perto.\n\nTrês meses de nós.\n\nMas algumas coisas eu não quero te explicar. Quero que você construa comigo.\n\nFio por fio."
-    },
-    { "tipo": "puzzle-algodao", "titulo": "Entre Fios" },
-    {
-      "tipo": "musica",
-      "titulo": "Cabelos de Algodão",
-      "artista": "Banda Fly",
-      "capa": "./assets/imagens/capas/cabelos-de-algodao.jpg",
-      "link": "https://open.spotify.com/intl-pt/track/3EL9IRDqB9GRf8JSacc35v?si=ca4b2b2a448c4ed4",
-            "mensagem": "Desculpa voltar décadas no tempo, mas sem duvdas, essa é a música perfeita para o capítulo de hoje. Te amo! (não vira uma velha chata por favor)"
-    }
-  ]
-},
-{
-  "id": "2026-10-03",
-  "titulo": "Eu te amo",
-  "data": "03.10.2026",
-  "subtitulo": "Só quero dizer que te amo",
-  "descricao": "Não vou me cansar, nunca, de te dizer tudo o que sinto",
-  "componentes": [
-    {
-      "tipo": "carta",
-      "titulo": "Sua e só!",
-      "texto": "Oi, minha princesa!\n\n Já apareci aqui falando sobre dias comuns, que soam tão pré estabelecidos na minha vida calculadamente pacata. Mas, quarta-feira, enquanto deixava de me arrumar para o trabalho para poder jogar roblox e te passar, eu percebi que não vivo dias tão comuns. A definição de comum é algo proximo a simples, desinteressante ou até sem valor. E já fazem quase oito meses que os meus dias deixaram de ser simples. Que os meus pensamentos se fazem bem interessantes. Que tudo a minha volta parece ter muito valor, pois tudo tem você. Os dias comuns saíram de uma forma tão sutil e ao mesmo tempo tão maluca. Graças a sua linda chegada. \n\n Eu desconhecia a magia dos dialogos, da companhia, do cuidado, do amor. Desconhecia a falta das conversas soltas, das poucas mensagens mandadas do nada em um dia corrido. Até você acontecer. Posso falar com tranquilidade, um sorriso bobo e o peito apertado de saudade, que você foi e vai ser para sempre o melhor que me aconteceu. \n\n Obrigada por não ter avançado de forma casual. Obrigada por não ter aceitado se afastar de mim. Obrigada por ser maluca. Obrigada por ser deliciosa. Obrigada por ter chorado igual um feijão no dia que eu ia embora. Obrigada por ser TÃO VOCÊ! \n\n Você é o amor da minha vida! A futura mãe dos meus filhos! A velhinha que vai trocar minhas fraldas...\n\n É você!\n\n Isso, definitivamente não chega perto do texto que li enquanto estava groge indo trabalhar atrasada, mas quero retribuir o que tem feito por mim. Nesses meses juntas, tive a visão plena de como é ser amada por inteiro, sem medo e de forma intensa. Eu te amo! E sei que você me ama!"
-    },
-    {
-      "tipo": "memoria-complementos",
-      "etiqueta": "Seu e só",
-      "titulo": "Tem coisas que simplesmente se completam",
-      "descricao": "Encontre aquilo que pertence ao outro. Algumas combinações são sutis. Outras parecem inevitáveis.",
-      "pares": [
-        {
-          "id": "folhas-vento",
-          "a": {
-            "emoji": "🍃",
-            "texto": "Folhas"
-          },
-          "b": {
-            "emoji": "🌬️",
-            "texto": "Vento"
-          },
-          "mensagem": "Folhas — vento."
-        },
-        {
-          "id": "sombras-sol",
-          "a": {
-            "emoji": "🌑",
-            "texto": "Sombras"
-          },
-          "b": {
-            "emoji": "☀️",
-            "texto": "Sol"
-          },
-          "mensagem": "Sombras — sol."
-        },
-        {
-          "id": "rugas-tempo",
-          "a": {
-            "emoji": "〰️",
-            "texto": "Rugas"
-          },
-          "b": {
-            "emoji": "⌛",
-            "texto": "Tempo"
-          },
-          "mensagem": "Rugas — tempo."
-        },
-        {
-          "id": "dores-homem",
-          "a": {
-            "emoji": "🩹",
-            "texto": "Dores"
-          },
-          "b": {
-            "emoji": "🫀",
-            "texto": "Homem"
-          },
-          "mensagem": "Dores — homem."
-        },
-        {
-          "id": "lacos-nos",
-          "a": {
-            "emoji": "🎀",
-            "texto": "Laços"
-          },
-          "b": {
-            "emoji": "🪢",
-            "texto": "Nós"
-          },
-          "mensagem": "Laços — nós."
-        },
-        {
-          "id": "gostos-fome",
-          "a": {
-            "emoji": "😋",
-            "texto": "Gostos"
-          },
-          "b": {
-            "emoji": "🍽️",
-            "texto": "Fome"
-          },
-          "mensagem": "Gostos — fome."
-        },
-        {
-          "id": "eu-sua",
-          "a": {
-            "emoji": "♡",
-            "texto": "EU"
-          },
-          "b": {
-            "emoji": "♡",
-            "texto": "SOU SUA E SÓ"
-          },
-          "mensagem": "Eu — sou sua e só. ♡"
-        }
-      ],
-      "mensagemFinal": "No meio de tantas coisas que se completam, existe uma combinação que eu escolheria em todas as vezes: eu e você.",
-      "assinatura": "Sua. E só. ♡"
-    },
-    {
-      "tipo": "musica",
-      "titulo": "Seu e só",
-      "artista": "Lagum",
-      "capa": "./assets/imagens/capas/seu-e-so.jpg",
-      "link": "https://open.spotify.com/track/1RYsDCcabDoTOYN73xVT3l",
-      "mensagem": "Só pra reforçar ainda mais, pra tu nem correr o risco de se esquecer. Nos dias felizes, tristes, tranquilos, agitados, surpreendentes ou comuns, eu sou sua, e só!\n\nPS: Espero que tenha gostado do girassol... testando flores novas.",
-      "bloqueada": true
-    }
-  ]
-}
 ]
-

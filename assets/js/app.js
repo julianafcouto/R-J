@@ -14,6 +14,7 @@
     "telescopio",
     "sonic-flores",
     "puzzle-algodao",
+    "investigacao-pipoca",
     "mapa"
   ]);
   function escaparHTML(valor) {
@@ -3241,6 +3242,21 @@ function criarMemoriaComplementos(dados) {
         
         case "sonic-flores":
         return criarSonicFlores(dados);
+
+        case "investigacao-pipoca": {
+          const elemento = document.createElement("section");
+          elemento.className = "componente investigacao-pipoca";
+          const quadro = document.createElement("iframe");
+          quadro.src = "./investigacao-pipoca.html";
+          quadro.title = "O Caso da Garota que Não Era Luisa — investigação interativa";
+          quadro.loading = "lazy";
+          quadro.style.cssText = "width:100%;height:min(82dvh,860px);min-height:540px;border:0;border-radius:18px;background:#1d1520;";
+          elemento.appendChild(quadro);
+          window.addEventListener("message", function(event) {
+            if (event.source === quadro.contentWindow && event.data?.tipo === "investigacao-pipoca-concluida") concluirPuzzle(elemento);
+          });
+          return elemento;
+        }
 
         case "puzzle-algodao":
           return window.criarPuzzleAlgodao(dados, concluirPuzzle);
