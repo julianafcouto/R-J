@@ -3231,8 +3231,70 @@ body {
 @media (max-width: 480px) { .boa-noite { padding-inline: 14px; }.boa-noite__telefone { min-height: 560px; border-width: 7px; border-radius: 35px; }.boa-noite__tela { padding-inline: 18px; } }
 @media (prefers-reduced-motion: reduce) { .boa-noite__ondas i, .boa-noite__chamada, .boa-noite__juntas, .boa-noite__final { animation: none; } }
 
+/* Hora de dormir (joguinho em pixel art) */
+.hora-dormir { background: linear-gradient(145deg, #fbf8ff, #eee8f7); text-align: center; }
+.hora-dormir__console { width: min(100%, 480px); margin: 26px auto 0; padding: 14px; border: 1px solid rgba(255, 255, 255, .08); border-radius: 24px; color: #eadff0; background: linear-gradient(180deg, #33283b, #241c2a); box-shadow: 0 22px 50px rgba(36, 26, 44, .35); outline: none; }
+.hora-dormir__console:focus-visible { box-shadow: 0 0 0 3px rgba(231, 179, 168, .6), 0 22px 50px rgba(36, 26, 44, .35); }
+.hora-dormir__topo { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; text-align: left; }
+.hora-dormir__emblema { display: grid; flex: 0 0 30px; height: 30px; place-items: center; border-radius: 8px; color: #5a3550; background: #f0c9b8; font-size: 1rem; }
+.hora-dormir__nome { display: flex; min-width: 0; flex: 1; flex-direction: column; }
+.hora-dormir__nome strong { font: 700 .78rem ui-monospace, "Courier New", monospace; letter-spacing: .14em; }
+.hora-dormir__nome small { color: #a998b3; font-size: .7rem; }
+.hora-dormir__coracoes { display: flex; gap: 4px; }
+.hora-dormir__coracoes i { color: rgba(255, 255, 255, .16); font-size: 1rem; font-style: normal; transition: color .4s ease, transform .4s ease; }
+.hora-dormir__coracoes .hora-dormir__coracao--cheio { color: #f4b3c8; transform: scale(1.12); }
+.hora-dormir__tela { position: relative; overflow: hidden; border: 2px solid #6d5679; border-radius: 14px; background: #1b1622; }
+.hora-dormir__tela canvas { display: block; width: 100%; aspect-ratio: 4 / 3; image-rendering: pixelated; image-rendering: crisp-edges; cursor: pointer; touch-action: manipulation; }
+.hora-dormir__fala { position: absolute; z-index: 2; padding: 4px 9px; border-radius: 10px; color: #3b2d44; background: #fff; box-shadow: 0 4px 12px rgba(20, 14, 30, .3); width: max-content; max-width: 78%; font-size: .7rem; font-weight: 800; line-height: 1.3; text-align: center; opacity: 0; pointer-events: none; transform: translate(-50%, calc(-100% + 4px)); transition: opacity .2s ease, transform .2s ease; }
+.hora-dormir__fala::after { position: absolute; top: 100%; left: 50%; border: 5px solid transparent; border-top-color: #fff; content: ""; transform: translateX(-50%); }
+.hora-dormir__fala--visivel { opacity: 1; transform: translate(-50%, -100%); }
+.hora-dormir__fala--dela { color: #6a2f4c; background: #fde3ee; }
+.hora-dormir__fala--dela::after { border-top-color: #fde3ee; }
+.hora-dormir__ligacao { position: absolute; z-index: 3; top: 8px; left: 8px; display: flex; align-items: center; gap: 6px; padding: 4px 10px 4px 8px; border-radius: 999px; color: #fff; background: rgba(20, 16, 28, .78); font: 700 .62rem ui-monospace, "Courier New", monospace; letter-spacing: .02em; }
+.hora-dormir__ligacao[hidden] { display: none; }
+.hora-dormir__ligacao i { width: 7px; height: 7px; border-radius: 50%; background: #f2b233; animation: hora-dormir-piscar 1s steps(2) infinite; }
+.hora-dormir__ligacao--ativa i { background: #5fd38a; animation: hora-dormir-pulso-verde 1.6s ease-in-out infinite; }
+@keyframes hora-dormir-piscar { 50% { opacity: .2; } }
+@keyframes hora-dormir-pulso-verde { 50% { box-shadow: 0 0 0 4px rgba(95, 211, 138, .25); } }
+.hora-dormir__pensamentos { position: absolute; inset: 0; pointer-events: none; }
+.hora-dormir__pensamento { position: absolute; z-index: 2; padding: 4px 9px; border-radius: 999px; color: #5b4a6e; background: rgba(255, 255, 255, .93); box-shadow: 0 4px 12px rgba(10, 8, 20, .3); font-size: .68rem; font-weight: 800; white-space: nowrap; animation: hora-dormir-pensar 3s ease-out forwards; }
+.hora-dormir__zzz { position: absolute; top: 26%; left: 88%; pointer-events: none; }
+.hora-dormir__zzz span { position: absolute; left: 0; top: 0; color: #e7e0ff; font: 800 1rem ui-monospace, "Courier New", monospace; opacity: 0; animation: hora-dormir-zzz 2.4s ease-out infinite; }
+.hora-dormir__zzz span:nth-child(2) { animation-delay: .8s; }.hora-dormir__zzz span:nth-child(3) { animation-delay: 1.6s; font-size: 1.25rem; }
+.hora-dormir__objetivo { min-height: 20px; margin: 12px 4px 4px; color: #d9cfe0; font-size: .84rem; line-height: 1.4; }
+.hora-dormir__controles { display: flex; align-items: center; justify-content: center; gap: clamp(22px, 9vw, 52px); padding: 8px 0 4px; }
+.hora-dormir__dpad { display: grid; grid-template-columns: repeat(3, 46px); grid-template-rows: repeat(2, 46px); gap: 6px; }
+.hora-dormir__dpad [data-dir="cima"] { grid-area: 1 / 2; }
+.hora-dormir__dpad [data-dir="esquerda"] { grid-area: 2 / 1; }
+.hora-dormir__dpad [data-dir="baixo"] { grid-area: 2 / 2; }
+.hora-dormir__dpad [data-dir="direita"] { grid-area: 2 / 3; }
+.hora-dormir__dpad button, .hora-dormir__a { font: inherit; cursor: pointer; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+.hora-dormir__dpad button { padding: 0; border: 1px solid #7a6387; border-radius: 12px; color: #f1e8f5; background: #4a3a55; box-shadow: 0 3px 0 #1c1520; font-size: 1.15rem; transition: transform .08s ease, box-shadow .08s ease; }
+.hora-dormir__dpad button:active { box-shadow: 0 1px 0 #1c1520; transform: translateY(2px); }
+.hora-dormir__a-area { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.hora-dormir__a { --p: 0; position: relative; width: 74px; height: 74px; padding: 0; border: 0; border-radius: 50%; color: #5a3550; background: radial-gradient(circle at 40% 35%, #fbe6dc, #e9b3a7 70%); box-shadow: 0 5px 0 #9c6f7c; font-size: 1.6rem; font-weight: 800; transition: transform .08s ease, box-shadow .08s ease, filter .2s ease; }
+.hora-dormir__a span { position: absolute; inset: -5px; border-radius: 50%; background: conic-gradient(#f4b3c8 calc(var(--p) * 1%), transparent 0); -webkit-mask: radial-gradient(circle, transparent 37px, #000 38px); mask: radial-gradient(circle, transparent 37px, #000 38px); }
+.hora-dormir__a b { position: relative; }
+.hora-dormir__a:active:not(:disabled) { box-shadow: 0 2px 0 #9c6f7c; transform: translateY(3px); }
+.hora-dormir__a--pronto { animation: hora-dormir-pulso 1.3s ease-in-out infinite; }
+.hora-dormir__a:disabled { cursor: default; filter: grayscale(.6) brightness(.8); }
+.hora-dormir__a-area small { min-height: 1.2em; color: #a998b3; font-size: .72rem; }
+.hora-dormir__rodape { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; padding-top: 11px; border-top: 1px solid rgba(255, 255, 255, .08); color: #a998b3; font-size: .7rem; }
+.hora-dormir__rodape button { padding: 4px 0; border: 0; color: #e9dcef; background: none; font: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.hora-dormir__final { margin-top: 26px; animation: boa-noite-entrar .9s ease both; }
+.hora-dormir__final > span { display: block; color: #b5964e; font-size: 2.6rem; line-height: 1; }
+.hora-dormir__final strong { display: block; margin: 10px 0 12px; font: 500 clamp(1.4rem, 5.5vw, 1.9rem) Georgia, serif; }
+.hora-dormir__final p { margin: 0; color: var(--texto-suave); line-height: 1.7; }
+.hora-dormir__musica { margin-top: 20px; padding: 12px 20px; border: 0; border-radius: 999px; color: #fff; background: linear-gradient(135deg, #6c5a82, #8a6f9e); box-shadow: 0 10px 24px rgba(84, 67, 103, .25); font: inherit; font-size: .86rem; font-weight: 800; cursor: pointer; animation: boa-noite-entrar .6s ease .3s both; }
+.musica--destaque { animation: musica-destaque 1.6s ease; }
+@keyframes musica-destaque { 30% { box-shadow: 0 0 0 6px rgba(244, 179, 200, .55), var(--sombra); } }
+@keyframes hora-dormir-pulso { 50% { box-shadow: 0 5px 0 #9c6f7c, 0 0 0 7px rgba(244, 179, 200, .28); } }
+@keyframes hora-dormir-pensar { 0% { opacity: 0; transform: translate(-50%, 0) scale(.8); } 15% { opacity: 1; transform: translate(-50%, -12px) scale(1); } 100% { opacity: 0; transform: translate(calc(-50% + var(--desvio, 0px)), -80px); } }
+@keyframes hora-dormir-zzz { 0% { opacity: 0; transform: translate(0, 0); } 30% { opacity: 1; } 100% { opacity: 0; transform: translate(18px, -44px); } }
+@media (max-width: 480px) { .hora-dormir { padding-inline: 12px; }.hora-dormir__console { padding: 11px; border-radius: 20px; }.hora-dormir__rodape > span { display: none; }.hora-dormir__rodape { justify-content: center; } }
+@media (prefers-reduced-motion: reduce) { .hora-dormir *, .hora-dormir *::before, .hora-dormir *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; } }
+
 /* =========================================================
-<<<<<<< HEAD
    SONIC — PUZZLE DE FLORES
    ========================================================= */
 
@@ -3358,171 +3420,10 @@ body {
       )
       scale(1.15)
       rotate(calc(var(--rotacao) * 0.4));
-=======
-   MEMÓRIA DE COMPLEMENTOS — 03.10.2026
-   ========================================================= */
-
-.memoria-complementos {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-}
-
-/* Cartas */
-
-.memoria-complementos .memoria__grade {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-  margin-top: 24px;
-}
-
-.memoria-complementos__carta {
-  min-height: 135px;
-}
-
-.memoria-complementos__carta .memoria__frente {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 14px;
-  text-align: center;
-}
-
-.memoria-complementos__conteudo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-}
-
-.memoria-complementos__emoji {
-  display: block;
-  font-size: 2rem;
-  line-height: 1;
-}
-
-.memoria-complementos__texto {
-  display: block;
-  font-size: 0.9rem;
-  font-weight: 700;
-  line-height: 1.25;
-  letter-spacing: 0.03em;
-}
-
-/* Quando encontra um par */
-
-.memoria-complementos__carta.memoria__carta--encontrada {
-  animation: memoria-complementos-acerto 0.65s ease;
-}
-
-@keyframes memoria-complementos-acerto {
-  0% {
-    transform: scale(1);
-  }
-
-  45% {
-    transform: scale(1.06);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
-
-/* Mensagem que aparece após cada encontro */
-
-.memoria-complementos__encontro {
-  position: relative;
-  z-index: 3;
-  min-height: 58px;
-  margin: 18px auto 4px;
-  text-align: center;
-  opacity: 0;
-  transform: translateY(8px);
-  transition:
-    opacity 0.4s ease,
-    transform 0.4s ease;
-}
-
-.memoria-complementos__encontro--visivel {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.memoria-complementos__encontro > span {
-  display: block;
-  margin-bottom: 4px;
-  font-size: 1.3rem;
-}
-
-.memoria-complementos__encontro p {
-  margin: 0;
-  font-size: 0.95rem;
-  font-style: italic;
-  line-height: 1.5;
-}
-
-/* =========================================================
-   FOLHAS AO VENTO
-   ========================================================= */
-
-.memoria-complementos__folha {
-  position: absolute;
-  z-index: 10;
-  top: -50px;
-
-  pointer-events: none;
-  user-select: none;
-
-  font-size: 1.35rem;
-
-  animation:
-    memoria-complementos-folha
-    var(--folha-duracao, 4s)
-    linear
-    forwards;
-}
-
-@keyframes memoria-complementos-folha {
-  0% {
-    opacity: 0;
-    transform:
-      translate3d(0, -20px, 0)
-      rotate(0deg);
-  }
-
-  10% {
-    opacity: 0.9;
-  }
-
-  30% {
-    transform:
-      translate3d(35px, 180px, 0)
-      rotate(100deg);
-  }
-
-  55% {
-    transform:
-      translate3d(-30px, 350px, 0)
-      rotate(210deg);
-  }
-
-  80% {
-    opacity: 0.8;
-    transform:
-      translate3d(50px, 520px, 0)
-      rotate(310deg);
->>>>>>> a631b66 (Sua e só)
   }
 
   100% {
     opacity: 0;
-<<<<<<< HEAD
 
     transform:
       translate(-50%, -50%)
@@ -3856,8 +3757,171 @@ body {
   .sonic-flores__conteudo p {
     font-size: 0.98rem;
   }
+}
 
-=======
+/* =========================================================
+   MEMÓRIA DE COMPLEMENTOS — 03.10.2026
+   ========================================================= */
+
+.memoria-complementos {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Cartas */
+
+.memoria-complementos .memoria__grade {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.memoria-complementos__carta {
+  min-height: 135px;
+}
+
+.memoria-complementos__carta .memoria__frente {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  text-align: center;
+}
+
+.memoria-complementos__conteudo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.memoria-complementos__emoji {
+  display: block;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.memoria-complementos__texto {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: 0.03em;
+}
+
+/* Quando encontra um par */
+
+.memoria-complementos__carta.memoria__carta--encontrada {
+  animation: memoria-complementos-acerto 0.65s ease;
+}
+
+@keyframes memoria-complementos-acerto {
+  0% {
+    transform: scale(1);
+  }
+
+  45% {
+    transform: scale(1.06);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Mensagem que aparece após cada encontro */
+
+.memoria-complementos__encontro {
+  position: relative;
+  z-index: 3;
+  min-height: 58px;
+  margin: 18px auto 4px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+}
+
+.memoria-complementos__encontro--visivel {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.memoria-complementos__encontro > span {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 1.3rem;
+}
+
+.memoria-complementos__encontro p {
+  margin: 0;
+  font-size: 0.95rem;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   FOLHAS AO VENTO
+   ========================================================= */
+
+.memoria-complementos__folha {
+  position: absolute;
+  z-index: 10;
+  top: -50px;
+
+  pointer-events: none;
+  user-select: none;
+
+  font-size: 1.35rem;
+
+  animation:
+    memoria-complementos-folha
+    var(--folha-duracao, 4s)
+    linear
+    forwards;
+}
+
+@keyframes memoria-complementos-folha {
+  0% {
+    opacity: 0;
+    transform:
+      translate3d(0, -20px, 0)
+      rotate(0deg);
+  }
+
+  10% {
+    opacity: 0.9;
+  }
+
+  30% {
+    transform:
+      translate3d(35px, 180px, 0)
+      rotate(100deg);
+  }
+
+  55% {
+    transform:
+      translate3d(-30px, 350px, 0)
+      rotate(210deg);
+  }
+
+  80% {
+    opacity: 0.8;
+    transform:
+      translate3d(50px, 520px, 0)
+      rotate(310deg);
+  }
+
+  100% {
+    opacity: 0;
     transform:
       translate3d(-20px, 720px, 0)
       rotate(430deg);
@@ -4076,5 +4140,86 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
->>>>>>> a631b66 (Sua e só)
+}
+/* =========================================================
+   CELULAR — ÍCONES E ATALHOS MAIS COMPACTOS
+   ========================================================= */
+
+@media (max-width: 680px) {
+  .area-cartas__topo {
+    align-items: flex-end;
+    flex-direction: row;
+    margin-bottom: 20px;
+  }
+
+  .area-cartas__topo h2 { font-size: 2rem; }
+
+  /* Os três atalhos viram uma lista agrupada */
+  .area-cartas__escolhas {
+    gap: 0;
+    overflow: hidden;
+    border: 1px solid rgba(60,52,68,.08);
+    border-radius: 20px;
+    background: rgba(255,255,255,.8);
+    box-shadow: 0 10px 28px rgba(49,40,57,.06);
+  }
+
+  .carta-acesso,
+  .carta-acesso--rayane,
+  .carta-acesso--juliana,
+  .carta-acesso--momentos {
+    min-height: 0;
+    padding: 12px 14px;
+    gap: 12px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .carta-acesso + .carta-acesso { border-top: 1px solid rgba(60,52,68,.07); }
+  .carta-acesso::after { display: none; }
+  .carta-acesso:hover { box-shadow: none; transform: none; }
+  .carta-acesso:active { background: rgba(128,107,150,.06); }
+  .carta-acesso--ativo { background: rgba(128,107,150,.07); box-shadow: none; }
+
+  .carta-acesso__icone {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    font-size: 1.05rem;
+    line-height: 1;
+  }
+
+  .carta-acesso--momentos .carta-acesso__icone { font-size: .8rem; }
+  .carta-acesso strong { font-size: 1.02rem; letter-spacing: -.02em; }
+  .carta-acesso small { font-size: .66rem; }
+  .carta-acesso i { font-size: 1rem; opacity: .7; }
+}
+
+@media (max-width: 560px) {
+  .mes-timeline__botao,
+  .cantinho-mes__botao { min-height: 56px; padding: 10px 14px; gap: 12px; }
+
+  .mes-timeline__titulo,
+  .cantinho-mes__titulo { gap: 11px; }
+
+  .mes-timeline__icone,
+  .cantinho-mes__icone {
+    flex-basis: 30px;
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
+    font-size: 1.15rem;
+    line-height: 1;
+  }
+
+  #capitulos.capitulos,
+  .cantinho__guardados { gap: 8px; }
+
+  .mes-timeline,
+  .cantinho-mes { border-radius: 18px; }
+
+  .mes-timeline__titulo strong,
+  .cantinho-mes__titulo strong { font-size: .98rem; }
 }

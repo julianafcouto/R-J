@@ -688,5 +688,71 @@
         "titulo": "Arquivo confidencial 004"
       }
     ]
+  },
+  {
+    "id": "2026-11-02",
+    "titulo": "A última luz",
+    "data": "02.11.2026",
+    "subtitulo": "Todas as noites, antes de dormir",
+    "componentes": [
+      {
+        "tipo": "carta",
+        "titulo": "Antes de dormir",
+        "texto": "Oi, minha princesa!\n\nHoje eu quero te contar sobre a parte do dia que eu mais espero.\n\nAntes de tudo, antes de apagar a luz, de chamar a Akali ou de deitar, eu te ligo. É assim que a minha noite começa, e é por isso que ela é tão boa.\n\nEu AMO dormir em ligação com você. Pode parecer bobeira, mas é ali que eu sinto você aqui comigo, mesmo tão longe. Escutar a sua voz ficando baixinha, a sua respiração do outro lado, deixa o meu quarto menos vazio. Por algumas horas, parece que a distância nem existe.\n\nMas preciso te confessar uma coisa: eu sinto muita falta de dormir abraçada com você. Todos os dias. Sinto falta do seu cheirinho, do seu calor, de te puxar pra mais perto no meio da noite. A ligação me acalma, mas nada substitui ter você nos meus braços.\n\nE é por isso que eu não vejo a hora de poder estar com você pessoalmente todas as noites. De apagar a luz sabendo que você tá do meu lado, de dormir e acordar com você, sem precisar de celular nenhum. Esse dia vai chegar, e eu vou aproveitar cada noite dele.\n\nAté lá, a gente segue assim: você do outro lado da linha, eu aqui, e nós duas juntinhas do mesmo jeito.\n\nObrigada por ser a minha ligação de todas as noites, e a melhor parte do meu dia.\n\nEu te amo, Bê! Boa noite ♡"
+      },
+      {
+        "tipo": "hora-de-dormir",
+        "etiqueta": "Hora de dormir",
+        "titulo": "Me coloca pra dormir?",
+        "instrucao": "Use as setas para andar e o A para interagir. Primeiro me ligue; depois apague a luz, chame a Akali e deite pra gente dormir juntinhas.",
+        "cabecalho": "QUARTO DA JU",
+        "boneca": "Juliana",
+        "gata": "Akali",
+        "pessoa": "Rayane",
+        "pensamentos": [
+          "a voz dela baixinha",
+          "a respiração dela do outro lado",
+          "dormir abraçadinha com ela",
+          "o cheirinho dela",
+          "quando for todas as noites",
+          "Rayane ♡"
+        ],
+        "falasLigacao": [
+          {
+            "quem": "ela",
+            "texto": "oi, amor ♡"
+          },
+          {
+            "quem": "eu",
+            "texto": "oi, princesa! vou me ajeitar pra dormir"
+          }
+        ],
+        "falasDeitar": [
+          {
+            "quem": "eu",
+            "texto": "pronto, deitei"
+          },
+          {
+            "quem": "ela",
+            "texto": "dorme comigo na ligação?"
+          },
+          {
+            "quem": "eu",
+            "texto": "todos os dias ♡"
+          }
+        ],
+        "mensagemFinal": "Todas as luzes se apagam. Menos uma.",
+        "dedicatoria": "Mesmo longe, é com você que eu durmo todas as noites. Falta pouco pra ser abraçadinha. Boa noite, meu amor."
+      },
+      {
+        "tipo": "musica",
+        "titulo": "Querida",
+        "artista": "Chapéu de Palha",
+        "capa": "./assets/imagens/capas/querida.jpg",
+        "link": "https://open.spotify.com/intl-pt/track/3az7pvrZeNKEHdaQWzpR6t",
+        "mensagem": "Pra tocar baixinho na nossa ligação, até uma de nós dormir. Te amo, querida ♡",
+        "bloqueada": true
+      }
+    ]
   }
 ]

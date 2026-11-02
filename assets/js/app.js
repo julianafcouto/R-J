@@ -10,6 +10,7 @@
     "memoria-complementos",
     "puzzle",
     "boa-noite",
+    "hora-de-dormir",
     "sorvete",
     "telescopio",
     "sonic-flores",
@@ -395,6 +396,771 @@
       ficar.addEventListener(evento, parar);
     });
 
+    return elemento;
+  }
+
+  /*
+   * Hora de dormir — joguinho em pixel art: ir até o interruptor, apagar a luz,
+   * chamar a gata, deitar e pensar nela até dormir
+   */
+
+  const HD_CORES = {
+    h: "#241915", H: "#4a3226", s: "#b98560", S: "#9c6b49", e: "#1a1212", f: "#94603f",
+    o: "#d9d9e0", r: "#7a3f3a", b: "#1f5cab", B: "#174a8c", k: "#1d2f7a", w: "#ffffff",
+    g: "#1f9d6a", m: "#f0c890", p: "#ece7f2",
+    K: "#141217", W: "#f4f1ec", Y: "#f2b233", D: "#163038", n: "#d98a9a", c: "#8b8696"
+  };
+
+  const HD_JULIANA = [
+    "....hhHhhHhh....",
+    "...hHhhhhhhHh...",
+    "..hhhhHhhhhhhh..",
+    "..hHhhhhhHhhHh..",
+    "..hhshhshhhshh..",
+    "..hssssssssssh..",
+    "..hsseesseessh..",
+    "..ssseesseesss..",
+    "..ssfssssssfso..",
+    "...sssssrrsss...",
+    "....ssssssss....",
+    "......SSSS......",
+    "...bbbbbbbbbb...",
+    "..bbbbbkkkbbbb..",
+    ".bbbbkkkkkkbbbb.",
+    ".bbbkkwwkwwkbbb.",
+    ".sbbkkwgkwgkbbs.",
+    ".sbbkkmmmmkkbbs.",
+    ".sbbbbkmmkbbbbs.",
+    "..bbbbbbbbbbbb..",
+    "..BBBBBBBBBBBB..",
+    "..BBBBB..BBBBB..",
+    "...sss....sss...",
+    "...ppp....ppp..."
+  ];
+
+  const HD_PASSOS = [
+    ["...sss....sss...", "...ppp....ppp..."],
+    ["...sss....ppp...", "...ppp.........."],
+    ["...ppp....sss...", "..........ppp..."]
+  ];
+
+  const HD_AKALI = [
+    ".........K....K...",
+    ".........KK..KK...",
+    "........KKKKKKKK..",
+    "........KYYKKYYK..",
+    "........KYDKKYDK..",
+    "K.......KKKnnKKK..",
+    "K........KKWWKK...",
+    "KK.KKKKKKKWWWWK...",
+    ".KKKKKKKKKWWWWK...",
+    "..KKKKKKKKKWWKK...",
+    "..KK.KK....KK.KK..",
+    "..WW.WW....WW.WW.."
+  ];
+
+  const HD_AKALI_PASSO = [".KK...KK..KK...KK.", ".WW...WW..WW...WW."];
+
+  const HD_AKALI_DORMINDO = [
+    "..................",
+    "..................",
+    ".........K....K...",
+    ".........KK..KK...",
+    "........KKKKKKKK..",
+    "........KccKKccK..",
+    "..KKKKKKKKKnnKKK..",
+    ".KKKKKKKKKKWWKK...",
+    "KKKKKKKKKKWWWWK...",
+    "KKKKKKKKKKKWWKK...",
+    ".KKKKKKKKKKKKK....",
+    "..KKK.WW..WW......"
+  ];
+
+  function hdSprite(ctx, linhas, x, y, espelhar = false) {
+    linhas.forEach(function (linha, j) {
+      for (let i = 0; i < linha.length; i += 1) {
+        const cor = HD_CORES[linha[i]];
+        if (!cor) continue;
+        ctx.fillStyle = cor;
+        ctx.fillRect(espelhar ? x + linha.length - 1 - i : x + i, y + j, 1, 1);
+      }
+    });
+  }
+
+  function hdRet(ctx, cor, x, y, w, h) {
+    ctx.fillStyle = cor;
+    ctx.fillRect(x, y, w, h);
+  }
+
+  function hdVidroJanela(ctx) {
+    hdRet(ctx, "#2c2650", 56, 8, 26, 22);
+    hdRet(ctx, "#f5dfac", 74, 10, 4, 6);
+    hdRet(ctx, "#f5dfac", 73, 11, 1, 4);
+    hdRet(ctx, "#2c2650", 76, 10, 2, 4);
+    [[59, 11], [63, 25], [79, 26], [72, 21], [60, 21]].forEach(([x, y]) => hdRet(ctx, "#ffffff", x, y, 1, 1));
+    hdRet(ctx, "#f3eff7", 68, 8, 2, 22);
+    hdRet(ctx, "#f3eff7", 56, 18, 26, 2);
+  }
+
+  function hdQuarto(ctx, luzAcesa) {
+    hdRet(ctx, "#ddd6e6", 0, 0, 160, 46);
+    hdRet(ctx, "#cfc6db", 0, 0, 160, 3);
+    hdRet(ctx, "#b7abc6", 0, 44, 160, 3);
+
+    hdRet(ctx, "#b98e69", 0, 47, 160, 73);
+    for (let y = 47, fileira = 0; y < 120; y += 7, fileira += 1) {
+      hdRet(ctx, "#a67d5a", 0, y, 160, 1);
+      for (let x = (fileira % 2) * 16; x < 160; x += 32) hdRet(ctx, "#a67d5a", x, y + 1, 1, 6);
+    }
+
+    // quadros
+    hdRet(ctx, "#f0ecf3", 9, 9, 11, 16);
+    hdRet(ctx, "#5b4a45", 10, 10, 9, 14);
+    hdRet(ctx, "#d8b25a", 12, 13, 5, 5);
+    hdRet(ctx, "#5b4a45", 14, 13, 3, 3);
+    hdRet(ctx, "#f0ecf3", 23, 7, 10, 18);
+    hdRet(ctx, "#4b3a33", 24, 8, 8, 16);
+    hdRet(ctx, "#c9a978", 26, 11, 2, 9);
+    hdRet(ctx, "#8a6e55", 28, 15, 3, 6);
+
+    // janela e cortinas
+    hdRet(ctx, "#f3eff7", 54, 6, 30, 26);
+    hdVidroJanela(ctx);
+    hdRet(ctx, "#8d7f9b", 47, 3, 44, 1);
+    [[49, 4], [84, 4]].forEach(function ([x, y]) {
+      hdRet(ctx, "#f6f3f9", x, y, 6, 34);
+      hdRet(ctx, "#e2dcea", x + 2, y, 1, 34);
+      hdRet(ctx, "#e2dcea", x + 4, y + 2, 1, 32);
+    });
+
+    // interruptor
+    hdRet(ctx, "#c9bfd5", 39, 19, 7, 9);
+    hdRet(ctx, "#f7f5fa", 40, 20, 5, 7);
+    hdRet(ctx, "#b3a6c2", 41, luzAcesa ? 21 : 24, 3, 2);
+
+    // tapete
+    for (let dy = -9; dy <= 9; dy += 1) {
+      const meia = Math.round(24 * Math.sqrt(1 - (dy / 9.5) ** 2));
+      hdRet(ctx, Math.abs(dy) > 6 ? "#d48aa8" : "#e7a6c0", 70 - meia, 88 + dy, meia * 2, 1);
+    }
+    hdRet(ctx, "#f2c3d5", 56, 88, 28, 1);
+
+    // criado-mudo e abajur
+    hdRet(ctx, "#8a6b52", 97, 34, 13, 7);
+    hdRet(ctx, "#735641", 97, 41, 13, 9);
+    hdRet(ctx, "#5e4535", 102, 44, 3, 1);
+    hdRet(ctx, "#d9cbe6", 101, 31, 5, 3);
+    hdRet(ctx, luzAcesa ? "#f3d58f" : "#8a7d96", 100, 25, 7, 6);
+
+    // cama com lençol florido e cobertor de girafa
+    hdRet(ctx, "#8a6a96", 112, 25, 40, 9);
+    hdRet(ctx, "#a487b0", 112, 25, 40, 2);
+    hdRet(ctx, "#6a4d78", 112, 34, 40, 66);
+    hdRet(ctx, "#f2ecef", 114, 34, 36, 62);
+    [[116, 47], [146, 40], [117, 92], [147, 88]].forEach(([x, y]) => hdRet(ctx, "#c99ab0", x, y, 2, 2));
+    hdRet(ctx, "#ffffff", 120, 37, 24, 9);
+    hdRet(ctx, "#e3dde9", 120, 45, 24, 1);
+    hdRet(ctx, "#f1dcb8", 114, 50, 36, 46);
+    [[115, 53, 8, 6], [125, 52, 9, 5], [136, 53, 7, 6], [145, 52, 5, 7],
+     [116, 62, 6, 7], [124, 60, 8, 7], [134, 62, 9, 6], [145, 61, 5, 8],
+     [115, 72, 9, 6], [126, 70, 7, 7], [135, 71, 8, 7], [145, 72, 5, 6],
+     [117, 81, 7, 7], [126, 80, 9, 6], [137, 81, 7, 7], [146, 80, 4, 7],
+     [115, 90, 8, 5], [125, 89, 8, 6], [135, 90, 9, 5], [146, 90, 4, 5]
+    ].forEach(([x, y, w, h]) => hdRet(ctx, "#c98a4f", x, y, w, h));
+    hdRet(ctx, "#f6ead6", 114, 50, 36, 2);
+    hdRet(ctx, "#553d61", 112, 98, 40, 3);
+  }
+
+  function criarHoraDeDormir(dados) {
+    const boneca = dados.boneca || "Juliana";
+    const gata = dados.gata || "Akali";
+    const pessoa = dados.pessoa || "Rayane";
+    const pensamentos =
+      Array.isArray(dados.pensamentos) && dados.pensamentos.length
+        ? dados.pensamentos
+        : ["a risada dela", "a voz dela baixinha", "o jeitinho dela", `${pessoa} ♡`];
+    // Falas da ligação: quando ela atende e quando a Juliana deita ({ quem: "ela" | "eu", texto })
+    const falasLigacao =
+      Array.isArray(dados.falasLigacao) && dados.falasLigacao.length
+        ? dados.falasLigacao
+        : [{ quem: "ela", texto: "oi, amor ♡" }, { quem: "eu", texto: "oi, princesa!" }];
+    const falasDeitar =
+      Array.isArray(dados.falasDeitar) && dados.falasDeitar.length
+        ? dados.falasDeitar
+        : [{ quem: "eu", texto: "pronto, deitei" }, { quem: "ela", texto: "dorme comigo? ♡" }];
+    const VELOCIDADE = 42;
+    const DURACAO_PENSAR = 7;
+    const OBSTACULOS = [
+      { x1: 109, y1: 20, x2: 160, y2: 102 },
+      { x1: 94, y1: 20, x2: 112, y2: 54 }
+    ];
+
+    const elemento = document.createElement("article");
+    elemento.className = "componente puzzle hora-dormir";
+    elemento.innerHTML = `
+      <span class="componente__etiqueta">${escaparHTML(dados.etiqueta || "Hora de dormir")}</span>
+      <h3>${escaparHTML(dados.titulo || "Antes de dormir")}</h3>
+      <p class="puzzle__descricao">${escaparHTML(dados.instrucao || "")}</p>
+
+      <div class="hora-dormir__console" tabindex="0" aria-label="Joguinho: use as setas para andar e o botão A para interagir">
+        <header class="hora-dormir__topo">
+          <span class="hora-dormir__emblema" aria-hidden="true">☾</span>
+          <span class="hora-dormir__nome"><strong>${escaparHTML(dados.cabecalho || "QUARTO DA JU")}</strong><small>hora de dormir</small></span>
+          <span class="hora-dormir__coracoes" data-coracoes aria-hidden="true"><i>♥</i><i>♥</i><i>♥</i><i>♥</i><i>♥</i></span>
+        </header>
+
+        <div class="hora-dormir__tela">
+          <canvas width="160" height="120" role="img" aria-label="Quarto em pixel art com a ${escaparHTML(boneca)} e a gata ${escaparHTML(gata)}"></canvas>
+          <span class="hora-dormir__fala" data-fala aria-hidden="true"></span>
+          <div class="hora-dormir__pensamentos" data-pensamentos aria-hidden="true"></div>
+          <div class="hora-dormir__zzz" data-zzz aria-hidden="true" hidden><span>z</span><span>z</span><span>Z</span></div>
+          <div class="hora-dormir__ligacao" data-ligacao hidden><i aria-hidden="true"></i><span data-ligacao-texto></span></div>
+        </div>
+
+        <p class="hora-dormir__objetivo" data-objetivo aria-live="polite"></p>
+
+        <div class="hora-dormir__controles">
+          <div class="hora-dormir__dpad">
+            <button type="button" data-dir="cima" aria-label="Andar para cima">↑</button>
+            <button type="button" data-dir="esquerda" aria-label="Andar para a esquerda">←</button>
+            <button type="button" data-dir="baixo" aria-label="Andar para baixo">↓</button>
+            <button type="button" data-dir="direita" aria-label="Andar para a direita">→</button>
+          </div>
+          <div class="hora-dormir__a-area">
+            <button type="button" class="hora-dormir__a" data-a aria-describedby="hd-rotulo"><span data-progresso></span><b>A</b></button>
+            <small data-rotulo>interagir</small>
+          </div>
+        </div>
+
+        <footer class="hora-dormir__rodape">
+          <span>↑↓←→ / WASD · E / Enter</span>
+          <button type="button" data-recomecar>recomeçar</button>
+        </footer>
+      </div>
+
+      <div class="hora-dormir__final" data-final hidden>
+        <span aria-hidden="true">☾</span>
+        <strong>${escaparHTML(dados.mensagemFinal || "Boa noite, meu amor.")}</strong>
+        <p>${escaparHTML(dados.dedicatoria || "")}</p>
+        <button type="button" class="hora-dormir__musica" data-ir-musica hidden></button>
+      </div>
+    `;
+
+    const consoleEl = elemento.querySelector(".hora-dormir__console");
+    const canvas = elemento.querySelector("canvas");
+    const ctx = canvas.getContext("2d");
+    const fala = elemento.querySelector("[data-fala]");
+    const nuvem = elemento.querySelector("[data-pensamentos]");
+    const zzz = elemento.querySelector("[data-zzz]");
+    const objetivo = elemento.querySelector("[data-objetivo]");
+    const botaoA = elemento.querySelector("[data-a]");
+    const rotulo = elemento.querySelector("[data-rotulo]");
+    const anel = elemento.querySelector("[data-progresso]");
+    const coracoes = elemento.querySelectorAll("[data-coracoes] i");
+    const final = elemento.querySelector("[data-final]");
+    const ligacao = elemento.querySelector("[data-ligacao]");
+    const ligacaoTexto = elemento.querySelector("[data-ligacao-texto]");
+    rotulo.id = `hd-rotulo-${Math.random().toString(36).slice(2, 8)}`;
+    botaoA.setAttribute("aria-describedby", rotulo.id);
+
+    const direcoes = new Set();
+    let timers = [];
+    let estado;
+    let quadro = 0;
+    let ultimo = 0;
+    let visivel = false;
+    let timerFala = 0;
+
+    function inicial() {
+      timers.forEach((id) => window.clearTimeout(id));
+      timers = [];
+      estado = {
+        etapa: "ligar",
+        luz: true,
+        x: 66, y: 74,
+        alvo: null,
+        andando: false,
+        tempo: 0,
+        deitada: false,
+        progresso: 0,
+        segurando: false,
+        proximoPensamento: 0,
+        indicePensamento: 0,
+        inicioLigacao: 0,
+        gata: { x: 70, y: 90, modo: "dormindo", esquerda: false, salto: 0 }
+      };
+      nuvem.innerHTML = "";
+      zzz.hidden = true;
+      ligacao.hidden = true;
+      ligacao.classList.remove("hora-dormir__ligacao--ativa");
+      fala.classList.remove("hora-dormir__fala--visivel");
+      anel.style.setProperty("--p", "0");
+      atualizarInterface();
+      desenhar();
+    }
+
+    function depois(ms, fn) {
+      timers.push(window.setTimeout(fn, ms));
+    }
+
+    function pertoInterruptor() {
+      return estado.x >= 28 && estado.x <= 56 && estado.y <= 64;
+    }
+
+    function pertoCama() {
+      return estado.x >= 90 && estado.y >= 50 && estado.y <= 106;
+    }
+
+    function podeAndar() {
+      return ["ligar", "chamando", "conversando", "luz", "akali", "esperando", "cama"].includes(estado.etapa);
+    }
+
+    function acaoDisponivel() {
+      const etapa = estado.etapa;
+      return etapa === "ligar" || (etapa === "luz" && pertoInterruptor()) || etapa === "akali" ||
+        (etapa === "cama" && pertoCama()) || etapa === "pensar";
+    }
+
+    function atualizarInterface() {
+      const textos = {
+        ligar: [`antes de tudo: ligue para a ${pessoa} ♡`, "ligar"],
+        chamando: [`ligando para a ${pessoa}...`, "..."],
+        conversando: [`em ligação com a ${pessoa} ♡`, "..."],
+        luz: [`com ela na linha, vá até o interruptor e apague a luz`, "apagar luz"],
+        akali: [`luz apagada. agora chame a ${gata} ♡`, `chamar ${gata}`],
+        esperando: [`a ${gata} está vindo...`, "..."],
+        cama: ["agora vá até a cama e deite", "deitar"],
+        deitando: [`deitadinha, com a ${pessoa} na linha ♡`, "..."],
+        pensar: ["segure o A e durmam juntinhas na ligação", "segure ♡"],
+        fim: ["dormiram em ligação ♡", "boa noite"]
+      };
+      const [texto, acao] = textos[estado.etapa];
+      if (objetivo.textContent !== texto) objetivo.textContent = texto;
+      rotulo.textContent = acao;
+      botaoA.classList.toggle("hora-dormir__a--pronto", acaoDisponivel());
+      botaoA.disabled = ["fim", "esperando", "chamando", "conversando", "deitando"].includes(estado.etapa);
+      const feitos = { ligar: 0, chamando: 0, conversando: 1, luz: 1, akali: 2, esperando: 2, cama: 3, deitando: 4, pensar: 4, fim: 5 }[estado.etapa];
+      coracoes.forEach((coracao, indice) => coracao.classList.toggle("hora-dormir__coracao--cheio", indice < feitos));
+    }
+
+    function posicionar(el, x, y) {
+      el.style.left = `${(x / 160) * 100}%`;
+      el.style.top = `${(y / 120) * 100}%`;
+    }
+
+    function falar(texto, x, y, dela = false) {
+      window.clearTimeout(timerFala);
+      fala.textContent = texto;
+      fala.classList.toggle("hora-dormir__fala--dela", dela);
+      // Mantém o balão inteiro dentro da tela, mesmo com frases longas.
+      const meia = ((fala.offsetWidth / 2) / (canvas.clientWidth || 1)) * 160 + 2;
+      posicionar(fala, Math.max(meia, Math.min(160 - meia, x)), y);
+      fala.classList.add("hora-dormir__fala--visivel");
+      timerFala = window.setTimeout(() => fala.classList.remove("hora-dormir__fala--visivel"), 1900);
+    }
+
+    function atualizarLigacao() {
+      if (!estado.inicioLigacao) return;
+      const segundos = Math.floor((performance.now() - estado.inicioLigacao) / 1000);
+      const tempo = `${String(Math.floor(segundos / 60)).padStart(2, "0")}:${String(segundos % 60).padStart(2, "0")}`;
+      ligacaoTexto.textContent = `${pessoa} ♡ · ${tempo}`;
+    }
+
+    function posicaoCelular() {
+      if (estado.deitada) return [142, 34];
+      const x = Math.round(estado.x);
+      const y = Math.round(estado.y);
+      // Na mão até ligar; depois, encostado na orelha.
+      return estado.etapa === "ligar" ? [x + 6, y - 9] : [x + 5, y - 19];
+    }
+
+    function conversar(falas, proximaEtapa) {
+      falas.forEach(function (fala, indice) {
+        depois(indice * 1900, function () {
+          const dela = fala.quem === "ela";
+          if (dela) {
+            const [cx, cy] = posicaoCelular();
+            falar(fala.texto, cx + 2, cy - 2, true);
+          } else if (estado.deitada) {
+            falar(fala.texto, 132, 31);
+          } else {
+            falar(fala.texto, estado.x, estado.y - 27);
+          }
+        });
+      });
+      depois(falas.length * 1900, function () {
+        estado.etapa = proximaEtapa;
+        atualizarInterface();
+      });
+    }
+
+    function fazerLigacao() {
+      estado.etapa = "chamando";
+      ligacao.hidden = false;
+      ligacaoTexto.textContent = `chamando ${pessoa}...`;
+      depois(2200, function () {
+        estado.inicioLigacao = performance.now();
+        estado.etapa = "conversando";
+        ligacao.classList.add("hora-dormir__ligacao--ativa");
+        atualizarLigacao();
+        atualizarInterface();
+        conversar(falasLigacao, "luz");
+      });
+    }
+
+    function bloqueado(x, y) {
+      return OBSTACULOS.some((o) => x > o.x1 && x < o.x2 && y > o.y1 && y < o.y2);
+    }
+
+    function mover(dt) {
+      if (!podeAndar()) {
+        estado.andando = false;
+        return;
+      }
+      let vx = (direcoes.has("direita") ? 1 : 0) - (direcoes.has("esquerda") ? 1 : 0);
+      let vy = (direcoes.has("baixo") ? 1 : 0) - (direcoes.has("cima") ? 1 : 0);
+      if (vx || vy) {
+        estado.alvo = null;
+      } else if (estado.alvo) {
+        vx = estado.alvo.x - estado.x;
+        vy = estado.alvo.y - estado.y;
+        if (Math.hypot(vx, vy) < 1.2) {
+          estado.alvo = null;
+          vx = 0;
+          vy = 0;
+        }
+      }
+      const tamanho = Math.hypot(vx, vy);
+      estado.andando = tamanho > 0;
+      if (!estado.andando) return;
+
+      const passo = VELOCIDADE * dt;
+      const nx = Math.max(10, Math.min(150, estado.x + (vx / tamanho) * passo));
+      const ny = Math.max(56, Math.min(116, estado.y + (vy / tamanho) * passo));
+      if (!bloqueado(nx, ny)) {
+        estado.x = nx;
+        estado.y = ny;
+      } else if (!bloqueado(nx, estado.y)) {
+        estado.x = nx;
+      } else if (!bloqueado(estado.x, ny)) {
+        estado.y = ny;
+      } else {
+        estado.alvo = null;
+      }
+    }
+
+    function moverGata(dt) {
+      const g = estado.gata;
+      if (g.modo === "andando") {
+        const dx = 104 - g.x;
+        const dy = 78 - g.y;
+        const dist = Math.hypot(dx, dy);
+        g.esquerda = dx < 0;
+        if (dist < 1) {
+          g.modo = "pulando";
+          g.salto = 0;
+        } else {
+          const passo = Math.min(dist, 36 * dt);
+          g.x += (dx / dist) * passo;
+          g.y += (dy / dist) * passo;
+        }
+      } else if (g.modo === "pulando") {
+        g.salto = Math.min(1, g.salto + dt / 0.45);
+        g.x = 104 + (128 - 104) * g.salto;
+        g.y = 78 + (74 - 78) * g.salto - Math.sin(g.salto * Math.PI) * 12;
+        if (g.salto >= 1) {
+          g.modo = "na-cama";
+          g.esquerda = true;
+          if (estado.etapa === "esperando") {
+            estado.etapa = "cama";
+            falar("mrrr ♡", g.x, g.y - 14);
+            atualizarInterface();
+          }
+        }
+      }
+    }
+
+    function pensar(dt) {
+      if (estado.etapa !== "pensar" || !estado.segurando) return;
+      estado.progresso = Math.min(1, estado.progresso + dt / DURACAO_PENSAR);
+      estado.proximoPensamento -= dt;
+      if (estado.proximoPensamento <= 0) {
+        soltarPensamento();
+        estado.proximoPensamento = 0.75;
+      }
+      anel.style.setProperty("--p", String(Math.round(estado.progresso * 100)));
+      if (estado.progresso >= 1) dormir();
+    }
+
+    function soltarPensamento() {
+      const i = estado.indicePensamento;
+      const balao = document.createElement("span");
+      balao.className = "hora-dormir__pensamento";
+      balao.textContent = i % 2 ? "♡" : pensamentos[(i / 2) % pensamentos.length];
+      balao.style.setProperty("--desvio", `${Math.round(Math.random() * 36 - 18)}px`);
+      posicionar(balao, 118 + Math.random() * 14, 34);
+      balao.addEventListener("animationend", () => balao.remove());
+      nuvem.appendChild(balao);
+      estado.indicePensamento += 1;
+    }
+
+    function interagir() {
+      const etapa = estado.etapa;
+      if (etapa === "ligar") {
+        fazerLigacao();
+      } else if (etapa === "luz") {
+        if (!pertoInterruptor()) {
+          falar("o interruptor fica ali na parede", estado.x, estado.y - 27);
+          return;
+        }
+        estado.luz = false;
+        estado.etapa = "akali";
+        falar("*clique*", 42, 17);
+      } else if (etapa === "akali") {
+        estado.etapa = "esperando";
+        falar(`${gata}! vem dormir ♡`, estado.x, estado.y - 27);
+        depois(1000, function () {
+          estado.gata.modo = "acordada";
+          falar("miau?", estado.gata.x, estado.gata.y - 14);
+        });
+        depois(1900, () => { estado.gata.modo = "andando"; });
+      } else if (etapa === "cama") {
+        if (!pertoCama()) {
+          falar("a cama fica ali →", estado.x, estado.y - 27);
+          return;
+        }
+        estado.etapa = "deitando";
+        estado.deitada = true;
+        estado.alvo = null;
+        direcoes.clear();
+        Object.assign(estado.gata, { x: 132, y: 86, modo: "na-cama", esquerda: true });
+        conversar(falasDeitar, "pensar");
+      }
+      atualizarInterface();
+    }
+
+    function dormir() {
+      estado.etapa = "fim";
+      estado.segurando = false;
+      estado.gata.modo = "dormindo";
+      zzz.hidden = false;
+      atualizarInterface();
+      depois(1400, function () {
+        final.hidden = false;
+        concluirPuzzle(elemento);
+        mostrarMusicaDesbloqueada();
+      });
+    }
+
+    // A música do capítulo é desbloqueada pelo concluirPuzzle; aqui o final aponta para ela.
+    function mostrarMusicaDesbloqueada() {
+      const chave = elemento.dataset.chaveDesbloqueio;
+      const capitulo = elemento.closest(".capitulo");
+      if (!chave || !capitulo) return;
+      const musica = [...capitulo.querySelectorAll(".musica")].find((item) => item.dataset.chaveDesbloqueio === chave);
+      if (!musica) return;
+      const titulo = musica.querySelector(".musica__conteudo h3")?.textContent.trim() || "nossa música";
+      const botao = final.querySelector("[data-ir-musica]");
+      botao.textContent = `♪ música desbloqueada: ${titulo} · ouvir agora`;
+      botao.hidden = false;
+      botao.onclick = function () {
+        musica.scrollIntoView({ behavior: "smooth", block: "center" });
+        musica.classList.remove("musica--destaque");
+        void musica.offsetWidth;
+        musica.classList.add("musica--destaque");
+      };
+    }
+
+    function desenhar() {
+      ctx.clearRect(0, 0, 160, 120);
+      hdQuarto(ctx, estado.luz);
+
+      const g = estado.gata;
+      const atores = [];
+      if (!estado.deitada) atores.push({ y: estado.y, desenhar: desenharJuliana });
+      atores.push({ y: g.modo === "na-cama" || g.modo === "pulando" || estado.deitada ? 999 : g.y, desenhar: desenharGata });
+      if (estado.deitada) desenharJulianaDeitada();
+      atores.sort((a, b) => a.y - b.y).forEach((ator) => ator.desenhar());
+      const celularAceso = estado.etapa === "chamando" || Boolean(estado.inicioLigacao);
+      if (estado.deitada) desenharCelular(celularAceso);
+
+      if (estado.luz) {
+        const brilho = ctx.createRadialGradient(103, 28, 2, 103, 28, 46);
+        brilho.addColorStop(0, "rgba(255, 222, 150, 0.32)");
+        brilho.addColorStop(1, "rgba(255, 222, 150, 0)");
+        ctx.fillStyle = brilho;
+        ctx.fillRect(40, 0, 120, 90);
+      } else {
+        ctx.fillStyle = estado.etapa === "fim" ? "rgba(10, 8, 26, 0.72)" : "rgba(14, 11, 32, 0.6)";
+        ctx.fillRect(0, 0, 160, 120);
+        hdVidroJanela(ctx);
+        ctx.fillStyle = "rgba(185, 195, 255, 0.1)";
+        ctx.beginPath();
+        ctx.moveTo(56, 30);
+        ctx.lineTo(82, 30);
+        ctx.lineTo(104, 116);
+        ctx.lineTo(34, 116);
+        ctx.closePath();
+        ctx.fill();
+        if (celularAceso) {
+          const [cx, cy] = posicaoCelular();
+          const tela = ctx.createRadialGradient(cx + 2, cy + 3, 1, cx + 2, cy + 3, 16);
+          tela.addColorStop(0, "rgba(190, 225, 255, 0.35)");
+          tela.addColorStop(1, "rgba(190, 225, 255, 0)");
+          ctx.fillStyle = tela;
+          ctx.fillRect(cx - 16, cy - 14, 36, 36);
+          desenharCelular(true);
+        }
+      }
+    }
+
+    function desenharCelular(aceso) {
+      const [x, y] = posicaoCelular();
+      const [w, h] = estado.deitada ? [4, 7] : [3, 6];
+      hdRet(ctx, "#15141c", x, y, w, h);
+      hdRet(ctx, aceso ? "#bfe3ff" : "#3a3f55", x + 1, y + 1, w - 2, h - 3);
+      if (estado.etapa === "ligar" && Math.floor(estado.tempo / 0.4) % 2) {
+        hdRet(ctx, "#f4b3c8", x - 1, y - 2, w + 2, 1);
+      }
+    }
+
+    function desenharJuliana() {
+      const x = Math.round(estado.x - 8);
+      const y = Math.round(estado.y - 24);
+      ctx.fillStyle = "rgba(0, 0, 0, 0.18)";
+      ctx.fillRect(x + 3, y + 23, 10, 2);
+      const linhas = HD_JULIANA.slice(0, 22);
+      const passo = estado.andando ? 1 + (Math.floor(estado.tempo / 0.16) % 2) : 0;
+      hdSprite(ctx, linhas.concat(HD_PASSOS[passo]), x, y - (passo ? 1 : 0));
+      desenharCelular(estado.etapa === "chamando" || Boolean(estado.inicioLigacao));
+    }
+
+    function desenharJulianaDeitada() {
+      const cabeca = HD_JULIANA.slice(0, 11).map(function (linha, j) {
+        if (j === 6 && estado.progresso > 0.6) return linha.replace(/e/g, estado.etapa === "fim" ? "s" : "S");
+        if (j === 7 && estado.etapa === "fim") return linha.replace(/e/g, "f");
+        return linha;
+      });
+      hdSprite(ctx, cabeca, 124, 32);
+      hdRet(ctx, "#f6ead6", 114, 47, 36, 3);
+    }
+
+    function desenharGata() {
+      const g = estado.gata;
+      const x = Math.round(g.x - 9);
+      const y = Math.round(g.y - 12);
+      if (g.modo !== "pulando") {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.16)";
+        ctx.fillRect(x + 2, y + 11, 14, 2);
+      }
+      if (g.modo === "dormindo") {
+        hdSprite(ctx, HD_AKALI_DORMINDO, x, y, g.esquerda);
+        return;
+      }
+      let linhas = HD_AKALI;
+      if (g.modo === "andando" && Math.floor(estado.tempo / 0.14) % 2) {
+        linhas = HD_AKALI.slice(0, 10).concat(HD_AKALI_PASSO);
+      }
+      hdSprite(ctx, linhas, x, y, g.esquerda);
+    }
+
+    function laco(agora) {
+      const dt = ultimo ? Math.min(0.05, (agora - ultimo) / 1000) : 0;
+      ultimo = agora;
+      estado.tempo += dt;
+      mover(dt);
+      moverGata(dt);
+      pensar(dt);
+      atualizarLigacao();
+      if (estado.etapa === "luz" || estado.etapa === "cama") atualizarInterface();
+      desenhar();
+      quadro = visivel ? window.requestAnimationFrame(laco) : 0;
+      if (!quadro) ultimo = 0;
+    }
+
+    function ligar() {
+      if (visivel && !quadro) quadro = window.requestAnimationFrame(laco);
+    }
+
+    // Controles
+    const TECLAS = {
+      ArrowUp: "cima", KeyW: "cima", ArrowDown: "baixo", KeyS: "baixo",
+      ArrowLeft: "esquerda", KeyA: "esquerda", ArrowRight: "direita", KeyD: "direita"
+    };
+
+    function apertarA() {
+      if (estado.etapa === "pensar") {
+        estado.segurando = true;
+      } else {
+        interagir();
+      }
+    }
+
+    consoleEl.addEventListener("keydown", function (evento) {
+      const direcao = TECLAS[evento.code];
+      if (direcao) {
+        evento.preventDefault();
+        direcoes.add(direcao);
+      } else if (evento.code === "KeyE" || (["Enter", "Space"].includes(evento.code) && evento.target === consoleEl)) {
+        evento.preventDefault();
+        if (!evento.repeat) apertarA();
+      }
+    });
+
+    consoleEl.addEventListener("keyup", function (evento) {
+      const direcao = TECLAS[evento.code];
+      if (direcao) direcoes.delete(direcao);
+      if (["KeyE", "Enter", "Space"].includes(evento.code)) estado.segurando = false;
+    });
+
+    consoleEl.addEventListener("focusout", function () {
+      direcoes.clear();
+      estado.segurando = false;
+    });
+
+    elemento.querySelectorAll("[data-dir]").forEach(function (botao) {
+      const direcao = botao.dataset.dir;
+      botao.addEventListener("pointerdown", function (evento) {
+        evento.preventDefault();
+        direcoes.add(direcao);
+      });
+      ["pointerup", "pointercancel", "pointerleave"].forEach((nome) => botao.addEventListener(nome, () => direcoes.delete(direcao)));
+    });
+
+    botaoA.addEventListener("pointerdown", function (evento) {
+      evento.preventDefault();
+      apertarA();
+    });
+    ["pointerup", "pointercancel", "pointerleave"].forEach((nome) => botaoA.addEventListener(nome, () => { estado.segurando = false; }));
+    botaoA.addEventListener("keydown", function (evento) {
+      if (!["Enter", " "].includes(evento.key)) return;
+      evento.preventDefault();
+      evento.stopPropagation();
+      if (!evento.repeat) apertarA();
+    });
+    botaoA.addEventListener("keyup", () => { estado.segurando = false; });
+
+    canvas.addEventListener("click", function (evento) {
+      if (!podeAndar()) return;
+      const caixa = canvas.getBoundingClientRect();
+      estado.alvo = {
+        x: ((evento.clientX - caixa.left) / caixa.width) * 160,
+        y: Math.max(56, ((evento.clientY - caixa.top) / caixa.height) * 120)
+      };
+      consoleEl.focus({ preventScroll: true });
+    });
+
+    elemento.querySelector("[data-recomecar]").addEventListener("click", function () {
+      final.hidden = true;
+      inicial();
+    });
+
+    new IntersectionObserver(function (entradas) {
+      visivel = entradas.some((entrada) => entrada.isIntersecting);
+      ligar();
+    }).observe(canvas);
+
+    inicial();
     return elemento;
   }
 
@@ -3233,6 +3999,9 @@ function criarMemoriaComplementos(dados) {
 
         case "boa-noite":
           return criarBoaNoite(dados);
+
+        case "hora-de-dormir":
+          return criarHoraDeDormir(dados);
 
         case "sorvete":
           return criarPuzzleSorvete(dados);
