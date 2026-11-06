@@ -33,7 +33,7 @@
 
   <link
     rel="stylesheet"
-    href="./assets/css/style.css?v=20261102h"
+    href="./assets/css/style.css?v=20261116d"
   >
   <link rel="stylesheet" href="./assets/vendor/leaflet/leaflet.css">
   <link rel="stylesheet" href="./assets/css/puzzle-algodao.css?v=20260916a">
@@ -94,6 +94,7 @@
     <nav class="cabecalho__navegacao">
       <a href="#inicio">Início</a>
       <a href="#tempo">Tempo</a>
+      <a href="#trilha">Músicas</a>
       <a href="#cartas" data-abrir-cartas>Cartas</a>
     </nav>
   </header>
@@ -122,10 +123,13 @@
     </section>
 
     <section class="contadores" id="tempo">
+      <div class="data-especial" id="data-especial" aria-live="polite" hidden></div>
+
       <header class="secao-cabecalho">
         <span class="etiqueta">
           O tempo entre nós
         </span>
+      </header>
 
       <div class="contadores__grade">
         <article class="contador" data-contador-data="2026-03-25T00:00:00">
@@ -152,6 +156,32 @@
       </div>
     </section>
 
+    <section class="trilha" id="trilha">
+      <header class="secao-cabecalho">
+        <span class="etiqueta">A nossa trilha sonora</span>
+        <p>Todas as músicas que já guardei aqui pra você, num lugar só.</p>
+      </header>
+
+      <div class="trilha__player">
+        <iframe
+          title="Playlist da nossa trilha sonora no Spotify"
+          src="https://open.spotify.com/embed/playlist/7B3Y6jfjKH5Xsnw0pJvxUu?utm_source=generator&amp;theme=0"
+          width="100%"
+          height="452"
+          frameborder="0"
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"
+        ></iframe>
+      </div>
+
+      <a
+        class="botao trilha__abrir"
+        href="https://open.spotify.com/playlist/7B3Y6jfjKH5Xsnw0pJvxUu"
+        target="_blank"
+        rel="noopener noreferrer"
+      >Abrir no Spotify</a>
+    </section>
+
     <section class="area-cartas" id="cartas" hidden>
       <header class="area-cartas__topo">
         <div>
@@ -161,25 +191,7 @@
         <button type="button" class="area-cartas__bloquear" id="bloquear-cartas">Bloquear</button>
       </header>
 
-      <div class="area-cartas__escolhas" id="escolher-cartas">
-        <button class="carta-acesso carta-acesso--rayane" type="button" data-painel-cartas="historia">
-          <span class="carta-acesso__icone">𓄋</span>
-          <span><small>Cartas, músicas e memórias</small><strong>Para Rayane</strong></span>
-          <i>→</i>
-        </button>
-        <button class="carta-acesso carta-acesso--juliana" type="button" data-painel-cartas="cantinho">
-          <span class="carta-acesso__icone">𑄝੭</span>
-          <span><small>Mensagens guardadas por ela</small><strong>Para Juliana</strong></span>
-          <i>→</i>
-        </button>
-        <button class="carta-acesso carta-acesso--momentos" type="button" data-painel-cartas="momentos" data-somente-proprietaria>
-          <span class="carta-acesso__icone">𖨆⁠♡𖨆⁠</span>
-          <span><small>Fotos, passeios e dias especiais</small><strong>Nossos momentos</strong></span>
-          <i>→</i>
-        </button>
-      </div>
-
-    <section class="historia area-cartas__painel" id="historia" hidden>
+    <section class="historia area-cartas__painel" id="historia">
       <header class="secao-cabecalho">
         <span class="etiqueta">
           Escrevendo sobre nós
@@ -202,110 +214,6 @@
       </div>
     </section>
 
-    <section class="cantinho area-cartas__painel" id="cantinho" hidden>
-      <header class="secao-cabecalho">
-        <span class="etiqueta">Um espaço para você</span>
-        <h2>De Rayane</h2>
-        <p>
-          Escreva aqui o que estiver sentindo, uma lembrança ou
-          qualquer coisinha que queira guardar.
-        </p>
-      </header>
-
-      <div class="cantinho__cartao" data-somente-proprietaria>
-        <label for="cantinho-texto">O que você quer guardar hoje?</label>
-        <textarea id="cantinho-texto" rows="6" maxlength="700000"
-          placeholder="Pode escrever do seu jeito..."></textarea>
-
-        <div class="cantinho__campos-extras">
-          <div class="cantinho__campo">
-            <label for="cantinho-data">Data</label>
-            <input id="cantinho-data" type="date">
-          </div>
-
-          <div class="cantinho__campo">
-            <label for="cantinho-link">Link <span>(se quiser)</span></label>
-            <input id="cantinho-link" type="url" inputmode="url"
-              placeholder="exemplo.com ou cole um link">
-          </div>
-
-          <div class="cantinho__campo cantinho__campo--codigo">
-            <label for="cantinho-codigo">Código de acesso</label>
-            <input id="cantinho-codigo" type="password"
-              autocomplete="current-password" placeholder="Para publicar ou apagar">
-          </div>
-        </div>
-
-        <div class="cantinho__acoes">
-          <span id="cantinho-contador">0 de 700000</span>
-          <button class="botao" id="cantinho-guardar" type="button">Guardar</button>
-        </div>
-
-        <p class="cantinho__aviso" id="cantinho-aviso" aria-live="polite"></p>
-      </div>
-
-      <div class="cantinho__guardados" id="cantinho-guardados">
-        <p class="cantinho__vazio">Carregando as publicações...</p>
-      </div>
-    </section>
-
-    <section class="momentos area-cartas__painel" id="momentos" hidden>
-      <header class="secao-cabecalho">
-        <span class="etiqueta">Nosso álbum vivo</span>
-        <h2>Nossos momentos</h2>
-        <p>Um feed para guardar o que aconteceu, do nosso jeitinho.</p>
-      </header>
-
-      <form class="momentos__formulario" id="momentos-form">
-        <div class="momentos__form-topo">
-          <div>
-            <span class="etiqueta">Nova memória</span>
-            <h3>O que aconteceu?</h3>
-          </div>
-          <span class="momentos__passos">Fotos + uma pequena história</span>
-        </div>
-
-        <label class="momentos__fotos" for="momentos-fotos">
-          <input id="momentos-fotos" name="fotos" type="file" accept="image/*" multiple required>
-          <span class="momentos__fotos-icone">＋</span>
-          <strong>Escolher fotos</strong>
-          <small>Até 50 fotos por momento</small>
-        </label>
-        <div class="momentos__previas" id="momentos-previas" hidden></div>
-
-        <label class="momentos__campo momentos__campo--descricao">
-          <span>Pequena descrição</span>
-          <textarea id="momentos-descricao" rows="3" maxlength="700" placeholder="Conte o que aconteceu, uma frase que ficou ou um detalhe que não devemos esquecer..." required></textarea>
-        </label>
-
-        <div class="momentos__linha">
-          <label class="momentos__campo">
-            <span>Data</span>
-            <input id="momentos-data" type="date" required>
-          </label>
-          <label class="momentos__campo">
-            <span>Publicado por</span>
-            <select id="momentos-autora">
-              <option value="Juliana">Juliana</option>
-              <option value="Rayane">Rayane</option>
-            </select>
-          </label>
-          <label class="momentos__campo">
-            <span>Senha</span>
-            <input id="momentos-codigo" type="password" autocomplete="current-password" required>
-          </label>
-        </div>
-
-        <div class="momentos__acoes">
-          <p id="momentos-aviso" aria-live="polite"></p>
-          <button class="botao" type="submit">Publicar momento</button>
-        </div>
-      </form>
-
-      <div class="momentos__feed" id="momentos-feed">
-        <p class="cantinho__vazio">Carregando nossos momentos...</p>
-      </div>
-    </section>
     </section>
 
     <div class="senha-cartas" id="senha-cartas" hidden>
@@ -380,16 +288,12 @@
   </script>
 
   <script src="./assets/vendor/leaflet/leaflet.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/12.2.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/12.2.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore-compat.js"></script>
-  <script src="./assets/js/firebase-cantinho.js?v=20260915b"></script>
   <script
     src="./assets/js/puzzle-algodao.js?v=20260916a"
     defer
   ></script>
   <script
-    src="./assets/js/app.js?v=20261102h"
+    src="./assets/js/app.js?v=20261116c"
     defer
   ></script>
 </body>

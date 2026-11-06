@@ -3720,9 +3720,10 @@ body {
 }
 
 
+/* Desbloqueada, a música usa o mesmo layout (grade) das que nunca foram guardadas. */
 .musica.musica--desbloqueada
 .musica__interior {
-  display: flex !important;
+  display: grid !important;
 }
 
 
@@ -4223,3 +4224,69 @@ body {
   .mes-timeline__titulo strong,
   .cantinho-mes__titulo strong { font-size: .98rem; }
 }
+
+/* Labirinto de chocolate (bodas de chocolate) — usa o console do joguinho da hora de dormir */
+.labirinto-choco { background: linear-gradient(145deg, #fff8f1, #f4e6da); }
+.labirinto-choco .hora-dormir__console { color: #f5e6d6; background: linear-gradient(180deg, #4a2c1f, #2f1b13); box-shadow: 0 22px 50px rgba(60, 32, 18, .35); }
+.labirinto-choco .hora-dormir__emblema { color: #fff; background: #c4314f; }
+.labirinto-choco .hora-dormir__nome small,
+.labirinto-choco .hora-dormir__a-area small,
+.labirinto-choco .hora-dormir__rodape { color: #c9a68c; }
+.labirinto-choco .hora-dormir__tela { border-color: #8a5a3c; background: #2f1b13; }
+.labirinto-choco .hora-dormir__objetivo { color: #f0dccb; }
+.labirinto-choco .hora-dormir__dpad button { border-color: #8a5a3c; color: #f8eadc; background: #6b4129; box-shadow: 0 3px 0 #2a170f; }
+.labirinto-choco .hora-dormir__dpad button:active { box-shadow: 0 1px 0 #2a170f; }
+.labirinto-choco .hora-dormir__a { color: #6a2a1a; background: radial-gradient(circle at 40% 35%, #fbe3c4, #e2b07a 70%); box-shadow: 0 5px 0 #8c5a33; }
+.labirinto-choco .hora-dormir__a:active:not(:disabled) { box-shadow: 0 2px 0 #8c5a33; }
+.labirinto-choco .hora-dormir__a--pronto { animation: labirinto-choco-pulso 1.3s ease-in-out infinite; }
+@keyframes labirinto-choco-pulso { 50% { box-shadow: 0 5px 0 #8c5a33, 0 0 0 7px rgba(242, 197, 92, .3); } }
+.labirinto-choco__bombons { display: flex; gap: 5px; }
+.labirinto-choco__bombons i { width: 12px; height: 12px; border: 1.5px solid rgba(255, 255, 255, .22); border-radius: 50%; transition: background-color .4s ease, border-color .4s ease, transform .4s ease; }
+.labirinto-choco__bombons .labirinto-choco__bombom--cheio { border-color: #e2b64c; background: radial-gradient(circle at 35% 35%, #8a5530, #3d1f10 70%); transform: scale(1.15); }
+.labirinto-choco .hora-dormir__console { position: relative; }
+.labirinto-choco__cartao { position: absolute; z-index: 4; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; overflow-y: auto; padding: 28px 24px; border-radius: inherit; color: #4a2c1f; background: #fff8f0; text-align: center; animation: labirinto-choco-cartao .35s cubic-bezier(.23, 1, .32, 1) both; }
+.labirinto-choco__cartao[hidden] { display: none; }
+.labirinto-choco__cartao small { color: #a0663f; font-size: .74rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.labirinto-choco__cartao strong { font: 500 clamp(1.4rem, 6vw, 1.8rem) Georgia, serif; line-height: 1.2; }
+.labirinto-choco__cartao p { max-width: 30em; margin: 0; font-size: 1rem; line-height: 1.65; }
+.labirinto-choco__cartao button { min-height: 44px; margin-top: 8px; padding: 10px 22px; border: 0; border-radius: 999px; color: #fff; background: #6b4129; font: inherit; font-size: .92rem; font-weight: 800; cursor: pointer; transition: transform .16s cubic-bezier(.23, 1, .32, 1); }
+.labirinto-choco__cartao button:active { transform: scale(.97); }
+.labirinto-choco__cartao button:disabled { opacity: .4; cursor: default; }
+.labirinto-choco__opcoes { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.labirinto-choco__opcoes button { margin-top: 0; }
+.labirinto-choco__cartao [data-quiz-aviso] { min-height: 1.4em; color: #c4314f; font-weight: 700; }
+@keyframes labirinto-choco-cartao { from { opacity: 0; transform: scale(.96); } }
+.labirinto-choco__final > span { color: #c4314f; }
+.labirinto-choco__final p + p { margin-top: 12px; }
+.labirinto-choco__final .labirinto-choco__assinatura { margin-top: 16px; color: #6b4129; font-style: italic; }
+.labirinto-choco .hora-dormir__musica { background: linear-gradient(135deg, #6b4129, #a0663f); box-shadow: 0 10px 24px rgba(107, 65, 41, .25); }
+
+/* Datas especiais — sticker acima da contagem */
+.data-especial { position: relative; display: flex; align-items: center; gap: 14px; width: fit-content; max-width: min(560px, 100%); margin: 0 auto 34px; padding: 14px 20px 14px 16px; border: 1px solid rgba(84, 67, 103, .12); border-radius: 22px; background: #fff; box-shadow: 0 12px 30px rgba(65, 50, 80, .08); transform: rotate(-1.5deg); }
+.data-especial[hidden] { display: none; }
+.data-especial::before { content: ""; position: absolute; top: -9px; left: 50%; width: 62px; height: 18px; border-radius: 3px; background: rgba(226, 214, 240, .85); transform: translateX(-50%) rotate(3deg); }
+.data-especial__icone { display: grid; flex: 0 0 auto; width: 44px; height: 44px; place-items: center; border-radius: 50%; background: var(--fundo-2); color: var(--roxo); font-size: 1.35rem; line-height: 1; }
+.data-especial__texto { display: flex; min-width: 0; flex-direction: column; gap: 2px; text-align: left; }
+.data-especial__texto small { color: var(--roxo); font-size: .62rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.data-especial__texto strong { color: var(--roxo-escuro); font-size: 1.05rem; font-weight: 750; letter-spacing: -.02em; line-height: 1.25; }
+.data-especial__texto span { margin-top: 2px; color: var(--texto-suave); font-size: .82rem; line-height: 1.5; }
+.data-especial--hoje { padding: 18px 24px 18px 18px; border-color: rgba(196, 86, 122, .22); background: linear-gradient(135deg, #fff 0%, #fdf1f5 100%); box-shadow: 0 16px 40px rgba(196, 86, 122, .16); animation: data-especial-balanco 4s ease-in-out infinite; }
+.data-especial--hoje::before { background: rgba(244, 179, 200, .85); }
+.data-especial--hoje .data-especial__icone { width: 54px; height: 54px; background: #fbe1ea; color: #c4566a; font-size: 1.6rem; }
+.data-especial--hoje .data-especial__texto small { color: #c4566a; }
+.data-especial--hoje .data-especial__texto strong { font-size: 1.3rem; }
+@keyframes data-especial-balanco { 0%, 100% { transform: rotate(-1.5deg); } 50% { transform: rotate(1deg) translateY(-2px); } }
+@media (prefers-reduced-motion: reduce) { .data-especial--hoje { animation: none; } }
+
+/* A nossa trilha sonora — playlist abaixo da contagem */
+.trilha { padding: 0 24px 84px; background: #f5f1f7; text-align: center; }
+.trilha .secao-cabecalho { margin-bottom: 24px; }
+.trilha .secao-cabecalho p { margin-top: 10px; }
+.trilha__player { overflow: hidden; width: min(620px, 100%); margin: 0 auto; border-radius: 16px; background: #282828; box-shadow: 0 12px 35px rgba(65, 50, 80, .1); }
+.trilha__player iframe { display: block; border: 0; }
+.trilha__abrir { margin-top: 22px; }
+@media (max-width: 760px) { .trilha { padding: 0 16px 66px; } .trilha__player iframe { height: 380px; } }
+
+/* Aviso padrão "música desbloqueada" no fim de cada desafio */
+.musica-aviso { display: block; margin: 22px auto 0; }
+.musica-aviso[hidden] { display: none; }

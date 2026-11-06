@@ -11,6 +11,7 @@
     "puzzle",
     "boa-noite",
     "hora-de-dormir",
+    "labirinto-chocolate",
     "sorvete",
     "telescopio",
     "sonic-flores",
@@ -948,27 +949,8 @@
       depois(1400, function () {
         final.hidden = false;
         concluirPuzzle(elemento);
-        mostrarMusicaDesbloqueada();
+        ligarBotaoMusica(elemento, final.querySelector("[data-ir-musica]"));
       });
-    }
-
-    // A música do capítulo é desbloqueada pelo concluirPuzzle; aqui o final aponta para ela.
-    function mostrarMusicaDesbloqueada() {
-      const chave = elemento.dataset.chaveDesbloqueio;
-      const capitulo = elemento.closest(".capitulo");
-      if (!chave || !capitulo) return;
-      const musica = [...capitulo.querySelectorAll(".musica")].find((item) => item.dataset.chaveDesbloqueio === chave);
-      if (!musica) return;
-      const titulo = musica.querySelector(".musica__conteudo h3")?.textContent.trim() || "nossa música";
-      const botao = final.querySelector("[data-ir-musica]");
-      botao.textContent = `♪ música desbloqueada: ${titulo} · ouvir agora`;
-      botao.hidden = false;
-      botao.onclick = function () {
-        musica.scrollIntoView({ behavior: "smooth", block: "center" });
-        musica.classList.remove("musica--destaque");
-        void musica.offsetWidth;
-        musica.classList.add("musica--destaque");
-      };
     }
 
     function desenhar() {
@@ -1154,6 +1136,869 @@
       final.hidden = true;
       inicial();
     });
+
+    new IntersectionObserver(function (entradas) {
+      visivel = entradas.some((entrada) => entrada.isIntersecting);
+      ligar();
+    }).observe(canvas);
+
+    inicial();
+    return elemento;
+  }
+
+  // Quando um joguinho termina, o botão do final leva até a música que ele desbloqueou.
+  function ligarBotaoMusica(elemento, botao) {
+    const chave = elemento.dataset.chaveDesbloqueio;
+    const capitulo = elemento.closest(".capitulo");
+    if (!chave || !capitulo || !botao) return;
+    const musica = [...capitulo.querySelectorAll(".musica")].find((item) => item.dataset.chaveDesbloqueio === chave);
+    if (!musica) return;
+    const titulo = musica.querySelector(".musica__conteudo h3")?.textContent.trim() || "nossa música";
+    botao.textContent = `♪ música desbloqueada: ${titulo} · ouvir agora`;
+    botao.hidden = false;
+    botao.onclick = function () {
+      musica.scrollIntoView({ behavior: "smooth", block: "center" });
+      musica.classList.remove("musica--destaque");
+      void musica.offsetWidth;
+      musica.classList.add("musica--destaque");
+    };
+  }
+
+  /*
+   * Labirinto de chocolate — a bonequinha da Rayane atravessa uma barra de
+   * chocolate, passa por um desafio a cada mês, pega os bombons com as memórias
+   * e chega até a Juliana, que entrega uma mensagem
+   */
+
+  // # parede · Q cofre · v velinha · c porta de bolo · ~ rio de chocolate
+  // m/n marshmallows que afundam em tempos diferentes · B barra para quebrar
+  // 1–5 bombons · r ponto de retorno · S começo · J Juliana
+  const LC_MAPA = [
+    "####################",
+    "#S..#.....#....#...#",
+    "#.#.#.###.#.##.Q.1.#",
+    "#.#...#.....#..#...#",
+    "#################.##",
+    "#..#......#.......v#",
+    "#2.c..##.....v.##..#",
+    "#..#.v....#........#",
+    "#.##################",
+    "#......#~~~~#......#",
+    "#.##..r.mmnn....3..#",
+    "#......#~~~~#......#",
+    "##################.#",
+    "#.................r#",
+    "#4.................#",
+    "#..................#",
+    "#.##################",
+    "#.....#............#",
+    "#.....B..5.......J.#",
+    "#.....#............#",
+    "####################"
+  ];
+  const LC_T = 16;
+  const LC_COLUNAS = LC_MAPA[0].length;
+  const LC_LINHAS = LC_MAPA.length;
+  const LC_TRUFAS = [
+    { coluna: 15, velocidade: 0.8, fase: 0 },
+    { coluna: 12, velocidade: 0.95, fase: 0.9 },
+    { coluna: 9, velocidade: 0.75, fase: 0.3 },
+    { coluna: 6, velocidade: 1.05, fase: 1.4 }
+  ];
+
+  const LC_RAYANE_CORES = {
+    h: "#2a1812", H: "#4a2c20", q: "#f2cdb0", Q: "#d9a98a", e: "#2a1812", r: "#c4566a",
+    n: "#f0a3a8", K: "#17151b", c: "#34303a", j: "#3c5f93", J: "#2c4775", w: "#f4f1ec", Y: "#e7c45a"
+  };
+
+  const LC_RAYANE = [
+    "....hhhhhhhh....",
+    "...hhhHHhhhhh...",
+    "..hhhHhhhhhhhh..",
+    "..hhhhhhhhhhhh..",
+    "..hhqqqqqqqqhh..",
+    "..hqqqqqqqqqqh..",
+    "..hqqeeqqeeqqh..",
+    "..hqqeeqqeeqqh..",
+    "..hqnqqqqqqnqh..",
+    "..hhqqqrrqqqhh..",
+    "..hhYqqqqqqhhh..",
+    "..hhhhQQQQhhhh..",
+    ".hhhKKKKKKKKhhh.",
+    ".hhKKKKcKKKKKhh.",
+    ".hhKKKKKKKKKKhh.",
+    ".qhKKKKKKKKKKhq.",
+    ".qKKKKKKKKKKKKq.",
+    "..KKKKKKKKKKKK..",
+    "..jjjjjjjjjjjj..",
+    "..jjjjjjjjjjjj..",
+    "..jjjjjjjjjjjj..",
+    "..jjjjj..jjjjj.."
+  ];
+
+  const LC_PASSOS = [
+    ["...jjj....jjj...", "...www....www..."],
+    ["...jjj....www...", "...www.........."],
+    ["...www....jjj...", "..........www..."]
+  ];
+
+  function lcSprite(ctx, linhas, cores, x, y, espelhar = false) {
+    linhas.forEach(function (linha, j) {
+      for (let i = 0; i < linha.length; i += 1) {
+        const cor = cores[linha[i]];
+        if (!cor) continue;
+        ctx.fillStyle = cor;
+        ctx.fillRect(espelhar ? x + linha.length - 1 - i : x + i, y + j, 1, 1);
+      }
+    });
+  }
+
+  function criarLabirintoChocolate(dados) {
+    const boneca = dados.boneca || "Rayane";
+    const pessoa = dados.pessoa || "Juliana";
+    const memorias = Array.isArray(dados.memorias) ? dados.memorias : [];
+    const quiz = dados.quiz || {
+      pergunta: "Em que dia viramos uma da outra?",
+      opcoes: ["05 de junho", "16 de junho", "30 de julho"],
+      resposta: "16 de junho"
+    };
+    const falasEncontro =
+      Array.isArray(dados.falasEncontro) && dados.falasEncontro.length
+        ? dados.falasEncontro
+        : [{ quem: "eu", texto: "você chegou ♡" }, { quem: "ela", texto: "achei você!" }];
+    const VELOCIDADE = 50;
+    const MUNDO_L = LC_COLUNAS * LC_T;
+    const MUNDO_A = LC_LINHAS * LC_T;
+
+    const elemento = document.createElement("article");
+    elemento.className = "componente puzzle hora-dormir labirinto-choco";
+    elemento.innerHTML = `
+      <span class="componente__etiqueta">${escaparHTML(dados.etiqueta || "Bodas de chocolate")}</span>
+      <h3>${escaparHTML(dados.titulo || "Vem me encontrar?")}</h3>
+      <p class="puzzle__descricao">${escaparHTML(dados.instrucao || "")}</p>
+
+      <div class="hora-dormir__console" tabindex="0" aria-label="Joguinho: use as setas para andar e o botão A para interagir">
+        <header class="hora-dormir__topo">
+          <span class="hora-dormir__emblema" aria-hidden="true">♥</span>
+          <span class="hora-dormir__nome"><strong>${escaparHTML(dados.cabecalho || "LABIRINTO DE CHOCOLATE")}</strong><small>${escaparHTML(dados.subcabecalho || "cinco meses, cinco bombons")}</small></span>
+          <span class="labirinto-choco__bombons" data-bombons aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+        </header>
+
+        <div class="hora-dormir__tela">
+          <canvas width="160" height="120" role="img" aria-label="Labirinto de chocolate em pixel art com a ${escaparHTML(boneca)}"></canvas>
+          <span class="hora-dormir__fala" data-fala aria-hidden="true"></span>
+        </div>
+
+        <p class="hora-dormir__objetivo" data-objetivo aria-live="polite"></p>
+
+        <div class="hora-dormir__controles">
+          <div class="hora-dormir__dpad">
+            <button type="button" data-dir="cima" aria-label="Andar para cima">↑</button>
+            <button type="button" data-dir="esquerda" aria-label="Andar para a esquerda">←</button>
+            <button type="button" data-dir="baixo" aria-label="Andar para baixo">↓</button>
+            <button type="button" data-dir="direita" aria-label="Andar para a direita">→</button>
+          </div>
+          <div class="hora-dormir__a-area">
+            <button type="button" class="hora-dormir__a" data-a><span></span><b>A</b></button>
+            <small data-rotulo>interagir</small>
+          </div>
+        </div>
+
+        <footer class="hora-dormir__rodape">
+          <span>↑↓←→ / WASD · E / Enter</span>
+          <button type="button" data-recomecar>recomeçar</button>
+        </footer>
+
+        <div class="labirinto-choco__cartao" data-cartao role="dialog" aria-live="polite" hidden></div>
+      </div>
+
+      <div class="hora-dormir__final labirinto-choco__final" data-final hidden>
+        <span aria-hidden="true">♥</span>
+        <strong>${escaparHTML(dados.mensagemFinal || "Feliz bodas de chocolate.")}</strong>
+        ${(dados.mensagem || "").split("\n\n").map((paragrafo) => `<p>${escaparHTML(paragrafo)}</p>`).join("")}
+        <p class="labirinto-choco__assinatura">${escaparHTML(dados.assinatura || "")}</p>
+        <button type="button" class="hora-dormir__musica" data-ir-musica hidden></button>
+      </div>
+    `;
+
+    const consoleEl = elemento.querySelector(".hora-dormir__console");
+    const canvas = elemento.querySelector("canvas");
+    const ctx = canvas.getContext("2d");
+    const fala = elemento.querySelector("[data-fala]");
+    const cartao = elemento.querySelector("[data-cartao]");
+    const objetivo = elemento.querySelector("[data-objetivo]");
+    const botaoA = elemento.querySelector("[data-a]");
+    const rotulo = elemento.querySelector("[data-rotulo]");
+    const bombonsHud = elemento.querySelectorAll("[data-bombons] i");
+    const final = elemento.querySelector("[data-final]");
+    rotulo.id = `lc-rotulo-${Math.random().toString(36).slice(2, 8)}`;
+    botaoA.setAttribute("aria-describedby", rotulo.id);
+
+    const direcoes = new Set();
+    let timers = [];
+    let estado;
+    let quadro = 0;
+    let ultimo = 0;
+    let visivel = false;
+    let timerFala = 0;
+
+    function centro(coluna, linha) {
+      return { x: coluna * LC_T + LC_T / 2, y: linha * LC_T + LC_T - 3 };
+    }
+
+    function acharNoMapa(letra) {
+      for (let linha = 0; linha < LC_LINHAS; linha += 1) {
+        const coluna = LC_MAPA[linha].indexOf(letra);
+        if (coluna >= 0) return { coluna, linha };
+      }
+      return null;
+    }
+
+    const POS = {
+      S: acharNoMapa("S"), Q: acharNoMapa("Q"), c: acharNoMapa("c"), B: acharNoMapa("B"), J: acharNoMapa("J")
+    };
+    const VELAS = [];
+    LC_MAPA.forEach((linha, l) => [...linha].forEach((letra, c) => { if (letra === "v") VELAS.push(`${c},${l}`); }));
+
+    function inicial() {
+      timers.forEach((id) => window.clearTimeout(id));
+      timers = [];
+      const comeco = centro(POS.S.coluna, POS.S.linha);
+      estado = {
+        x: comeco.x, y: comeco.y,
+        retorno: comeco,
+        esquerda: false,
+        andando: false,
+        alvo: null,
+        tempo: 0,
+        cofreAberto: false,
+        velasApagadas: new Set(),
+        fumaca: {},
+        barra: 0,
+        tremor: 0,
+        bombons: new Set(),
+        cartao: null,
+        caindo: 0,
+        ferida: 0,
+        encontro: false,
+        fim: false
+      };
+      cartao.hidden = true;
+      cartao.innerHTML = "";
+      final.hidden = true;
+      fala.classList.remove("hora-dormir__fala--visivel");
+      atualizarInterface();
+      desenhar();
+    }
+
+    function depois(ms, fn) {
+      timers.push(window.setTimeout(fn, ms));
+    }
+
+    function letraEm(coluna, linha) {
+      if (linha < 0 || linha >= LC_LINHAS || coluna < 0 || coluna >= LC_COLUNAS) return "#";
+      return LC_MAPA[linha][coluna];
+    }
+
+    function solido(coluna, linha) {
+      const letra = letraEm(coluna, linha);
+      if (letra === "#" || letra === "v" || letra === "J") return true;
+      if (letra === "Q") return !estado.cofreAberto;
+      if (letra === "c") return estado.velasApagadas.size < VELAS.length;
+      if (letra === "B") return estado.barra < 5;
+      return false;
+    }
+
+    function bloqueado(x, y) {
+      return [[x - 5, y - 6], [x + 5, y - 6], [x - 5, y - 1], [x + 5, y - 1]].some(
+        ([px, py]) => solido(Math.floor(px / LC_T), Math.floor(py / LC_T))
+      );
+    }
+
+    // Os marshmallows aparecem e afundam em dois grupos alternados.
+    function fasePedra(letra) {
+      const ciclo = 3.2;
+      return letra === "m" ? estado.tempo % ciclo : (estado.tempo + 1.6) % ciclo;
+    }
+
+    function pedraFirme(letra) {
+      return fasePedra(letra) < 2.2;
+    }
+
+    function posTrufa(trufa) {
+      const p = (estado.tempo * trufa.velocidade + trufa.fase) % 2;
+      const k = p < 1 ? p : 2 - p;
+      return { x: trufa.coluna * LC_T + 8, y: 13 * LC_T + 8 + k * 2 * LC_T };
+    }
+
+    function perto(pos) {
+      if (!pos) return false;
+      const alvo = { x: pos.coluna * LC_T + 8, y: pos.linha * LC_T + 8 };
+      return Math.hypot(estado.x - alvo.x, estado.y - 6 - alvo.y) < 22;
+    }
+
+    function velaPerto() {
+      return VELAS.find((chave) => {
+        if (estado.velasApagadas.has(chave)) return false;
+        const [coluna, linha] = chave.split(",").map(Number);
+        return perto({ coluna, linha });
+      });
+    }
+
+    function acaoAtual() {
+      if (estado.cartao === "memoria") return "continuar";
+      if (estado.cartao || estado.fim || estado.encontro) return "";
+      if (!estado.cofreAberto && perto(POS.Q)) return "abrir";
+      if (velaPerto()) return "assoprar";
+      if (estado.barra < 5 && perto(POS.B)) return "quebrar";
+      return "";
+    }
+
+    function textoObjetivo() {
+      const b = estado.bombons;
+      if (estado.fim) return `${boneca} encontrou a ${pessoa} ♡`;
+      if (estado.encontro) return "...";
+      if (estado.cartao === "quiz") return "o cofre só abre com a data certa";
+      if (estado.cartao === "memoria") return "uma memória desbloqueada ♡";
+      if (!estado.cofreAberto) return "um cofre de chocolate guarda o primeiro bombom. vá até ele e aperte A";
+      if (!b.has(1)) return "pegue o bombom de junho";
+      if (estado.velasApagadas.size < VELAS.length) return `assopre as velinhas dos bolinhos de aniversário (${estado.velasApagadas.size}/${VELAS.length})`;
+      if (!b.has(2)) return "a porta de bolo abriu! pegue o bombom de julho";
+      if (!b.has(3)) return "pise nos marshmallows e espere os próximos subirem antes de pular";
+      if (!b.has(4)) return "cuidado com as trufas rolando! passe entre elas";
+      if (estado.barra < 5) return `uma barra de chocolate fecha o caminho: aperte A para quebrar (${estado.barra}/5)`;
+      if (!b.has(5)) return "pegue o último bombom";
+      return `agora vá até a ${pessoa} ♡`;
+    }
+
+    function atualizarInterface() {
+      const texto = textoObjetivo();
+      if (objetivo.textContent !== texto) objetivo.textContent = texto;
+      const acao = acaoAtual();
+      rotulo.textContent = acao || "interagir";
+      botaoA.classList.toggle("hora-dormir__a--pronto", Boolean(acao));
+      botaoA.disabled = estado.fim || estado.encontro;
+      bombonsHud.forEach((bombom, indice) => bombom.classList.toggle("labirinto-choco__bombom--cheio", estado.bombons.has(indice + 1)));
+    }
+
+    function camera() {
+      return {
+        x: Math.max(0, Math.min(MUNDO_L - 160, Math.round(estado.x - 80))),
+        y: Math.max(0, Math.min(MUNDO_A - 120, Math.round(estado.y - 72)))
+      };
+    }
+
+    function falar(texto, x, y, dela = false) {
+      const cam = camera();
+      window.clearTimeout(timerFala);
+      fala.textContent = texto;
+      fala.classList.toggle("hora-dormir__fala--dela", dela);
+      const meia = ((fala.offsetWidth / 2) / (canvas.clientWidth || 1)) * 160 + 2;
+      const sx = Math.max(meia, Math.min(160 - meia, x - cam.x));
+      fala.style.left = `${(sx / 160) * 100}%`;
+      fala.style.top = `${(Math.max(14, y - cam.y) / 120) * 100}%`;
+      fala.classList.add("hora-dormir__fala--visivel");
+      timerFala = window.setTimeout(() => fala.classList.remove("hora-dormir__fala--visivel"), 1900);
+    }
+
+    function falarEla(texto) {
+      falar(texto, estado.x, estado.y - 27);
+    }
+
+    function abrirCartao(tipo, html) {
+      estado.cartao = tipo;
+      direcoes.clear();
+      estado.alvo = null;
+      cartao.innerHTML = html;
+      cartao.hidden = false;
+      atualizarInterface();
+    }
+
+    function fecharCartao() {
+      estado.cartao = null;
+      cartao.hidden = true;
+      cartao.innerHTML = "";
+      consoleEl.focus({ preventScroll: true });
+      atualizarInterface();
+    }
+
+    function mostrarMemoria(numero) {
+      const memoria = memorias[numero - 1] || {};
+      abrirCartao("memoria", `
+        <small>bombom ${numero} de 5 · ${escaparHTML(memoria.mes || "")}</small>
+        <strong>${escaparHTML(memoria.titulo || "")}</strong>
+        <p>${escaparHTML(memoria.texto || "")}</p>
+        <button type="button" data-continuar>continuar ♥</button>
+      `);
+      cartao.querySelector("[data-continuar]").addEventListener("click", fecharCartao);
+      cartao.querySelector("[data-continuar]").focus({ preventScroll: true });
+    }
+
+    function mostrarQuiz() {
+      abrirCartao("quiz", `
+        <small>o cofre de chocolate pergunta</small>
+        <strong>${escaparHTML(quiz.pergunta)}</strong>
+        <div class="labirinto-choco__opcoes">
+          ${quiz.opcoes.map((opcao) => `<button type="button" data-opcao="${escaparHTML(opcao)}">${escaparHTML(opcao)}</button>`).join("")}
+        </div>
+        <p data-quiz-aviso></p>
+      `);
+      cartao.querySelectorAll("[data-opcao]").forEach(function (botao) {
+        botao.addEventListener("click", function () {
+          if (botao.dataset.opcao === quiz.resposta) {
+            fecharCartao();
+            estado.cofreAberto = true;
+            falar("*clique* ♡", POS.Q.coluna * LC_T + 8, POS.Q.linha * LC_T);
+            atualizarInterface();
+          } else {
+            botao.disabled = true;
+            cartao.querySelector("[data-quiz-aviso]").textContent = quiz.erro || "quase! essa é outra data nossa ♡";
+          }
+        });
+      });
+      cartao.querySelector("[data-opcao]").focus({ preventScroll: true });
+    }
+
+    function interagir() {
+      if (estado.cartao === "memoria") {
+        fecharCartao();
+        return;
+      }
+      if (estado.cartao || estado.fim || estado.encontro || estado.caindo || estado.ferida) return;
+      if (!estado.cofreAberto && perto(POS.Q)) {
+        mostrarQuiz();
+        return;
+      }
+      const vela = velaPerto();
+      if (vela) {
+        estado.velasApagadas.add(vela);
+        estado.fumaca[vela] = estado.tempo;
+        const [coluna, linha] = vela.split(",").map(Number);
+        const faltam = VELAS.length - estado.velasApagadas.size;
+        falar(faltam ? "fuuu ♡" : "parabéns pra você ♪", coluna * LC_T + 8, linha * LC_T - 2);
+        atualizarInterface();
+        return;
+      }
+      if (estado.barra < 5 && perto(POS.B)) {
+        estado.barra += 1;
+        estado.tremor = 0.18;
+        if (estado.barra >= 5) falar("crack! ♡", POS.B.coluna * LC_T + 8, POS.B.linha * LC_T);
+        atualizarInterface();
+        return;
+      }
+      falarEla(["hmm...", "por onde será?", "cadê você, amor?"][Math.floor(Math.random() * 3)]);
+    }
+
+    function voltar(mensagem) {
+      estado.x = estado.retorno.x;
+      estado.y = estado.retorno.y;
+      estado.alvo = null;
+      direcoes.clear();
+      falarEla(mensagem);
+    }
+
+    function mover(dt) {
+      if (estado.cartao || estado.encontro || estado.fim || estado.caindo || estado.ferida) {
+        estado.andando = false;
+        return;
+      }
+      let vx = (direcoes.has("direita") ? 1 : 0) - (direcoes.has("esquerda") ? 1 : 0);
+      let vy = (direcoes.has("baixo") ? 1 : 0) - (direcoes.has("cima") ? 1 : 0);
+      if (vx || vy) {
+        estado.alvo = null;
+      } else if (estado.alvo) {
+        vx = estado.alvo.x - estado.x;
+        vy = estado.alvo.y - estado.y;
+        if (Math.hypot(vx, vy) < 1.2) {
+          estado.alvo = null;
+          vx = 0;
+          vy = 0;
+        }
+      }
+      const tamanho = Math.hypot(vx, vy);
+      estado.andando = tamanho > 0;
+      if (!estado.andando) return;
+      if (vx) estado.esquerda = vx < 0;
+
+      const passo = VELOCIDADE * dt;
+      const nx = estado.x + (vx / tamanho) * passo;
+      const ny = estado.y + (vy / tamanho) * passo;
+      if (!bloqueado(nx, ny)) {
+        estado.x = nx;
+        estado.y = ny;
+      } else if (!bloqueado(nx, estado.y)) {
+        estado.x = nx;
+      } else if (!bloqueado(estado.x, ny)) {
+        estado.y = ny;
+      } else {
+        estado.alvo = null;
+      }
+    }
+
+    function verificarChao(dt) {
+      if (estado.caindo) {
+        estado.caindo += dt;
+        if (estado.caindo > 0.7) {
+          estado.caindo = 0;
+          voltar("ops! quase virei bombom");
+        }
+        return;
+      }
+      if (estado.ferida) {
+        estado.ferida += dt;
+        if (estado.ferida > 0.6) {
+          estado.ferida = 0;
+          voltar("essa trufa me pegou!");
+        }
+        return;
+      }
+      if (estado.cartao || estado.encontro || estado.fim) return;
+
+      const coluna = Math.floor(estado.x / LC_T);
+      const linha = Math.floor((estado.y - 3) / LC_T);
+      const letra = letraEm(coluna, linha);
+
+      if (letra === "r") estado.retorno = centro(coluna, linha);
+      if (letra === "~" || ((letra === "m" || letra === "n") && !pedraFirme(letra))) {
+        estado.caindo = 0.001;
+        estado.alvo = null;
+        direcoes.clear();
+        return;
+      }
+      if (linha >= 13 && linha <= 15) {
+        const pegou = LC_TRUFAS.some((trufa) => {
+          const t = posTrufa(trufa);
+          return Math.hypot(estado.x - t.x, estado.y - 5 - t.y) < 11;
+        });
+        if (pegou) {
+          estado.ferida = 0.001;
+          estado.alvo = null;
+          direcoes.clear();
+          return;
+        }
+      }
+      const numero = Number(letra);
+      if (numero >= 1 && numero <= 5 && !estado.bombons.has(numero)) {
+        estado.bombons.add(numero);
+        estado.retorno = centro(coluna, linha);
+        mostrarMemoria(numero);
+        return;
+      }
+      if (estado.bombons.size === 5 && perto(POS.J)) encontrar();
+    }
+
+    function encontrar() {
+      estado.encontro = true;
+      estado.alvo = null;
+      direcoes.clear();
+      estado.esquerda = false;
+      atualizarInterface();
+      const juliana = centro(POS.J.coluna, POS.J.linha);
+      falasEncontro.forEach(function (item, indice) {
+        depois(indice * 1900, function () {
+          if (item.quem === "eu") falar(item.texto, juliana.x, juliana.y - 27, true);
+          else falarEla(item.texto);
+        });
+      });
+      depois(falasEncontro.length * 1900, function () {
+        estado.encontro = false;
+        estado.fim = true;
+        atualizarInterface();
+        depois(900, function () {
+          final.hidden = false;
+          concluirPuzzle(elemento);
+          ligarBotaoMusica(elemento, final.querySelector("[data-ir-musica]"));
+        });
+      });
+    }
+
+    // Desenho
+
+    function piso(sx, sy, coluna, linha) {
+      hdRet(ctx, (coluna + linha) % 2 ? "#f6e6d2" : "#f2dfc8", sx, sy, LC_T, LC_T);
+      const semente = (coluna * 7 + linha * 13) % 11;
+      if (semente < 3) {
+        hdRet(ctx, ["#f29bb5", "#8fc7e8", "#f2c55c"][semente], sx + ((semente * 5) % 11) + 2, sy + ((semente * 3) % 11) + 3, 2, 1);
+      }
+    }
+
+    function blocoChocolate(sx, sy, claro = false) {
+      hdRet(ctx, claro ? "#6e4328" : "#45251a", sx, sy, LC_T, LC_T);
+      hdRet(ctx, claro ? "#94603a" : "#683b23", sx + 1, sy + 1, 14, 14);
+      hdRet(ctx, claro ? "#b07a4c" : "#86512f", sx + 2, sy + 2, 12, 1);
+      hdRet(ctx, claro ? "#b07a4c" : "#86512f", sx + 2, sy + 2, 1, 12);
+      hdRet(ctx, claro ? "#7a4b2c" : "#4f2b19", sx + 2, sy + 13, 12, 1);
+      hdRet(ctx, claro ? "#7a4b2c" : "#4f2b19", sx + 13, sy + 2, 1, 12);
+    }
+
+    function rio(sx, sy, linha) {
+      hdRet(ctx, "#5c2f18", sx, sy, LC_T, LC_T);
+      for (let i = 0; i < 3; i += 1) {
+        const desloc = Math.floor((estado.tempo * 10 + linha * 5 + i * 7) % 16);
+        hdRet(ctx, "#7b4426", sx + Math.min(desloc, 10), sy + 3 + i * 5, 6, 1);
+      }
+    }
+
+    function marshmallow(sx, sy, letra) {
+      if (!pedraFirme(letra)) return;
+      const fase = fasePedra(letra);
+      const afundando = fase > 1.7;
+      if (afundando && Math.floor(estado.tempo * 10) % 2) return;
+      const baixo = afundando ? 1 : 0;
+      hdRet(ctx, "#fffaf6", sx + 2, sy + 4 + baixo, 12, 8);
+      hdRet(ctx, "#ffffff", sx + 3, sy + 4 + baixo, 7, 1);
+      hdRet(ctx, "#f2c4d2", sx + 2, sy + 11 + baixo, 12, 2);
+    }
+
+    function bombom(sx, sy, numero) {
+      const sobe = Math.round(Math.sin(estado.tempo * 3 + numero) * 1);
+      hdRet(ctx, "rgba(0, 0, 0, 0.12)", sx + 4, sy + 13, 8, 1);
+      hdRet(ctx, "#d9a640", sx + 4, sy + 9 + sobe, 8, 4);
+      hdRet(ctx, "#b7862c", sx + 5, sy + 9 + sobe, 1, 4);
+      hdRet(ctx, "#b7862c", sx + 8, sy + 9 + sobe, 1, 4);
+      hdRet(ctx, "#b7862c", sx + 11, sy + 9 + sobe, 1, 4);
+      hdRet(ctx, "#4a2614", sx + 4, sy + 4 + sobe, 8, 6);
+      hdRet(ctx, "#4a2614", sx + 5, sy + 3 + sobe, 6, 1);
+      hdRet(ctx, "#7a4a2a", sx + 5, sy + 4 + sobe, 2, 2);
+      hdRet(ctx, "#f29bb5", sx + 7, sy + 2 + sobe, 1, 1);
+      hdRet(ctx, "#f29bb5", sx + 9, sy + 2 + sobe, 1, 1);
+      hdRet(ctx, "#f29bb5", sx + 7, sy + 3 + sobe, 3, 1);
+    }
+
+    function cofre(sx, sy) {
+      hdRet(ctx, "#2f190f", sx, sy, LC_T, LC_T);
+      hdRet(ctx, "#5a321d", sx + 1, sy + 1, 14, 14);
+      hdRet(ctx, "#3a2013", sx + 3, sy + 3, 10, 10);
+      hdRet(ctx, "#e2b64c", sx + 6, sy + 5, 4, 4);
+      hdRet(ctx, "#2f190f", sx + 7, sy + 6, 2, 3);
+      if (perto(POS.Q) && Math.floor(estado.tempo * 3) % 2) hdRet(ctx, "#f2c55c", sx + 6, sy + 1, 4, 1);
+    }
+
+    function portaBolo(sx, sy) {
+      hdRet(ctx, "#6b3a22", sx, sy, LC_T, LC_T);
+      hdRet(ctx, "#f3a9c0", sx, sy, LC_T, 3);
+      hdRet(ctx, "#f3a9c0", sx + 3, sy + 3, 2, 2);
+      hdRet(ctx, "#f3a9c0", sx + 10, sy + 3, 2, 3);
+      hdRet(ctx, "#f8e3c8", sx, sy + 7, LC_T, 2);
+      hdRet(ctx, "#f8e3c8", sx, sy + 12, LC_T, 2);
+    }
+
+    function velinha(sx, sy, chave) {
+      hdRet(ctx, "#5a3020", sx + 3, sy + 6, 10, 4);
+      hdRet(ctx, "#e98fae", sx + 4, sy + 10, 8, 5);
+      hdRet(ctx, "#d06f91", sx + 6, sy + 10, 1, 5);
+      hdRet(ctx, "#d06f91", sx + 9, sy + 10, 1, 5);
+      hdRet(ctx, "#9ad0f0", sx + 7, sy + 1, 2, 5);
+      if (!estado.velasApagadas.has(chave)) {
+        const pisca = Math.floor(estado.tempo * 8) % 2;
+        hdRet(ctx, "#ffcf4a", sx + 7, sy - 2 + pisca, 2, 3 - pisca);
+        hdRet(ctx, "#ff8a3d", sx + 7, sy - 3 + pisca, 1, 1);
+      } else {
+        const idade = estado.tempo - estado.fumaca[chave];
+        if (idade < 1.4) {
+          const subida = Math.round(idade * 8);
+          hdRet(ctx, "rgba(200, 190, 200, 0.8)", sx + 7 + (subida % 3) - 1, sy - 2 - subida, 2, 2);
+        }
+      }
+    }
+
+    function barra(sx, sy) {
+      const tremor = estado.tremor > 0 ? (Math.floor(estado.tempo * 40) % 2 ? 1 : -1) : 0;
+      blocoChocolate(sx + tremor, sy, true);
+      ctx.fillStyle = "#3f2214";
+      const rachaduras = [[7, 2, 1, 4], [6, 6, 2, 1], [4, 7, 1, 4], [9, 8, 1, 5], [10, 4, 3, 1]];
+      rachaduras.slice(0, estado.barra).forEach(([x, y, w, h]) => ctx.fillRect(sx + tremor + x, sy + y, w, h));
+    }
+
+    function migalhas(sx, sy) {
+      [[3, 5], [10, 9], [6, 12], [12, 3]].forEach(([x, y]) => hdRet(ctx, "#94603a", sx + x, sy + y, 2, 1));
+    }
+
+    function desenharLadrilho(coluna, linha, sx, sy) {
+      const letra = letraEm(coluna, linha);
+      if (letra === "#") {
+        blocoChocolate(sx, sy);
+        return;
+      }
+      if (letra === "~" || letra === "m" || letra === "n") {
+        rio(sx, sy, linha);
+        if (letra !== "~") marshmallow(sx, sy, letra);
+        return;
+      }
+      piso(sx, sy, coluna, linha);
+      if (letra === "Q" && !estado.cofreAberto) cofre(sx, sy);
+      else if (letra === "c") {
+        if (estado.velasApagadas.size < VELAS.length) portaBolo(sx, sy);
+        else migalhas(sx, sy);
+      } else if (letra === "v") velinha(sx, sy, `${coluna},${linha}`);
+      else if (letra === "B") {
+        if (estado.barra < 5) barra(sx, sy);
+        else migalhas(sx, sy);
+      } else if (Number(letra) >= 1 && Number(letra) <= 5 && !estado.bombons.has(Number(letra))) {
+        bombom(sx, sy, Number(letra));
+      }
+    }
+
+    function desenharRayane(cam) {
+      if (estado.ferida && Math.floor(estado.ferida * 12) % 2) return;
+      const x = Math.round(estado.x - 8 - cam.x);
+      const y = Math.round(estado.y - 24 - cam.y);
+      const passo = estado.andando ? 1 + (Math.floor(estado.tempo / 0.15) % 2) : 0;
+      const linhas = LC_RAYANE.concat(LC_PASSOS[passo]);
+      if (estado.caindo) {
+        const afunda = Math.round(Math.min(1, estado.caindo / 0.6) * 18);
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(x - 2, y - 10, 20, 32);
+        ctx.clip();
+        lcSprite(ctx, linhas, LC_RAYANE_CORES, x, y + afunda, estado.esquerda);
+        ctx.restore();
+        hdRet(ctx, "#7b4426", x + 1, y + 21, 14, 2);
+        return;
+      }
+      ctx.fillStyle = "rgba(0, 0, 0, 0.16)";
+      ctx.fillRect(x + 3, y + 22, 10, 2);
+      lcSprite(ctx, linhas, LC_RAYANE_CORES, x, y - (passo ? 1 : 0), estado.esquerda);
+    }
+
+    function desenharJuliana(cam) {
+      const pos = centro(POS.J.coluna, POS.J.linha);
+      const x = Math.round(pos.x - 8 - cam.x);
+      const y = Math.round(pos.y - 24 - cam.y);
+      if (x < -20 || x > 180 || y < -30 || y > 140) return;
+      ctx.fillStyle = "rgba(0, 0, 0, 0.16)";
+      ctx.fillRect(x + 3, y + 22, 10, 2);
+      hdSprite(ctx, HD_JULIANA, x, y, true);
+      // a caixinha de bombons em forma de coração, nas mãos dela
+      const cx = x - 3;
+      const cy = y + 13 + (estado.fim ? 0 : Math.round(Math.sin(estado.tempo * 2)));
+      hdRet(ctx, "#c4314f", cx, cy + 1, 3, 3);
+      hdRet(ctx, "#c4314f", cx + 4, cy + 1, 3, 3);
+      hdRet(ctx, "#c4314f", cx, cy + 2, 7, 3);
+      hdRet(ctx, "#c4314f", cx + 1, cy + 5, 5, 1);
+      hdRet(ctx, "#c4314f", cx + 2, cy + 6, 3, 1);
+      hdRet(ctx, "#f2c55c", cx + 3, cy + 1, 1, 6);
+      hdRet(ctx, "#f78aa6", cx + 1, cy + 2, 1, 1);
+      if (estado.fim) {
+        const sobe = (estado.tempo * 14) % 24;
+        hdRet(ctx, "#f29bb5", x + 6, y - 4 - Math.round(sobe), 1, 1);
+        hdRet(ctx, "#f29bb5", x + 5, y - 5 - Math.round(sobe), 3, 1);
+      }
+    }
+
+    function desenhar() {
+      const cam = camera();
+      ctx.clearRect(0, 0, 160, 120);
+      const c0 = Math.floor(cam.x / LC_T);
+      const l0 = Math.floor(cam.y / LC_T);
+      for (let linha = l0; linha <= l0 + 8; linha += 1) {
+        for (let coluna = c0; coluna <= c0 + 10; coluna += 1) {
+          desenharLadrilho(coluna, linha, coluna * LC_T - cam.x, linha * LC_T - cam.y);
+        }
+      }
+
+      const atores = [
+        { y: estado.y, desenhar: () => desenharRayane(cam) },
+        { y: centro(POS.J.coluna, POS.J.linha).y, desenhar: () => desenharJuliana(cam) }
+      ];
+      LC_TRUFAS.forEach(function (trufa) {
+        const t = posTrufa(trufa);
+        atores.push({ y: t.y + 6, desenhar: () => desenharTrufa(t, cam) });
+      });
+      atores.sort((a, b) => a.y - b.y).forEach((ator) => ator.desenhar());
+    }
+
+    function desenharTrufa(t, cam) {
+      const x = Math.round(t.x - 6 - cam.x);
+      const y = Math.round(t.y - 6 - cam.y);
+      if (x < -14 || x > 170 || y < -14 || y > 130) return;
+      hdRet(ctx, "rgba(0, 0, 0, 0.16)", x + 2, y + 11, 9, 2);
+      hdRet(ctx, "#3d1f10", x + 2, y, 8, 12);
+      hdRet(ctx, "#3d1f10", x, y + 2, 12, 8);
+      hdRet(ctx, "#3d1f10", x + 1, y + 1, 10, 10);
+      // granulado que gira enquanto ela rola
+      const giro = Math.floor(estado.tempo * 8) % 4;
+      [[3, 3], [7, 2], [8, 7], [4, 8], [6, 5]].forEach(function ([gx, gy], i) {
+        const cor = ["#f29bb5", "#f6e6d2", "#8fc7e8", "#f2c55c"][(i + giro) % 4];
+        hdRet(ctx, cor, x + ((gx + giro) % 9) + 1, y + gy, 2, 1);
+      });
+      hdRet(ctx, "#f6e6d2", x + 3, y + 5, 1, 1);
+      hdRet(ctx, "#f6e6d2", x + 8, y + 5, 1, 1);
+    }
+
+    function laco(agora) {
+      const dt = ultimo ? Math.min(0.05, (agora - ultimo) / 1000) : 0;
+      ultimo = agora;
+      estado.tempo += dt;
+      if (estado.tremor > 0) estado.tremor -= dt;
+      mover(dt);
+      verificarChao(dt);
+      atualizarInterface();
+      desenhar();
+      quadro = visivel ? window.requestAnimationFrame(laco) : 0;
+      if (!quadro) ultimo = 0;
+    }
+
+    function ligar() {
+      if (visivel && !quadro) quadro = window.requestAnimationFrame(laco);
+    }
+
+    // Controles
+    const TECLAS = {
+      ArrowUp: "cima", KeyW: "cima", ArrowDown: "baixo", KeyS: "baixo",
+      ArrowLeft: "esquerda", KeyA: "esquerda", ArrowRight: "direita", KeyD: "direita"
+    };
+
+    consoleEl.addEventListener("keydown", function (evento) {
+      const direcao = TECLAS[evento.code];
+      if (direcao && !estado.cartao) {
+        evento.preventDefault();
+        direcoes.add(direcao);
+      } else if (evento.code === "KeyE" || (["Enter", "Space"].includes(evento.code) && evento.target === consoleEl)) {
+        evento.preventDefault();
+        if (!evento.repeat) interagir();
+      }
+    });
+
+    consoleEl.addEventListener("keyup", function (evento) {
+      const direcao = TECLAS[evento.code];
+      if (direcao) direcoes.delete(direcao);
+    });
+
+    consoleEl.addEventListener("focusout", () => direcoes.clear());
+
+    elemento.querySelectorAll("[data-dir]").forEach(function (botao) {
+      const direcao = botao.dataset.dir;
+      botao.addEventListener("pointerdown", function (evento) {
+        evento.preventDefault();
+        if (!estado.cartao) direcoes.add(direcao);
+      });
+      ["pointerup", "pointercancel", "pointerleave"].forEach((nome) => botao.addEventListener(nome, () => direcoes.delete(direcao)));
+    });
+
+    botaoA.addEventListener("pointerdown", function (evento) {
+      evento.preventDefault();
+      interagir();
+    });
+    botaoA.addEventListener("keydown", function (evento) {
+      if (!["Enter", " "].includes(evento.key)) return;
+      evento.preventDefault();
+      evento.stopPropagation();
+      if (!evento.repeat) interagir();
+    });
+
+    canvas.addEventListener("click", function (evento) {
+      if (estado.cartao || estado.encontro || estado.fim) return;
+      const caixa = canvas.getBoundingClientRect();
+      const cam = camera();
+      estado.alvo = {
+        x: ((evento.clientX - caixa.left) / caixa.width) * 160 + cam.x,
+        y: ((evento.clientY - caixa.top) / caixa.height) * 120 + cam.y
+      };
+      consoleEl.focus({ preventScroll: true });
+    });
+
+    elemento.querySelector("[data-recomecar]").addEventListener("click", inicial);
 
     new IntersectionObserver(function (entradas) {
       visivel = entradas.some((entrada) => entrada.isIntersecting);
@@ -4003,6 +4848,9 @@ function criarMemoriaComplementos(dados) {
         case "hora-de-dormir":
           return criarHoraDeDormir(dados);
 
+        case "labirinto-chocolate":
+          return criarLabirintoChocolate(dados);
+
         case "sorvete":
           return criarPuzzleSorvete(dados);
 
@@ -4132,6 +4980,12 @@ function criarMemoriaComplementos(dados) {
         const tipo =
           normalizar(componente?.tipo);
 
+        // Padrão: a música que fecha o capítulo fica guardada até o desafio
+        // anterior ser resolvido. Sem desafio antes, ela já aparece aberta.
+        if (tipo === "musica") {
+          componente = { ...componente, bloqueada: Boolean(puzzlePendente) };
+        }
+
         const elemento =
           criarComponente(componente);
 
@@ -4210,6 +5064,19 @@ function criarMemoriaComplementos(dados) {
 
         if (!musica) {
           return;
+        }
+
+        // Todo desafio termina com o mesmo aviso levando até a música.
+        // (Os joguinhos que já têm o botão no próprio final usam o deles.)
+        const desafio = evento.target;
+        if (desafio instanceof HTMLElement && !desafio.querySelector("[data-ir-musica]")) {
+          const aviso = document.createElement("button");
+          aviso.type = "button";
+          aviso.className = "hora-dormir__musica musica-aviso";
+          aviso.dataset.irMusica = "";
+          aviso.hidden = true;
+          desafio.appendChild(aviso);
+          ligarBotaoMusica(desafio, aviso);
         }
 
         musica.classList.add(
@@ -4491,545 +5358,138 @@ function criarMemoriaComplementos(dados) {
     }
   }
 
-  function iniciarCantinho() {
-    const PUBLICACOES_URL = "https://firebase.rayane.local";
-    const texto = document.getElementById("cantinho-texto");
-    const dataEscolhida = document.getElementById("cantinho-data");
-    const link = document.getElementById("cantinho-link");
-    const codigo = document.getElementById("cantinho-codigo");
-    const guardar = document.getElementById("cantinho-guardar");
-    const contador = document.getElementById("cantinho-contador");
-    const aviso = document.getElementById("cantinho-aviso");
-    const guardados = document.getElementById("cantinho-guardados");
-    const chaveLocal = "rayane-cantinho-v1";
-    const chaveCodigo = "rayane-cantinho-codigo-v1";
+  /*
+   * Datas especiais — o sticker acima da contagem.
+   * No dia, mostra a comemoração; nos outros dias, quanto falta para a próxima.
+   * Para conferir como fica em outra data: ?data=2026-11-16
+   */
+  const NAMORO = { ano: 2026, mes: 6, dia: 16 };
+  const NASCIMENTO_RAYANE = 2005;
 
-    if (!texto || !dataEscolhida || !link || !codigo || !guardar || !contador || !aviso || !guardados) return;
-
-    dataEscolhida.value = new Date().toLocaleDateString("en-CA");
-    codigo.value = localStorage.getItem(chaveCodigo) || "";
-
-    function opcoesRequisicao(extras) {
-      return {
-        ...extras,
-        headers: {
-          "Content-Type": "application/json",
-          ...(extras?.headers || {})
-        }
-      };
-    }
-
-    function prepararLink(valor) {
-      if (!valor) return "";
-
-      try {
-        const completo = /^https?:\/\//i.test(valor) ? valor : `https://${valor}`;
-        const endereco = new URL(completo);
-        return ["http:", "https:"].includes(endereco.protocol) ? endereco.href : "";
-      } catch (erro) {
-        return "";
-      }
-    }
-
-    function lerLocais() {
-      try {
-        const valor = JSON.parse(localStorage.getItem(chaveLocal) || "[]");
-        return Array.isArray(valor) ? valor : [];
-      } catch (erro) {
-        return [];
-      }
-    }
-
-    function guardarLocalmente(anotacao) {
-      const locais = lerLocais();
-      const jaExiste = locais.some(function (item) {
-        return item.id === anotacao.id;
-      });
-
-      if (!jaExiste) locais.push(anotacao);
-      localStorage.setItem(chaveLocal, JSON.stringify(locais));
-    }
-
-    async function enviar(anotacao, codigoAcesso) {
-      const resposta = await fetch(
-        `${PUBLICACOES_URL}/rest/v1/rpc/criar_publicacao_rayane`,
-        opcoesRequisicao({
-          method: "POST",
-          body: JSON.stringify({
-            p_id: anotacao.id,
-            p_texto: anotacao.texto,
-            p_data: anotacao.data || null,
-            p_link: anotacao.link || null,
-            p_codigo: codigoAcesso,
-            p_criada_em: anotacao.criada_em || anotacao.criadaEm
-          })
-        })
-      );
-
-      if (!resposta.ok) {
-        const detalhe = await resposta.text();
-        throw new Error(detalhe.includes("codigo_incorreto") ? "codigo" : detalhe);
-      }
-    }
-
-    async function migrarLocais(codigoAcesso) {
-      const locais = lerLocais();
-      if (!locais.length) return;
-
-      for (const anotacao of locais) {
-        await enviar(anotacao, codigoAcesso);
-        localStorage.setItem(chaveLocal, JSON.stringify(lerLocais().filter(function (item) {
-          return item.id !== anotacao.id;
-        })));
-      }
-    }
-
-    function mostrar(anotacoes) {
-      guardados.innerHTML = "";
-
-      if (!anotacoes.length) {
-        guardados.innerHTML = '<p class="cantinho__vazio">As coisas que você guardar vão aparecer aqui. ♡</p>';
-        return;
-      }
-
-      const nomesMeses = [
-        "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-        "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
-      ];
-      const grupos = new Map();
-
-      function dataDaAnotacao(anotacao) {
-        if (anotacao.data) {
-          const partes = anotacao.data.split("-").map(Number);
-          return new Date(partes[0], partes[1] - 1, partes[2]);
-        }
-
-        return new Date(anotacao.criada_em || anotacao.criadaEm || Date.now());
-      }
-
-      function obterGrupo(anotacao) {
-        const dataReferencia = dataDaAnotacao(anotacao);
-        const ano = dataReferencia.getFullYear();
-        const mes = dataReferencia.getMonth();
-        const chave = `${ano}-${String(mes + 1).padStart(2, "0")}`;
-
-        if (grupos.has(chave)) return grupos.get(chave);
-
-        const grupo = document.createElement("section");
-        const lista = document.createElement("div");
-        const titulo = `${nomesMeses[mes]} de ${ano}`;
-        const id = `cantinho-${chave}`;
-
-        grupo.className = "cantinho-mes";
-        grupo.innerHTML = `<button type="button" class="cantinho-mes__botao" aria-expanded="false" aria-controls="${id}"><span class="cantinho-mes__titulo"><span class="cantinho-mes__icone">♡</span><span><strong>${escaparHTML(titulo)}</strong></span></span><span class="cantinho-mes__meta"><small data-total>0 publicações</small><i aria-hidden="true"></i></span></button>`;
-        lista.className = "cantinho-mes__publicacoes";
-        lista.id = id;
-        lista.hidden = true;
-        grupo.appendChild(lista);
-
-        const botao = grupo.querySelector(".cantinho-mes__botao");
-        botao.addEventListener("click", function () {
-          const abrir = botao.getAttribute("aria-expanded") !== "true";
-          botao.setAttribute("aria-expanded", String(abrir));
-          grupo.classList.toggle("cantinho-mes--aberto", abrir);
-          lista.hidden = !abrir;
-        });
-
-        const dadosGrupo = { grupo, lista, total: 0 };
-        grupos.set(chave, dadosGrupo);
-        guardados.appendChild(grupo);
-        return dadosGrupo;
-      }
-
-      anotacoes.forEach(function (anotacao) {
-        const grupo = obterGrupo(anotacao);
-        const cartao = document.createElement("article");
-        const cabecalho = document.createElement("div");
-        const data = document.createElement("time");
-        const excluir = document.createElement("button");
-        const conteudo = document.createElement("p");
-
-        cartao.className = "cantinho__anotacao";
-        cabecalho.className = "cantinho__anotacao-cabecalho";
-        if (anotacao.data) {
-          const partes = anotacao.data.split("-").map(Number);
-          const dataLocal = new Date(partes[0], partes[1] - 1, partes[2]);
-          data.dateTime = anotacao.data;
-          data.textContent = new Intl.DateTimeFormat("pt-BR", {
-            dateStyle: "long"
-          }).format(dataLocal);
-        } else {
-          const criadaEm = anotacao.criada_em || anotacao.criadaEm;
-          data.dateTime = criadaEm;
-          data.textContent = new Intl.DateTimeFormat("pt-BR", {
-            dateStyle: "long",
-            timeStyle: "short"
-          }).format(new Date(criadaEm));
-        }
-        excluir.type = "button";
-        excluir.className = "cantinho__excluir";
-        excluir.textContent = "Apagar";
-        excluir.setAttribute("aria-label", "Apagar esta mensagem");
-        conteudo.textContent = anotacao.texto;
-
-        excluir.addEventListener("click", async function () {
-          if (!window.confirm("Quer mesmo apagar esta mensagem?")) return;
-
-          const codigoAcesso = codigo.value.trim();
-          if (!codigoAcesso) {
-            aviso.textContent = "Digite o código de acesso para apagar.";
-            codigo.focus();
-            return;
-          }
-
-          excluir.disabled = true;
-          try {
-            const resposta = await fetch(
-              `${PUBLICACOES_URL}/rest/v1/rpc/apagar_publicacao_rayane`,
-              opcoesRequisicao({
-                method: "POST",
-                body: JSON.stringify({
-                  p_id: anotacao.id,
-                  p_codigo: codigoAcesso
-                })
-              })
-            );
-
-            if (!resposta.ok) {
-              const detalhe = await resposta.text();
-              throw new Error(detalhe.includes("codigo_incorreto") ? "codigo" : "exclusao");
-            }
-
-            localStorage.setItem(chaveCodigo, codigoAcesso);
-            aviso.textContent = "Publicação apagada.";
-            await carregarPublicacoes();
-          } catch (erro) {
-            aviso.textContent = erro.message === "codigo"
-              ? "Código de acesso incorreto."
-              : "Não foi possível apagar. Confira sua conexão.";
-            excluir.disabled = false;
-          }
-        });
-
-        cabecalho.append(data, excluir);
-        cartao.append(cabecalho, conteudo);
-
-        if (anotacao.link) {
-          const acesso = document.createElement("a");
-          acesso.className = "cantinho__link";
-          acesso.href = anotacao.link;
-          acesso.target = "_blank";
-          acesso.rel = "noopener noreferrer";
-          acesso.textContent = "Abrir link ↗";
-          cartao.appendChild(acesso);
-        }
-
-        grupo.lista.appendChild(cartao);
-        grupo.total += 1;
-        grupo.grupo.querySelector("[data-total]").textContent =
-          `${grupo.total} ${grupo.total === 1 ? "publicação" : "publicações"}`;
-      });
-    }
-
-    function mensagemErro(erro) {
-      const detalhe = erro.message || "";
-      if (/firebase_sdk_indisponivel/.test(detalhe)) return "O Firebase não carregou. Recarregue a página e verifique se o navegador está bloqueando o serviço.";
-      if (/codigo|auth\/invalid|auth\/wrong/.test(detalhe)) return "A senha não foi aceita pelo Firebase. Confira a senha da conta cadastrada.";
-      if (/permission-denied/.test(detalhe)) return "O Firebase recusou o acesso. Confira a conta e as regras do banco.";
-      if (/publicacao_grande/.test(detalhe)) return "A publicação ultrapassou o tamanho permitido. Reduza o conteúdo.";
-      if (/auth\//.test(detalhe)) return "Não foi possível entrar no Firebase. Código: " + detalhe;
-      return "Não foi possível confirmar o salvamento online. Confira a conexão e tente novamente.";
-    }
-
-    let carregando = false;
-    async function carregarPublicacoes() {
-      if (carregando) return;
-      carregando = true;
-      try {
-        const senha = codigo.value.trim() || sessionStorage.getItem("rj-firebase-codigo");
-        if (!senha) return;
-        const tinhaPendentes = lerLocais().length > 0;
-        await migrarLocais(senha);
-        const resposta = await fetch(
-          `${PUBLICACOES_URL}/rest/v1/publicacoes_rayane?select=*&order=criada_em.desc`,
-          opcoesRequisicao({ cache: "no-store" })
-        );
-
-        if (!resposta.ok) throw new Error(await resposta.text());
-        const publicacoes = await resposta.json();
-        mostrar(publicacoes.filter(function (item) {
-          const conteudo = String(item.texto || "");
-          return !conteudo.startsWith("__MAPA_RJ__") && !conteudo.startsWith("__FEED_RJ__");
-        }));
-        if (tinhaPendentes) aviso.textContent = "Publicações deste aparelho confirmadas no Firebase. ♡";
-      } catch (erro) {
-        const locais = lerLocais().slice().reverse();
-        mostrar(locais);
-        aviso.textContent = mensagemErro(erro) + (locais.length ? " Há publicações neste aparelho aguardando envio." : "");
-      } finally {
-        carregando = false;
-      }
-    }
-
-    texto.addEventListener("input", function () {
-      contador.textContent = `${texto.value.length} de 700000`;
-      aviso.textContent = "";
-    });
-
-    guardar.addEventListener("click", async function () {
-      const valor = texto.value.trim();
-      const linkDigitado = link.value.trim();
-      const linkPreparado = prepararLink(linkDigitado);
-      const codigoAcesso = codigo.value.trim();
-      const anotacao = {
-        id: globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`,
-        texto: valor,
-        data: dataEscolhida.value,
-        link: linkPreparado,
-        criadaEm: new Date().toISOString()
-      };
-
-      if (!valor) {
-        aviso.textContent = "Escreva alguma coisinha antes de guardar.";
-        texto.focus();
-        return;
-      }
-
-      if (linkDigitado && !linkPreparado) {
-        aviso.textContent = "Confira o link antes de guardar.";
-        link.focus();
-        return;
-      }
-
-      if (!codigoAcesso) {
-        aviso.textContent = "Digite o código de acesso para publicar.";
-        codigo.focus();
-        return;
-      }
-
-      guardar.disabled = true;
-      try {
-        await migrarLocais(codigoAcesso);
-        await enviar(anotacao, codigoAcesso);
-
-        localStorage.setItem(chaveCodigo, codigoAcesso);
-        texto.value = "";
-        link.value = "";
-        dataEscolhida.value = new Date().toLocaleDateString("en-CA");
-        contador.textContent = "0 de 700000";
-        aviso.textContent = "Guardado online no Firebase. ♡";
-        await carregarPublicacoes();
-      } catch (erro) {
-        if (erro.message === "codigo") {
-          aviso.textContent = "Código de acesso incorreto.";
-        } else {
-          try {
-            guardarLocalmente(anotacao);
-            localStorage.setItem(chaveCodigo, codigoAcesso);
-            texto.value = "";
-            link.value = "";
-            dataEscolhida.value = new Date().toLocaleDateString("en-CA");
-            contador.textContent = "0 de 700000";
-            mostrar(lerLocais().slice().reverse());
-            aviso.textContent = mensagemErro(erro) + " Cópia preservada neste aparelho, aguardando envio.";
-          } catch (erroLocal) {
-            aviso.textContent = "Não foi possível guardar neste aparelho. Verifique o espaço disponível do navegador.";
-          }
-        }
-      } finally {
-        guardar.disabled = false;
-      }
-    });
-
-    window.addEventListener("online", carregarPublicacoes);
-    document.addEventListener("rj-acesso-alterado", carregarPublicacoes);
-    codigo.addEventListener("change", carregarPublicacoes);
-    carregarPublicacoes();
+  function porExtenso(numero) {
+    const nomes = ["zero", "um", "dois", "três", "quatro", "cinco", "seis", "sete", "oito", "nove", "dez", "onze", "doze",
+      "treze", "catorze", "quinze", "dezesseis", "dezessete", "dezoito", "dezenove", "vinte"];
+    return nomes[numero] || String(numero);
   }
 
-  function iniciarMomentos() {
-    const PUBLICACOES_URL = "https://firebase.rayane.local";
-    const PREFIXO = "__FEED_RJ__";
-    const formulario = document.getElementById("momentos-form");
-    const fotos = document.getElementById("momentos-fotos");
-    const previas = document.getElementById("momentos-previas");
-    const descricao = document.getElementById("momentos-descricao");
-    const data = document.getElementById("momentos-data");
-    const autora = document.getElementById("momentos-autora");
-    const codigo = document.getElementById("momentos-codigo");
-    const aviso = document.getElementById("momentos-aviso");
-    const feed = document.getElementById("momentos-feed");
+  function capitalizar(texto) {
+    return texto.charAt(0).toLocaleUpperCase("pt-BR") + texto.slice(1);
+  }
 
-    if (!formulario || !fotos || !previas || !descricao || !data || !autora || !codigo || !aviso || !feed) return;
+  function tempoJuntas(meses) {
+    const anos = Math.floor(meses / 12);
+    const resto = meses % 12;
+    const parteAnos = anos ? `${porExtenso(anos)} ${anos === 1 ? "ano" : "anos"}` : "";
+    const parteMeses = resto ? `${porExtenso(resto)} ${resto === 1 ? "mês" : "meses"}` : "";
+    return [parteAnos, parteMeses].filter(Boolean).join(" e ");
+  }
 
-    data.value = new Date().toLocaleDateString("en-CA");
-    codigo.value = localStorage.getItem("rayane-cantinho-codigo-v1") || "";
+  // Devolve o que comemorar numa data, ou null se for um dia comum.
+  function dataEspecial(data) {
+    const ano = data.getFullYear();
+    const mes = data.getMonth() + 1;
+    const dia = data.getDate();
 
-    function opcoesRequisicao(extras) {
+    if (mes === 7 && dia === 30) {
       return {
-        ...extras,
-        headers: {
-          "Content-Type": "application/json",
-          ...(extras?.headers || {})
-        }
+        icone: "🎂",
+        titulo: "O dia mais importante do ano",
+        texto: `Feliz aniversário, Rayane! ${porExtenso(ano - NASCIMENTO_RAYANE)} anos de você no mundo ♡`
       };
     }
 
-    function comprimirImagem(arquivo, quantidade) {
-      return new Promise(function (resolve, reject) {
-        const leitor = new FileReader();
-        leitor.onerror = reject;
-        leitor.onload = function () {
-          const imagem = new Image();
-          imagem.onerror = reject;
-          imagem.onload = function () {
-            const limite = quantidade > 20 ? 720 : quantidade > 10 ? 900 : 1200;
-            const qualidade = quantidade > 20 ? 0.62 : quantidade > 10 ? 0.68 : 0.76;
-            const escala = Math.min(1, limite / Math.max(imagem.width, imagem.height));
-            const canvas = document.createElement("canvas");
-            canvas.width = Math.max(1, Math.round(imagem.width * escala));
-            canvas.height = Math.max(1, Math.round(imagem.height * escala));
-            canvas.getContext("2d").drawImage(imagem, 0, 0, canvas.width, canvas.height);
-            resolve(canvas.toDataURL("image/jpeg", qualidade));
-          };
-          imagem.src = leitor.result;
+    const meses = (ano - NAMORO.ano) * 12 + (mes - NAMORO.mes);
+    if (dia === NAMORO.dia && meses > 0) {
+      if (meses % 12 === 0) {
+        return {
+          icone: "💍",
+          titulo: `${capitalizar(tempoJuntas(meses))} sendo sua`,
+          texto: "Feliz aniversário de namoro, meu amor. O melhor dia em que eu disse sim ♡"
         };
-        leitor.readAsDataURL(arquivo);
-      });
-    }
-
-    function mostrarPrevias() {
-      const arquivos = Array.from(fotos.files || []).slice(0, 50);
-      previas.innerHTML = "";
-      previas.hidden = arquivos.length === 0;
-      arquivos.forEach(function (arquivo) {
-        const imagem = document.createElement("img");
-        imagem.alt = "Prévia da foto escolhida";
-        imagem.src = URL.createObjectURL(arquivo);
-        imagem.onload = function () { URL.revokeObjectURL(imagem.src); };
-        previas.appendChild(imagem);
-      });
-      if ((fotos.files?.length || 0) > 50) aviso.textContent = "Serão usadas as primeiras 50 fotos.";
-    }
-
-    function criarCarrossel(imagens, titulo) {
-      const carrossel = document.createElement("div");
-      carrossel.className = "momento__carrossel";
-      carrossel.innerHTML = `<div class="momento__trilha"></div>${imagens.length > 1 ? `<button type="button" class="momento__seta momento__seta--anterior" aria-label="Foto anterior">‹</button><button type="button" class="momento__seta momento__seta--proxima" aria-label="Próxima foto">›</button><span class="momento__indicador">1 / ${imagens.length}</span>` : ""}`;
-      const trilha = carrossel.querySelector(".momento__trilha");
-      imagens.forEach(function (origem, indice) {
-        const imagem = document.createElement("img");
-        imagem.src = origem;
-        imagem.alt = `${titulo}, foto ${indice + 1} de ${imagens.length}`;
-        imagem.loading = "lazy";
-        trilha.appendChild(imagem);
-      });
-
-      if (imagens.length > 1) {
-        let atual = 0;
-        const indicador = carrossel.querySelector(".momento__indicador");
-        function irPara(indice) {
-          atual = (indice + imagens.length) % imagens.length;
-          trilha.scrollTo({ left: trilha.clientWidth * atual, behavior: "smooth" });
-          indicador.textContent = `${atual + 1} / ${imagens.length}`;
-        }
-        carrossel.querySelector(".momento__seta--anterior").addEventListener("click", function () { irPara(atual - 1); });
-        carrossel.querySelector(".momento__seta--proxima").addEventListener("click", function () { irPara(atual + 1); });
-        trilha.addEventListener("scrollend", function () {
-          atual = Math.round(trilha.scrollLeft / Math.max(1, trilha.clientWidth));
-          indicador.textContent = `${atual + 1} / ${imagens.length}`;
-        });
       }
-      return carrossel;
+      return {
+        icone: "♡",
+        titulo: `${capitalizar(tempoJuntas(meses))} sendo sua`,
+        texto: "Feliz mesversário, minha princesa. Mais um mês te escolhendo ♡"
+      };
     }
 
-    function desenhar(momentos) {
-      feed.innerHTML = "";
-      if (!momentos.length) {
-        feed.innerHTML = '<div class="momentos__vazio"><span>◎</span><h3>O primeiro momento começa aqui</h3><p>Escolham algumas fotos e contem um pedacinho do dia.</p></div>';
+    if (mes === 3 && dia === 25 && ano > 2026) {
+      const anos = ano - 2026;
+      return {
+        icone: "✨",
+        titulo: "O dia em que a gente se conheceu",
+        texto: `${capitalizar(porExtenso(anos))} ${anos === 1 ? "ano" : "anos"} desde aquele 25 de março ♡`
+      };
+    }
+
+    if (mes === 6 && dia === 12) {
+      return { icone: "💌", titulo: "Dia dos Namorados", texto: "Feliz Dia dos Namorados pra minha namorada favorita ♡" };
+    }
+
+    if (mes === 12 && dia === 25) {
+      return { icone: "🎄", titulo: "Feliz Natal, meu amor", texto: "O meu presente favorito continua sendo você ♡" };
+    }
+
+    if (mes === 1 && dia === 1) {
+      return { icone: "🥂", titulo: "Feliz Ano Novo!", texto: `Que ${ano} seja mais um ano inteirinho sendo sua ♡` };
+    }
+
+    return null;
+  }
+
+  function dataDeHoje() {
+    const parametro = new URLSearchParams(window.location.search).get("data");
+    const partes = /^(\d{4})-(\d{2})-(\d{2})$/.exec(parametro || "");
+    if (partes) return new Date(Number(partes[1]), Number(partes[2]) - 1, Number(partes[3]));
+    const agora = new Date();
+    return new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
+  }
+
+  function iniciarDataEspecial() {
+    const area = document.getElementById("data-especial");
+    if (!area) return;
+
+    function mostrar() {
+      const hoje = dataDeHoje();
+      let evento = dataEspecial(hoje);
+      let faltam = 0;
+
+      for (let dias = 1; !evento && dias <= 400; dias += 1) {
+        const dia = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + dias);
+        evento = dataEspecial(dia);
+        if (evento) faltam = dias;
+      }
+      if (!evento) {
+        area.hidden = true;
         return;
       }
 
-      momentos.forEach(function (item) {
-        const cartao = document.createElement("article");
-        const dados = item.dados;
-        const dataPartes = String(dados.data || "").split("-").map(Number);
-        const dataLocal = dataPartes.length === 3 ? new Date(dataPartes[0], dataPartes[1] - 1, dataPartes[2]) : new Date(item.criada_em);
-        cartao.className = "momento";
-        cartao.appendChild(criarCarrossel(dados.imagens || [], dados.descricao || "Nosso momento"));
-        const corpo = document.createElement("div");
-        corpo.className = "momento__corpo";
-        const classeAutora = normalizar(dados.autora) === "juliana" ? "juliana" : normalizar(dados.autora) === "rayane" ? "rayane" : "nos";
-        corpo.innerHTML = `<div class="momento__meta"><span class="momento__autora momento__autora--${classeAutora}">Por ${escaparHTML(dados.autora || "Nós")}</span><time datetime="${escaparHTML(dados.data || "")}">${new Intl.DateTimeFormat("pt-BR", { dateStyle: "long" }).format(dataLocal)}</time></div><p>${escaparHTML(dados.descricao || "")}</p><button type="button" class="momento__apagar">Apagar</button>`;
-        corpo.querySelector(".momento__apagar").addEventListener("click", async function () {
-          if (!window.confirm("Quer mesmo apagar este momento?")) return;
-          const senha = codigo.value.trim() || window.prompt("Digite a senha para apagar:")?.trim();
-          if (!senha) return;
-          try {
-            const resposta = await fetch(`${PUBLICACOES_URL}/rest/v1/rpc/apagar_publicacao_rayane`, opcoesRequisicao({ method: "POST", body: JSON.stringify({ p_id: item.id, p_codigo: senha }) }));
-            if (!resposta.ok) { const detalhe = await resposta.text(); throw new Error(detalhe.includes("codigo_incorreto") ? "codigo" : "exclusao"); }
-            await carregar();
-          } catch (erro) {
-            aviso.textContent = erro.message === "codigo" ? "Senha incorreta." : "Não foi possível apagar agora.";
-          }
-        });
-        cartao.appendChild(corpo);
-        feed.appendChild(cartao);
-      });
+      const aviso = faltam === 0 ? "hoje é dia especial" : faltam === 1 ? "é amanhã!" : `faltam ${faltam} dias`;
+      area.className = `data-especial${faltam === 0 ? " data-especial--hoje" : ""}`;
+      area.innerHTML = `
+        <span class="data-especial__icone" aria-hidden="true">${escaparHTML(evento.icone)}</span>
+        <span class="data-especial__texto">
+          <small>${escaparHTML(aviso)}</small>
+          <strong>${escaparHTML(evento.titulo)}</strong>
+          ${faltam === 0 ? `<span>${escaparHTML(evento.texto)}</span>` : ""}
+        </span>
+      `;
+      area.hidden = false;
     }
 
-    async function carregar() {
-      try {
-        const resposta = await fetch(`${PUBLICACOES_URL}/rest/v1/publicacoes_rayane?select=id,texto,criada_em&order=criada_em.desc`, opcoesRequisicao({ cache: "no-store" }));
-        if (!resposta.ok) throw new Error("leitura");
-        const itens = (await resposta.json()).filter(function (item) { return String(item.texto || "").startsWith(PREFIXO); }).map(function (item) {
-          try { return { ...item, dados: JSON.parse(item.texto.slice(PREFIXO.length)) }; } catch (_) { return null; }
-        }).filter(Boolean);
-        desenhar(itens);
-      } catch (_) {
-        feed.innerHTML = '<p class="cantinho__vazio">Não foi possível carregar os momentos agora.</p>';
-      }
+    mostrar();
+
+    // Troca sozinho à meia-noite, se o site ficar aberto.
+    function agendarMeiaNoite() {
+      const agora = new Date();
+      const meiaNoite = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate() + 1, 0, 0, 5);
+      window.setTimeout(function () {
+        mostrar();
+        agendarMeiaNoite();
+      }, meiaNoite - agora);
     }
-
-    fotos.addEventListener("change", mostrarPrevias);
-
-    formulario.addEventListener("submit", async function (evento) {
-      evento.preventDefault();
-      const arquivos = Array.from(fotos.files || []).slice(0, 50);
-      const senha = codigo.value.trim();
-      if (!arquivos.length || !descricao.value.trim() || !senha) return;
-
-      const botao = formulario.querySelector("button[type='submit']");
-      botao.disabled = true;
-      aviso.textContent = "Preparando as fotos...";
-      try {
-        const imagens = [];
-        for (const arquivo of arquivos) {
-          aviso.textContent = `Preparando foto ${imagens.length + 1} de ${arquivos.length}...`;
-          imagens.push(await comprimirImagem(arquivo, arquivos.length));
-        }
-        const payload = { imagens, descricao: descricao.value.trim(), data: data.value, autora: autora.value };
-        aviso.textContent = "Publicando o momento...";
-        const resposta = await fetch(`${PUBLICACOES_URL}/rest/v1/rpc/criar_publicacao_rayane`, opcoesRequisicao({ method: "POST", body: JSON.stringify({ p_id: globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`, p_texto: PREFIXO + JSON.stringify(payload), p_data: data.value || null, p_link: null, p_codigo: senha }) }));
-        if (!resposta.ok) { const detalhe = await resposta.text(); throw new Error(detalhe.includes("codigo_incorreto") ? "codigo" : "envio"); }
-        localStorage.setItem("rayane-cantinho-codigo-v1", senha);
-        formulario.reset();
-        data.value = new Date().toLocaleDateString("en-CA");
-        codigo.value = senha;
-        previas.hidden = true;
-        previas.innerHTML = "";
-        aviso.textContent = "Momento publicado. ♡";
-        await carregar();
-      } catch (erro) {
-        aviso.textContent = erro.message === "codigo" ? "Senha incorreta." : "As fotos ficaram grandes demais ou houve uma falha na conexão. Tente menos fotos.";
-      } finally {
-        botao.disabled = false;
-      }
-    });
-
-    window.addEventListener("online", carregar);
-    document.addEventListener("rj-acesso-alterado", carregar);
-    carregar();
+    agendarMeiaNoite();
   }
 
   function iniciarAreaCartas() {
@@ -5044,8 +5504,6 @@ function criarMemoriaComplementos(dados) {
     const area = document.getElementById("cartas");
     const bloquear = document.getElementById("bloquear-cartas");
     const gatilhos = document.querySelectorAll("#abrir-cartas, [data-abrir-cartas]");
-    const escolhas = document.querySelectorAll("[data-painel-cartas]");
-    const paineis = document.querySelectorAll(".area-cartas__painel");
 
     if (!modal || !formulario || !entrada || !aviso || !area) return;
 
@@ -5080,10 +5538,6 @@ function criarMemoriaComplementos(dados) {
       document.querySelectorAll("[data-somente-proprietaria]").forEach(function (elemento) {
         elemento.hidden = visitante;
       });
-      if (visitante) {
-        const painelMomentos = document.getElementById("momentos");
-        if (painelMomentos) painelMomentos.hidden = true;
-      }
     }
 
     function abrir() {
@@ -5127,15 +5581,8 @@ function criarMemoriaComplementos(dados) {
           return;
         }
 
-        if (perfil === "proprietaria") {
-          const codigoPostagem = document.getElementById("cantinho-codigo");
-          if (codigoPostagem) codigoPostagem.value = entrada.value.trim();
-          const codigoMomentos = document.getElementById("momentos-codigo");
-          if (codigoMomentos) codigoMomentos.value = entrada.value.trim();
-        }
         sessionStorage.setItem("rj-cartas-abertas", "sim");
         sessionStorage.setItem("rj-perfil", perfil);
-        sessionStorage.setItem("rj-firebase-codigo", entrada.value.trim());
         aplicarPerfil(perfil);
         document.dispatchEvent(new CustomEvent("rj-acesso-alterado", { detail: { perfil } }));
         modal.classList.add("senha-cartas--saindo");
@@ -5149,23 +5596,11 @@ function criarMemoriaComplementos(dados) {
       }
     });
 
-    escolhas.forEach(function (escolha) {
-      escolha.addEventListener("click", function () {
-        const idPainel = escolha.dataset.painelCartas;
-        if (idPainel === "momentos" && sessionStorage.getItem("rj-perfil") === "visitante") return;
-        paineis.forEach(function (painel) { painel.hidden = painel.id !== idPainel; });
-        escolhas.forEach(function (item) { item.classList.toggle("carta-acesso--ativo", item === escolha); });
-        document.getElementById(idPainel)?.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
-    });
-
     bloquear?.addEventListener("click", function () {
       sessionStorage.removeItem("rj-cartas-abertas");
       sessionStorage.removeItem("rj-perfil");
       document.body.classList.remove("acesso-visitante");
       area.hidden = true;
-      paineis.forEach(function (painel) { painel.hidden = true; });
-      escolhas.forEach(function (item) { item.classList.remove("carta-acesso--ativo"); });
       document.getElementById("inicio")?.scrollIntoView({ behavior: "smooth" });
     });
 
@@ -5176,20 +5611,11 @@ function criarMemoriaComplementos(dados) {
 
   function iniciarSite() {
     iniciarAreaCartas();
-    iniciarCantinho();
-    let momentosIniciados = false;
-    function iniciarMomentosDaProprietaria() {
-      if (momentosIniciados) return;
-      momentosIniciados = true;
-      iniciarMomentos();
+    try {
+      iniciarDataEspecial();
+    } catch (erro) {
+      console.error("Erro no aviso de datas especiais:", erro);
     }
-    const perfilSalvo = sessionStorage.getItem("rj-perfil");
-    if (sessionStorage.getItem("rj-cartas-abertas") === "sim" && perfilSalvo !== "visitante") {
-      iniciarMomentosDaProprietaria();
-    }
-    document.addEventListener("rj-acesso-alterado", function (evento) {
-      if (evento.detail?.perfil === "proprietaria") iniciarMomentosDaProprietaria();
-    });
     try {
       atualizarContadores();
 
