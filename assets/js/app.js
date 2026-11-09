@@ -1208,7 +1208,8 @@
 
   const LC_RAYANE_CORES = {
     h: "#2a1812", H: "#4a2c20", q: "#f2cdb0", Q: "#d9a98a", e: "#2a1812", r: "#c4566a",
-    n: "#f0a3a8", K: "#17151b", c: "#34303a", j: "#3c5f93", J: "#2c4775", w: "#f4f1ec", Y: "#e7c45a"
+    n: "#f0a3a8", K: "#17151b", c: "#34303a", j: "#3c5f93", J: "#2c4775", w: "#f4f1ec", Y: "#e7c45a",
+    V: "#d4232b"
   };
 
   const LC_RAYANE = [
@@ -1224,12 +1225,13 @@
     "..hhqqqrrqqqhh..",
     "..hhYqqqqqqhhh..",
     "..hhhhQQQQhhhh..",
-    ".hhhKKKKKKKKhhh.",
-    ".hhKKKKcKKKKKhh.",
-    ".hhKKKKKKKKKKhh.",
-    ".qhKKKKKKKKKKhq.",
-    ".qKKKKKKKKKKKKq.",
-    "..KKKKKKKKKKKK..",
+    // camisa do Vasco: preta, faixa branca na diagonal e a cruz vermelha no peito
+    ".hhhwwKKKKKKhhh.",
+    ".hhKKwwKKKKVKhh.",
+    ".hhKKKKwwKVVVhh.",
+    ".qhKKKKKwwKVKhq.",
+    ".qKKKKKKKKwwKKq.",
+    "..KKKKKKKKKwwK..",
     "..jjjjjjjjjjjj..",
     "..jjjjjjjjjjjj..",
     "..jjjjjjjjjjjj..",
